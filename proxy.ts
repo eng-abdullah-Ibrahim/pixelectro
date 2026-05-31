@@ -5,10 +5,11 @@ import type { NextRequest } from 'next/server';
 // ONLY this path grants access to the admin panel.
 // Visiting /admin/login directly shows the homepage (no error, no hint).
 const SECRET_ENTRY  = '/pxl-studio-9x7k2';   // The hidden URL you visit
-const GATE_COOKIE   = 'pxl_sg';              // Cookie name (obscure)
-const GATE_VALUE    = 'k9Px2mZ7qRnW3vS8jT'; // Cookie value (secret)
+const GATE_COOKIE    = 'pxl_sg';              // Cookie name (obscure)
+const GATE_VALUE     = 'k9Px2mZ7qRnW3vS8jT'; // Cookie value (secret)
 
-export function middleware(request: NextRequest) {
+// التعديل الهندسي هنا: تغيير اسم الدالة الأساسية من middleware إلى proxy لتتوافق مع Next.js 16
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '127.0.0.1';
 
@@ -60,6 +61,9 @@ export function middleware(request: NextRequest) {
 
   return NextResponse.next();
 }
+
+// تصدير ديفولت إضافي لضمان توافق الـ Turbopack تماماً
+export default proxy;
 
 export const config = {
   matcher: ['/((?!_next/static|_next/image|favicon.ico|api/auth).*)'],
