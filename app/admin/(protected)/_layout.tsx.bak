@@ -1,0 +1,4 @@
+// Pass-through layout for (protected) group - actual auth handled in middleware.ts
+export default function ProtectedGroupLayout({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
+}

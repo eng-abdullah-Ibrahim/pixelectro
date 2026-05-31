@@ -1,0 +1,114 @@
+/* ════════════════════════════════════════════════════════════════
+   PIXELECTRO — DESIGN SYSTEM v6  "Sapphire Studio"
+   Palette: Pearl White + Royal Navy + Electric Blue
+   Inspired by: Stripe, Arc, Linear, Awwwards winners 2025
+   ════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Brand Blues (extracted from Pixelectro logo) ── */
+  --blue-sky:    #2FA8E8;   /* logo top gradient */
+  --blue-core:   #1565D8;   /* primary brand blue */
+  --blue-royal:  #0C2461;   /* logo bottom / deep navy */
+  --blue-deep:   #071440;   /* darkest navy */
+
+  /* ── Backgrounds ── */
+  --bg:          #F5F8FF;   /* pearl white — main */
+  --bg-card:     #FFFFFF;   /* pure white — elevated */
+  --bg-navy:     #071440;   /* deep navy — hero/CTA sections */
+  --bg-blue:     #0C2461;   /* royal navy — sections */
+  --bg-ice:      #EBF3FD;   /* icy blue — subtle panels */
+
+  /* ── Text ── */
+  --ink:         #060F2B;   /* near-black navy — primary text */
+  --ink-dim:     rgba(6, 15, 43, 0.52);
+  --ink-faint:   rgba(6, 15, 43, 0.22);
+  --on-navy:     #EBF3FD;   /* text on dark navy */
+  --on-navy-dim: rgba(235, 243, 253, 0.5);
+
+  /* ── Accents ── */
+  --accent:      var(--blue-core);
+  --accent-glow: rgba(21, 101, 216, 0.18);
+
+  /* ── Rules ── */
+  --rule-light:  rgba(6, 15, 43, 0.07);
+  --rule-navy:   rgba(235, 243, 253, 0.08);
+
+  /* ── Typography ── */
+  --font-display: var(--font-cormorant), 'Georgia', serif;
+  --font-sans:    var(--font-space), 'Helvetica Neue', sans-serif;
+  --font-mono:    var(--font-mono), 'Courier New', monospace;
+}
+
+/* ── Reset ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; overflow-x: hidden; }
+
+body {
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  line-height: 1.6;
+  /* Safe area insets for notched/island devices */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+a { color: inherit; text-decoration: none; }
+img, video { display: block; max-width: 100%; height: auto; }
+
+/* Touch targets — minimum 44px for accessibility */
+button, [role="button"] { min-height: 44px; touch-action: manipulation; }
+
+/* Prevent iOS auto-zoom on input focus */
+@supports (-webkit-touch-callout: none) {
+  input, select, textarea { font-size: max(16px, 1em) !important; }
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: rgba(21,101,216,0.3); }
+::-webkit-scrollbar-thumb:hover { background: var(--blue-core); }
+
+::selection { background: var(--blue-core); color: #fff; }
+
+/* ── Global Reveal Animations ─────────────────────────────── */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-reveal][data-visible="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── CSS 3D Sphere — pure CSS, no WebGL ─────────────────── */
+.px-sphere {
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 33% 33%,
+      #76c8f7 0%,
+      #2FA8E8 20%,
+      #1565D8 45%,
+      #0C2461 70%,
+      #071440 100%
+    );
+  box-shadow:
+    inset -20px -20px 50px rgba(7, 20, 64, 0.7),
+    inset 15px 15px 35px rgba(118, 200, 247, 0.25),
+    0 30px 70px rgba(21, 101, 216, 0.35),
+    0 0 0 1px rgba(47, 168, 232, 0.2);
+  animation: sphereFloat 7s ease-in-out infinite;
+}
+
+@keyframes sphereFloat {
+  0%, 100% { transform: translateY(0) rotateZ(0deg); }
+  33%       { transform: translateY(-18px) rotateZ(1deg); }
+  66%       { transform: translateY(-8px) rotateZ(-0.5deg); }
+}

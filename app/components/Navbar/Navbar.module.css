@@ -1,0 +1,208 @@
+.nav {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.4rem 5%;
+  transition: background 0.5s ease, box-shadow 0.5s ease, padding 0.4s ease;
+}
+
+.scrolled {
+  background: rgba(245, 248, 255, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 1px 0 rgba(6,15,43,0.06), 0 4px 20px rgba(6,15,43,0.04);
+  padding: 1rem 5%;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  text-decoration: none;
+  z-index: 1001;
+}
+
+.logoMark {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #2FA8E8, #1565D8, #0C2461);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(21,101,216,0.35);
+  flex-shrink: 0;
+}
+
+.logoMark span {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 1rem;
+  color: #fff;
+  letter-spacing: -0.03em;
+}
+
+.logoText {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #0C2461, #1565D8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Desktop Links */
+.links {
+  list-style: none;
+  display: flex;
+  gap: 2.5rem;
+}
+
+.link {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 0.82rem;
+  color: rgba(6,15,43,0.55);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  position: relative;
+  white-space: nowrap;
+}
+
+.link::after {
+  content: '';
+  position: absolute;
+  bottom: -3px; left: 0;
+  width: 0; height: 1.5px;
+  background: linear-gradient(90deg, #1565D8, #2FA8E8);
+  transition: width 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+
+.link:hover { color: var(--blue-core); }
+.link:hover::after { width: 100%; }
+
+/* CTA */
+.cta {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #fff;
+  background: linear-gradient(135deg, #1565D8, #2FA8E8);
+  padding: 0.65rem 1.5rem;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(21,101,216,0.3);
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(21,101,216,0.4);
+}
+
+/* Hamburger Button */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 6px;
+  z-index: 1001;
+}
+
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Mobile Menu Drawer */
+.mobileMenu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(245, 248, 255, 0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.mobileMenu.open {
+  display: flex;
+  opacity: 1;
+  pointer-events: all;
+}
+
+.mobileLinks {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+}
+
+.mobileLink {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 6vw, 2.2rem);
+  color: var(--ink);
+  text-decoration: none;
+  padding: 1rem 2rem;
+  text-align: center;
+  width: 100%;
+  border-bottom: 1px solid var(--rule-light);
+  transition: color 0.2s ease;
+}
+
+.mobileLink:first-child { border-top: 1px solid var(--rule-light); }
+.mobileLink:hover { color: var(--blue-core); }
+
+.mobileCta {
+  margin-top: 2.5rem;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 1rem;
+  color: #fff;
+  background: linear-gradient(135deg, #1565D8, #2FA8E8);
+  padding: 1rem 3rem;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(21,101,216,0.35);
+}
+
+/* ── Responsive Breakpoints ── */
+@media (max-width: 900px) {
+  .links { display: none; }
+  .cta { display: none; }
+  .hamburger { display: flex; }
+}
+
+@media (max-width: 480px) {
+  .nav { padding: 1rem 4%; }
+  .scrolled { padding: 0.8rem 4%; }
+}

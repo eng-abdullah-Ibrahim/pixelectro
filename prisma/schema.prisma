@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String?
+  email        String   @unique
+  passwordHash String
+  role         String   @default("EDITOR") // SUPER_ADMIN or EDITOR
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ServicePage {
+  id          String     @id @default(cuid())
+  title       String
+  slug        String     @unique
+  description String?
+  scene       String
+  icon        String     @default("◈")
+  order       Int        @default(0)
+  isActive    Boolean    @default(true)
+  categories  Category[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Category {
+  id            String       @id @default(cuid())
+  name          String
+  slug          String       @unique
+  servicePageId String
+  servicePage   ServicePage  @relation(fields: [servicePageId], references: [id], onDelete: Cascade)
+  order         Int          @default(0)
+  isActive      Boolean      @default(true)
+  projects      Project[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model Project {
+  id           String         @id @default(cuid())
+  title        String
+  description  String?
+
+  categoryId   String
+  category     Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  order        Int            @default(0)
+  isActive     Boolean        @default(true)
+  media        ProjectMedia[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+model ProjectMedia {
+  id        String   @id @default(cuid())
+  url       String
+  type      String   // e.g. 'IMAGE' or 'VIDEO'
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}

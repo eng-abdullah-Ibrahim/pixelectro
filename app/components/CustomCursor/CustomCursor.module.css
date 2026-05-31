@@ -1,0 +1,32 @@
+.dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: hsl(210, 90%, 55%);
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform;
+  transition: opacity 0.15s ease;
+  box-shadow: 0 0 8px hsl(210, 90%, 55%);
+}
+
+.ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid hsl(210, 90%, 55%);
+  pointer-events: none;
+  z-index: 9998;
+  will-change: transform;
+  transition:
+    border-color    0.2s ease,
+    background      0.2s ease,
+    box-shadow      0.2s ease;
+  backdrop-filter: blur(0px);
+}

@@ -1,0 +1,74 @@
+.preloader {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 3rem 5%;
+}
+
+.gridOverlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(21, 101, 216, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(21, 101, 216, 0.03) 1px, transparent 1px);
+  background-size: 80px 80px;
+  pointer-events: none;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 2.5rem;
+}
+
+.glitchText {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(3rem, 7vw, 6rem);
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--blue-royal), var(--blue-core));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.loadingBarContainer {
+  width: 280px;
+  height: 2px;
+  background: rgba(21, 101, 216, 0.1);
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+.loadingBar {
+  height: 100%;
+  background: var(--blue-core);
+  transition: width 0.08s linear;
+}
+
+.percentage {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: var(--blue-royal);
+  font-weight: 600;
+}
+
+.statusText {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+}
