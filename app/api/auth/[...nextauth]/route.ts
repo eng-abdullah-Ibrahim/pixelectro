@@ -1,36 +1,47 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 
+// ── Hardened Admin Credentials ──
+const ADMIN_EMAIL    = "pxl.dashboard.9x7k@pixelectro.com";
+const ADMIN_PASSWORD = "Px!L3ctr0#9K@mZ7qR$nW2&jT8vS!2026";
+
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: { label: "Email", type: "email", placeholder: "admin@pixelectro.com" },
+        email:    { label: "Email",    type: "email",    placeholder: "admin@pixelectro.com" },
         password: { label: "Password", type: "password" }
       },
-      async authorize(credentials, req) {
-        if (credentials?.email === "admin@pixelectro.com" && credentials?.password === "admin") {
-          return { id: "1", name: "Super Admin", email: "admin@pixelectro.com", role: "SUPER_ADMIN" }
+      async authorize(credentials) {
+        const emailMatch    = credentials?.email    === ADMIN_EMAIL;
+        const passwordMatch = credentials?.password === ADMIN_PASSWORD;
+
+        // Both must match exactly — no partial match allowed
+        if (emailMatch && passwordMatch) {
+          return { id: "1", name: "Pixelectro Admin", email: ADMIN_EMAIL, role: "SUPER_ADMIN" };
         }
-        return null
+
+        // Deliberate delay to slow down brute-force attacks
+        await new Promise(r => setTimeout(r, 1500));
+        return null;
       }
     })
   ],
   pages: {
     signIn: '/admin/login',
   },
+  session: {
+    strategy: 'jwt',
+    maxAge: 8 * 60 * 60, // Session expires after 8 hours
+  },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
-        token.role = (user as any).role;
-      }
+      if (user) token.role = (user as any).role;
       return token;
     },
     async session({ session, token }) {
-      if (session?.user) {
-        (session.user as any).role = token.role;
-      }
+      if (session?.user) (session.user as any).role = token.role;
       return session;
     }
   }
