@@ -8,7 +8,7 @@ const SECRET_ENTRY  = '/pxl-studio-9x7k2';   // The hidden URL you visit
 const GATE_COOKIE    = 'pxl_sg';              // Cookie name (obscure)
 const GATE_VALUE     = 'k9Px2mZ7qRnW3vS8jT'; // Cookie value (secret)
 
-// التعديل الهندسي هنا: تغيير اسم الدالة الأساسية من middleware إلى proxy لتتوافق مع Next.js 16
+// دالة الـ proxy الأساسية لحماية لوحة التحكم (بديلة للـ middleware في Next.js 16)
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '127.0.0.1';
@@ -62,7 +62,7 @@ export function proxy(request: NextRequest) {
   return NextResponse.next();
 }
 
-// تصدير ديفولت إضافي لضمان توافق الـ Turbopack تماماً
+// تصدير ديفولت ليتوافق مع نظام Next.js تماماً
 export default proxy;
 
 export const config = {

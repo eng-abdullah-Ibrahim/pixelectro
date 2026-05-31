@@ -3,6 +3,7 @@ import { Space_Grotesk, Cormorant_Garamond, JetBrains_Mono } from 'next/font/goo
 import './globals.css';
 import ClientLayoutWrapper from './ClientLayoutWrapper';
 import prisma from '../lib/prisma';
+import { Analytics } from '@vercel/analytics/react';
 
 const spaceGrotesk = Space_Grotesk({
   weight: ['300', '400', '500', '600', '700'],
@@ -49,6 +50,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en">
       <body className={`${spaceGrotesk.variable} ${cormorant.variable} ${jetbrains.variable}`}>
         <ClientLayoutWrapper links={links}>{children}</ClientLayoutWrapper>
+        <Analytics />
       </body>
     </html>
   );
