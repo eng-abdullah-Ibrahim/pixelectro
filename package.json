@@ -41,5 +41,8 @@
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
+  "overrides": {
+    "uuid": "^14.0.0"
   }
 }
