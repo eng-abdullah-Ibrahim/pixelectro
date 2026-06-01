@@ -288,7 +288,7 @@ export default function AnalyticsDashboard({
       return <div className="emptyStateText">No data available to plot.</div>;
     }
 
-    const rawMax = Math.max(...series.flatMap(s => s.data.map(v => Number(v) || 0)), 8);
+    const rawMax = Math.max(...series.flatMap(s => s.data.map((v: any) => Number(v) || 0)), 8);
     const maxVal = isNaN(rawMax) ? 8 : Math.max(rawMax, 1);
     const numPoints = series[0].rawData.length;
 
