@@ -13,8 +13,8 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const periodsStr = searchParams.get('periods');
     const projectId = searchParams.get('projectId');
-    
-    // Legacy support for older requests (start/end/compStart/compEnd)
+
+    // Legacy support
     const startStr = searchParams.get('start');
     const endStr = searchParams.get('end');
     const compStartStr = searchParams.get('compStart');
@@ -25,7 +25,7 @@ export async function GET(request: Request) {
     if (periodsStr) {
       try {
         periods = JSON.parse(periodsStr);
-      } catch (e) {
+      } catch {
         return NextResponse.json({ error: 'Invalid periods format' }, { status: 400 });
       }
     } else if (startStr && endStr) {
@@ -37,8 +37,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Missing date ranges' }, { status: 400 });
     }
 
-    // Helper to determine interval based on duration
-    const getInterval = (start: Date, end: Date) => {
+    const getInterval = (start: Date, end: Date): 'hour' | 'day' | 'month' => {
       const diffMs = end.getTime() - start.getTime();
       const diffDays = diffMs / (1000 * 60 * 60 * 24);
       if (diffDays <= 2) return 'hour';
@@ -46,17 +45,25 @@ export async function GET(request: Request) {
       return 'day';
     };
 
-    // Helper to fetch and aggregate data for a specific period
     const getPeriodData = async (periodStart: Date, periodEnd: Date, label: string) => {
       const interval = getInterval(periodStart, periodEnd);
-      
-      const whereClause: any = {
+
+      // Fix: set end of day for the end date so today's events are included
+      const endOfDay = new Date(periodEnd);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      const whereClause: {
+        createdAt: { gte: Date; lte: Date };
+        targetId?: string;
+      } = {
         createdAt: {
           gte: periodStart,
-          lte: periodEnd,
+          lte: endOfDay,
         },
       };
 
+      // For project-specific analytics, filter by targetId for interaction events
+      // but keep PAGE_VIEW and CATEGORY_VIEW global (or targetId = projectId for PROJECT_VIEW)
       if (projectId) {
         whereClause.targetId = projectId;
       }
@@ -66,7 +73,7 @@ export async function GET(request: Request) {
         orderBy: { createdAt: 'asc' },
       });
 
-      const totals = {
+      const emptyTotals = () => ({
         PAGE_VIEW: 0,
         PROJECT_VIEW: 0,
         CATEGORY_VIEW: 0,
@@ -74,15 +81,20 @@ export async function GET(request: Request) {
         EMAIL_CLICK: 0,
         PROJECT_LIKE: 0,
         PROJECT_SHARE: 0,
-      };
+      });
 
-      const groupedData: { [key: string]: typeof totals } = {};
+      type TotalsType = ReturnType<typeof emptyTotals>;
 
+      const totals = emptyTotals();
+      const groupedData: Record<string, TotalsType> = {};
+
+      // Pre-fill all time buckets so chart has even spacing
       const current = new Date(periodStart);
-      while (current <= periodEnd) {
+      while (current <= endOfDay) {
         const key = getGroupKey(current, interval);
-        groupedData[key] = { ...totals };
-        
+        if (!groupedData[key]) {
+          groupedData[key] = emptyTotals();
+        }
         if (interval === 'hour') {
           current.setHours(current.getHours() + 1);
         } else if (interval === 'month') {
@@ -91,21 +103,22 @@ export async function GET(request: Request) {
           current.setDate(current.getDate() + 1);
         }
       }
-      
-      const endKey = getGroupKey(periodEnd, interval);
+
+      // Ensure end bucket exists
+      const endKey = getGroupKey(endOfDay, interval);
       if (!groupedData[endKey]) {
-        groupedData[endKey] = { ...totals };
+        groupedData[endKey] = emptyTotals();
       }
 
+      // Aggregate events
       events.forEach((ev) => {
-        const type = ev.eventType as keyof typeof totals;
-        if (totals[type] !== undefined) {
+        const type = ev.eventType as keyof TotalsType;
+        if (type in totals) {
           totals[type]++;
-        }
-        
-        const key = getGroupKey(ev.createdAt, interval);
-        if (groupedData[key] && groupedData[key][type] !== undefined) {
-          groupedData[key][type]++;
+          const key = getGroupKey(ev.createdAt, interval);
+          if (groupedData[key]) {
+            groupedData[key][type]++;
+          }
         }
       });
 
@@ -119,12 +132,14 @@ export async function GET(request: Request) {
       return { label, totals, timeline, interval };
     };
 
-    // Fetch data for all requested periods concurrently
     const periodsData = await Promise.all(
-      periods.map((p) => getPeriodData(new Date(p.start), new Date(p.end), p.label))
+      periods.map((p) => {
+        const start = new Date(p.start);
+        const end = new Date(p.end);
+        return getPeriodData(start, end, p.label);
+      })
     );
 
-    // Get extra project metrics if queried for a specific project
     let projectMeta = null;
     if (projectId) {
       const proj = await prisma.project.findUnique({
@@ -158,9 +173,10 @@ export async function GET(request: Request) {
       periodsData,
       project: projectMeta,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : 'Internal server error';
     console.error('Error fetching admin analytics:', error);
-    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
 
@@ -169,7 +185,7 @@ function getGroupKey(date: Date, interval: 'hour' | 'day' | 'month'): string {
   const m = String(date.getMonth() + 1).padStart(2, '0');
   const d = String(date.getDate()).padStart(2, '0');
   const h = String(date.getHours()).padStart(2, '0');
-  
+
   if (interval === 'hour') return `${m}/${d} ${h}:00`;
   if (interval === 'month') return `${y}-${m}`;
   return `${m}/${d}`;
