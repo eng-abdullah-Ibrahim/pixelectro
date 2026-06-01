@@ -25,6 +25,20 @@ type PeriodData = {
   interval: string;
 };
 
+type DateRange = {
+  start: string;
+  end: string;
+  label: string;
+};
+
+type SeriesItem = {
+  id: string;
+  label: string;
+  color: string;
+  data: number[];
+  rawData: DataPoint[];
+};
+
 type ProjectItem = {
   id: string;
   title: string;
@@ -37,7 +51,7 @@ type ProjectItem = {
   category: { name: string; servicePage: { title: string } };
 };
 
-const METRICS_DEF = [
+const METRICS_DEF: { id: keyof MetricTotals; title: string; icon: string }[] = [
   { id: "PAGE_VIEW", title: "Site Visits", icon: "👁" },
   { id: "PROJECT_VIEW", title: "Project Views", icon: "◈" },
   { id: "CATEGORY_VIEW", title: "Category Views", icon: "▤" },
@@ -47,38 +61,41 @@ const METRICS_DEF = [
   { id: "PROJECT_SHARE", title: "Real Shares", icon: "🔗" },
 ];
 
-// Beautiful dynamic color palette
 const COLOR_PALETTE = [
-  "#1565d8", "#f59e0b", "#10b981", "#ef4444", "#8b5cf6", 
+  "#1565d8", "#f59e0b", "#10b981", "#ef4444", "#8b5cf6",
   "#ec4899", "#06b6d4", "#f97316", "#84cc16", "#3b82f6"
 ];
 
-// Date ranges calculation helper
-const calculatePresetRanges = (tf: string) => {
+const calculatePresetRanges = (tf: string): { start: string; end: string } => {
   const end = new Date();
   const start = new Date();
   switch (tf) {
-    case "1h": start.setHours(end.getHours() - 1); break;
-    case "24h": start.setDate(end.getDate() - 1); break;
-    case "7d": start.setDate(end.getDate() - 7); break;
-    case "30d": start.setDate(end.getDate() - 30); break;
-    case "90d": start.setDate(end.getDate() - 90); break;
+    case "1h":   start.setHours(end.getHours() - 1); break;
+    case "24h":  start.setDate(end.getDate() - 1); break;
+    case "7d":   start.setDate(end.getDate() - 7); break;
+    case "30d":  start.setDate(end.getDate() - 30); break;
+    case "90d":  start.setDate(end.getDate() - 90); break;
     case "180d": start.setDate(end.getDate() - 180); break;
-    case "1y": start.setFullYear(end.getFullYear() - 1); break;
-    case "5y": start.setFullYear(end.getFullYear() - 5); break;
-    default: start.setDate(end.getDate() - 7);
+    case "1y":   start.setFullYear(end.getFullYear() - 1); break;
+    case "5y":   start.setFullYear(end.getFullYear() - 5); break;
+    default:     start.setDate(end.getDate() - 7);
   }
-  return { 
-    start: start.toISOString().split('T')[0], 
-    end: end.toISOString().split('T')[0] 
+  return {
+    start: start.toISOString().split("T")[0],
+    end: end.toISOString().split("T")[0],
   };
 };
 
-const PeriodManager = ({ state, setState }: { state: any[], setState: any }) => {
+const PeriodManager = ({
+  state,
+  setState,
+}: {
+  state: DateRange[];
+  setState: (v: DateRange[]) => void;
+}) => {
   const [mode, setMode] = useState<"preset" | "custom">("preset");
   const [preset, setPreset] = useState<string>("7d");
 
-  // When preset changes, update the main state with one period
   useEffect(() => {
     if (mode === "preset") {
       const { start, end } = calculatePresetRanges(preset);
@@ -90,14 +107,19 @@ const PeriodManager = ({ state, setState }: { state: any[], setState: any }) => 
     <div style={{ background: "var(--adm-bg)", padding: "16px", borderRadius: "8px", border: "1px solid var(--adm-border)", display: "flex", flexDirection: "column", gap: "12px", width: "100%" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ fontSize: "0.9rem", fontWeight: 600 }}>Timeframe Settings</div>
-        <select className="select" style={{ width: "200px" }} value={mode === "preset" ? preset : "custom"} onChange={e => {
-          if (e.target.value === "custom") {
-            setMode("custom");
-          } else {
-            setMode("preset");
-            setPreset(e.target.value);
-          }
-        }}>
+        <select
+          className="select"
+          style={{ width: "200px" }}
+          value={mode === "preset" ? preset : "custom"}
+          onChange={e => {
+            if (e.target.value === "custom") {
+              setMode("custom");
+            } else {
+              setMode("preset");
+              setPreset(e.target.value);
+            }
+          }}
+        >
           <option value="1h">Last 1 Hour</option>
           <option value="24h">Last 24 Hours</option>
           <option value="7d">Last 7 Days</option>
@@ -114,31 +136,37 @@ const PeriodManager = ({ state, setState }: { state: any[], setState: any }) => 
         <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "8px" }}>
           {state.map((p, idx) => (
             <div key={idx} style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
-              <input 
-                type="text" 
-                className="input" 
-                style={{ width: "140px" }} 
-                value={p.label} 
+              <input
+                type="text"
+                className="input"
+                style={{ width: "140px" }}
+                value={p.label}
                 onChange={e => {
-                  const n = [...state]; n[idx].label = e.target.value; setState(n);
+                  const n = [...state];
+                  n[idx] = { ...n[idx], label: e.target.value };
+                  setState(n);
                 }}
                 placeholder="Label (e.g. 2024)"
               />
               <input type="date" className="input" value={p.start} onChange={e => {
-                const n = [...state]; n[idx].start = e.target.value; setState(n);
+                const n = [...state];
+                n[idx] = { ...n[idx], start: e.target.value };
+                setState(n);
               }} />
               <span style={{ color: "var(--adm-muted)", fontSize: "0.85rem" }}>to</span>
               <input type="date" className="input" value={p.end} onChange={e => {
-                const n = [...state]; n[idx].end = e.target.value; setState(n);
+                const n = [...state];
+                n[idx] = { ...n[idx], end: e.target.value };
+                setState(n);
               }} />
               {state.length > 1 && (
                 <button onClick={() => setState(state.filter((_, i) => i !== idx))} className="btnGhost" style={{ color: "#ef4444", padding: "4px 8px" }}>✕</button>
               )}
             </div>
           ))}
-          <button 
-            onClick={() => setState([...state, { start: new Date().toISOString().split('T')[0], end: new Date().toISOString().split('T')[0], label: `Period ${state.length + 1}` }])}
-            className="btnGhost" 
+          <button
+            onClick={() => setState([...state, { start: new Date().toISOString().split("T")[0], end: new Date().toISOString().split("T")[0], label: `Period ${state.length + 1}` }])}
+            className="btnGhost"
             style={{ alignSelf: "flex-start", fontSize: "0.85rem" }}
           >
             + Add Comparison Period
@@ -159,54 +187,49 @@ export default function AnalyticsDashboard({
   initialProjects: ProjectItem[];
 }) {
   const [activeTab, setActiveTab] = useState<"overview" | "analytics">("overview");
-  
-  // Array of active metrics
+
   const [activeMetrics, setActiveMetrics] = useState<(keyof MetricTotals)[]>(["PAGE_VIEW"]);
-  
+
   const toggleMetric = (metric: keyof MetricTotals) => {
     setActiveMetrics(prev => {
       if (prev.includes(metric)) {
-        return prev.length > 1 ? prev.filter(m => m !== metric) : prev; // Prevent deselecting all
+        return prev.length > 1 ? prev.filter(m => m !== metric) : prev;
       }
       return [...prev, metric];
     });
   };
 
-  // Multiple Date Periods Array
-  // Default is last 7 days
-  const [periods, setPeriods] = useState<{ start: string; end: string; label: string }[]>([
+  const [periods, setPeriods] = useState<DateRange[]>([
     {
-      start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      end: new Date().toISOString().split('T')[0],
-      label: "Last 7 Days"
-    }
+      start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+      end: new Date().toISOString().split("T")[0],
+      label: "Last 7 Days",
+    },
   ]);
 
   const [chartType, setChartType] = useState<"line" | "bar">("line");
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
-  
+
   const [analyticsData, setAnalyticsData] = useState<PeriodData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  // Project Modal State
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [projectAnalytics, setProjectAnalytics] = useState<PeriodData[]>([]);
   const [projectLoading, setProjectLoading] = useState<boolean>(false);
-  
-  const [projectPeriods, setProjectPeriods] = useState<{ start: string; end: string; label: string }[]>([
+
+  const [projectPeriods, setProjectPeriods] = useState<DateRange[]>([
     {
-      start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      end: new Date().toISOString().split('T')[0],
-      label: "Last 7 Days"
-    }
+      start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+      end: new Date().toISOString().split("T")[0],
+      label: "Last 7 Days",
+    },
   ]);
   const [projectActiveMetrics, setProjectActiveMetrics] = useState<(keyof MetricTotals)[]>(["PROJECT_VIEW", "PROJECT_LIKE", "PROJECT_SHARE"]);
 
   const svgRef = useRef<SVGSVGElement>(null);
   const modalSvgRef = useRef<SVGSVGElement>(null);
 
-  // Fetch Main Analytics
   const fetchAnalytics = async () => {
     if (periods.length === 0) return;
     setLoading(true);
@@ -214,9 +237,7 @@ export default function AnalyticsDashboard({
       const url = `/api/admin/analytics?periods=${encodeURIComponent(JSON.stringify(periods))}`;
       const res = await fetch(url);
       const data = await res.json();
-      if (data.success) {
-        setAnalyticsData(data.periodsData);
-      }
+      if (data.success) setAnalyticsData(data.periodsData);
     } catch (err) {
       console.error(err);
     } finally {
@@ -224,7 +245,6 @@ export default function AnalyticsDashboard({
     }
   };
 
-  // Fetch Project Analytics
   const fetchProjectAnalytics = async () => {
     if (!selectedProjectId || projectPeriods.length === 0) return;
     setProjectLoading(true);
@@ -232,9 +252,7 @@ export default function AnalyticsDashboard({
       const url = `/api/admin/analytics?projectId=${selectedProjectId}&periods=${encodeURIComponent(JSON.stringify(projectPeriods))}`;
       const res = await fetch(url);
       const data = await res.json();
-      if (data.success) {
-        setProjectAnalytics(data.periodsData);
-      }
+      if (data.success) setProjectAnalytics(data.periodsData);
     } catch (err) {
       console.error(err);
     } finally {
@@ -246,53 +264,56 @@ export default function AnalyticsDashboard({
     if (activeTab === "analytics") {
       fetchAnalytics();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, periods]);
 
   useEffect(() => {
     if (selectedProjectId) {
       fetchProjectAnalytics();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProjectId, projectPeriods]);
 
-  // Construct series dynamically based on selected metrics and periods
-  const generateSeries = (data: PeriodData[], selectedMetrics: (keyof MetricTotals)[]) => {
-    const series: { id: string; label: string; color: string; data: number[]; rawData: any[] }[] = [];
+  const generateSeries = (data: PeriodData[], selectedMetrics: (keyof MetricTotals)[]): SeriesItem[] => {
+    const series: SeriesItem[] = [];
     let colorIdx = 0;
-    
     data.forEach(period => {
       selectedMetrics.forEach(metric => {
         const metricDef = METRICS_DEF.find(m => m.id === metric);
         series.push({
           id: `${period.label}-${metric}`,
-          label: `${period.label} - ${metricDef?.title}`,
+          label: `${period.label} - ${metricDef?.title ?? metric}`,
           color: COLOR_PALETTE[colorIdx % COLOR_PALETTE.length],
-          data: period.timeline.map(pt => pt[metric] || 0),
-          rawData: period.timeline
+          data: period.timeline.map(pt => pt[metric] ?? 0),
+          rawData: period.timeline,
         });
         colorIdx++;
       });
     });
-    
     return series;
   };
 
-  // Math Helpers
   const svgWidth = 800;
   const svgHeight = 280;
   const padding = 45;
   const chartW = svgWidth - 2 * padding;
   const chartH = svgHeight - 2 * padding;
 
-  const renderChart = (series: any[], dataSrc: PeriodData[], targetRef: React.RefObject<SVGSVGElement | null>) => {
+  const renderChart = (
+    series: SeriesItem[],
+    dataSrc: PeriodData[],
+    targetRef: React.RefObject<SVGSVGElement | null>
+  ) => {
     if (series.length === 0 || dataSrc.length === 0) {
       return <div className="emptyStateText">No data available to plot.</div>;
     }
 
-    const rawMax = Math.max(...series.flatMap(s => s.data.map((v: any) => Number(v) || 0)), 8);
+    const allVals = series.flatMap(s => s.data.map(v => Number(v) || 0));
+    const rawMax = allVals.length > 0 ? Math.max(...allVals, 8) : 8;
     const maxVal = isNaN(rawMax) ? 8 : Math.max(rawMax, 1);
     const numPoints = series[0].rawData.length;
 
-    const getLinePath = (dataArr: number[]) => {
+    const getLinePath = (dataArr: number[]): string => {
       if (dataArr.length === 0) return "";
       return dataArr.reduce((path, val, idx) => {
         const x = padding + (idx * chartW) / Math.max(numPoints - 1, 1);
@@ -301,24 +322,21 @@ export default function AnalyticsDashboard({
       }, "");
     };
 
-    const handleMouseMove = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+    const handleMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
       if (!targetRef.current || numPoints === 0) return;
       const rect = targetRef.current.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const relativeX = (mouseX / rect.width) * svgWidth;
-      
+
       let closestIdx = 0;
       let minDiff = Infinity;
-      
+
       series[0].rawData.forEach((_, idx) => {
         const x = padding + (idx * chartW) / Math.max(numPoints - 1, 1);
         const diff = Math.abs(x - relativeX);
-        if (diff < minDiff) {
-          minDiff = diff;
-          closestIdx = idx;
-        }
+        if (diff < minDiff) { minDiff = diff; closestIdx = idx; }
       });
-      
+
       setHoveredIndex(closestIdx);
       const ptX = padding + (closestIdx * chartW) / Math.max(numPoints - 1, 1);
       const tooltipX = (ptX / svgWidth) * rect.width;
@@ -329,7 +347,7 @@ export default function AnalyticsDashboard({
     return (
       <div className={styles.chartWrapper}>
         <svg
-          ref={targetRef as any}
+          ref={targetRef as React.RefObject<SVGSVGElement>}
           className={styles.svgChart}
           onMouseMove={handleMouseMove}
           onMouseLeave={() => { setHoveredIndex(null); setTooltipPos(null); }}
@@ -345,8 +363,8 @@ export default function AnalyticsDashboard({
             );
           })}
 
-          {series[0].rawData.map((pt: any, idx: number) => {
-            const step = Math.ceil(numPoints / 8);
+          {series[0].rawData.map((pt, idx) => {
+            const step = Math.max(Math.ceil(numPoints / 8), 1);
             if (idx % step !== 0 && idx !== numPoints - 1) return null;
             const x = padding + (idx * chartW) / Math.max(numPoints - 1, 1);
             return (
@@ -356,7 +374,7 @@ export default function AnalyticsDashboard({
             );
           })}
 
-          {chartType === "line" && series.map((s) => (
+          {chartType === "line" && series.map(s => (
             <path key={s.id} d={getLinePath(s.data)} fill="none" stroke={s.color} strokeWidth={2.5} />
           ))}
 
@@ -364,34 +382,44 @@ export default function AnalyticsDashboard({
             const x = padding + (ptIdx * chartW) / Math.max(numPoints - 1, 1);
             const w = Math.max((chartW / numPoints) * 0.7, 4);
             const isHovered = hoveredIndex === ptIdx;
-            
+
             return series.map((s, sIdx) => {
               const val = Number(s.data[ptIdx]) || 0;
               const h = Math.max(0, (val / maxVal) * chartH);
               const y = svgHeight - padding - h;
               const barW = w / series.length;
-              const barX = x - w/2 + (sIdx * barW);
-              
+              const barX = x - w / 2 + sIdx * barW;
+
               return (
-                <rect key={`bar-${ptIdx}-${sIdx}`} x={barX} y={y || 0} width={barW - 1} height={h || 0} fill={s.color} opacity={isHovered ? 1 : 0.8} rx={1} />
+                <rect
+                  key={`bar-${ptIdx}-${sIdx}`}
+                  x={barX}
+                  y={isNaN(y) ? 0 : y}
+                  width={Math.max(0, barW - 1)}
+                  height={isNaN(h) ? 0 : h}
+                  fill={s.color}
+                  opacity={isHovered ? 1 : 0.8}
+                  rx={1}
+                />
               );
             });
           })}
 
           {hoveredIndex !== null && chartType === "line" && (
             <>
-              <line 
-                x1={padding + (hoveredIndex * chartW) / Math.max(numPoints - 1, 1)} 
-                y1={padding} 
-                x2={padding + (hoveredIndex * chartW) / Math.max(numPoints - 1, 1)} 
-                y2={svgHeight - padding} 
-                stroke="rgba(255,255,255,0.15)" strokeWidth={1.5} 
+              <line
+                x1={padding + (hoveredIndex * chartW) / Math.max(numPoints - 1, 1)}
+                y1={padding}
+                x2={padding + (hoveredIndex * chartW) / Math.max(numPoints - 1, 1)}
+                y2={svgHeight - padding}
+                stroke="rgba(255,255,255,0.15)"
+                strokeWidth={1.5}
               />
               {series.map(s => {
                 const cx = padding + (hoveredIndex * chartW) / Math.max(numPoints - 1, 1);
                 const safeVal = Number(s.data[hoveredIndex]) || 0;
                 const cy = svgHeight - padding - (safeVal / maxVal) * chartH;
-                return <circle key={`dot-${s.id}`} cx={cx} cy={cy || 0} r={5} fill={s.color} stroke="var(--adm-bg)" strokeWidth={2} />;
+                return <circle key={`dot-${s.id}`} cx={cx} cy={isNaN(cy) ? 0 : cy} r={5} fill={s.color} stroke="var(--adm-bg)" strokeWidth={2} />;
               })}
             </>
           )}
@@ -399,7 +427,7 @@ export default function AnalyticsDashboard({
 
         {tooltipPos && hoveredIndex !== null && (
           <div className={styles.tooltip} style={{ left: `${tooltipPos.x}px`, top: `${tooltipPos.y}px` }}>
-            <div className={styles.tooltipTitle}>{series[0].rawData[hoveredIndex].label}</div>
+            <div className={styles.tooltipTitle}>{series[0].rawData[hoveredIndex]?.label}</div>
             {series.map(s => (
               <div key={s.id} className={styles.tooltipRow}>
                 <span><span className={styles.tooltipDot} style={{ background: s.color }} /> {s.label}:</span>
@@ -414,6 +442,7 @@ export default function AnalyticsDashboard({
 
   const mainSeries = generateSeries(analyticsData, activeMetrics);
   const projSeries = generateSeries(projectAnalytics, projectActiveMetrics);
+
   return (
     <div className={styles.analyticsContainer}>
       <div className={styles.tabs}>
@@ -447,7 +476,7 @@ export default function AnalyticsDashboard({
           </div>
 
           <div className="card">
-            <div className="cardHeader"><div className="cardTitle">All Projects & Interactions</div><span className="badge badgeBlue">{initialProjects.length} entries</span></div>
+            <div className="cardHeader"><div className="cardTitle">All Projects &amp; Interactions</div><span className="badge badgeBlue">{initialProjects.length} entries</span></div>
             <div className="tableWrap">
               <table className="table">
                 <thead>
@@ -461,7 +490,7 @@ export default function AnalyticsDashboard({
                   </tr>
                 </thead>
                 <tbody>
-                  {initialProjects.map((p) => (
+                  {initialProjects.map(p => (
                     <tr key={p.id}>
                       <td style={{ fontWeight: 600 }}>{p.title}</td>
                       <td><span className="badge badgeBlue">{p.category.name}</span></td>
@@ -498,11 +527,11 @@ export default function AnalyticsDashboard({
 
           <div style={{ marginBottom: "16px", color: "var(--adm-muted)", fontSize: "0.9rem" }}>Select one or multiple metrics to plot them together on the chart:</div>
           <div className={styles.metricsGrid}>
-            {METRICS_DEF.map((m) => {
-              const isSelected = activeMetrics.includes(m.id as any);
-              const totalVal = analyticsData.reduce((sum, period) => sum + (period.totals[m.id as keyof MetricTotals] || 0), 0);
+            {METRICS_DEF.map(m => {
+              const isSelected = activeMetrics.includes(m.id);
+              const totalVal = analyticsData.reduce((sum, period) => sum + (period.totals[m.id] ?? 0), 0);
               return (
-                <div key={m.id} onClick={() => toggleMetric(m.id as any)} className={`${styles.metricCard} ${isSelected ? styles.metricCardActive : ""}`}>
+                <div key={m.id} onClick={() => toggleMetric(m.id)} className={`${styles.metricCard} ${isSelected ? styles.metricCardActive : ""}`}>
                   <div className={styles.metricHeader}>
                     <span className={styles.metricTitle}>{m.title}</span>
                     <span className={styles.metricIcon}>{m.icon}</span>
@@ -543,23 +572,27 @@ export default function AnalyticsDashboard({
 
       {selectedProjectId && (
         <div className={styles.modalOverlay} onClick={() => setSelectedProjectId(null)}>
-          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
             <div className={styles.modalHeader}>
               <div className={styles.modalTitle}>📈 Project Stats</div>
               <button onClick={() => setSelectedProjectId(null)} className={styles.modalClose}>✕</button>
             </div>
-            
+
             <div className={styles.modalBody}>
               <PeriodManager state={projectPeriods} setState={setProjectPeriods} />
 
               <div style={{ margin: "16px 0", display: "flex", gap: "8px", flexWrap: "wrap" }}>
                 {METRICS_DEF.filter(m => m.id.startsWith("PROJECT_")).map(m => (
-                  <button 
-                    key={m.id} 
+                  <button
+                    key={m.id}
                     onClick={() => {
-                      setProjectActiveMetrics(prev => prev.includes(m.id as any) ? (prev.length > 1 ? prev.filter(x => x !== m.id) : prev) : [...prev, m.id as any]);
+                      setProjectActiveMetrics(prev =>
+                        prev.includes(m.id)
+                          ? prev.length > 1 ? prev.filter(x => x !== m.id) : prev
+                          : [...prev, m.id]
+                      );
                     }}
-                    className={`${styles.presetBtn} ${projectActiveMetrics.includes(m.id as any) ? styles.activePreset : ""}`}
+                    className={`${styles.presetBtn} ${projectActiveMetrics.includes(m.id) ? styles.activePreset : ""}`}
                   >
                     {m.icon} {m.title}
                   </button>
