@@ -25,12 +25,18 @@ export default async function EditProjectPage({ params }: { params: Promise<{ id
     const title = formData.get("title") as string;
     const description = formData.get("description") as string;
     const categoryId = formData.get("categoryId") as string;
+    const fakeLikes = parseInt(formData.get("fakeLikes") as string || "0", 10);
+    const fakeViews = parseInt(formData.get("fakeViews") as string || "0", 10);
+    const fakeShares = parseInt(formData.get("fakeShares") as string || "0", 10);
     await prisma.project.update({
       where: { id },
       data: {
         title,
         description,
         categoryId,
+        fakeLikes,
+        fakeViews,
+        fakeShares,
       },
     });
 
@@ -66,6 +72,21 @@ export default async function EditProjectPage({ params }: { params: Promise<{ id
                     <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
                 </select>
+              </div>
+
+              <div className="field">
+                <label className="label">Mock Likes</label>
+                <input name="fakeLikes" type="number" min="0" defaultValue={project.fakeLikes || 0} className="input" required />
+              </div>
+
+              <div className="field">
+                <label className="label">Mock Views</label>
+                <input name="fakeViews" type="number" min="0" defaultValue={project.fakeViews || 0} className="input" required />
+              </div>
+
+              <div className="field">
+                <label className="label">Mock Shares</label>
+                <input name="fakeShares" type="number" min="0" defaultValue={project.fakeShares || 0} className="input" required />
               </div>
 
               <div className="field formGridFull">

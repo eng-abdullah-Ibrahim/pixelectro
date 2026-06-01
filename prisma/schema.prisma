@@ -49,6 +49,12 @@ model Project {
   id           String         @id @default(cuid())
   title        String
   description  String?
+  likesCount   Int            @default(0)
+  fakeLikes    Int            @default(0)
+  viewsCount   Int            @default(0)
+  fakeViews    Int            @default(0)
+  sharesCount  Int            @default(0)
+  fakeShares   Int            @default(0)
 
   categoryId   String
   category     Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
@@ -67,4 +73,15 @@ model ProjectMedia {
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   order     Int      @default(0)
   createdAt DateTime @default(now())
+}
+
+model AnalyticsEvent {
+  id         String   @id @default(cuid())
+  eventType  String   // 'PAGE_VIEW' | 'PROJECT_VIEW' | 'CATEGORY_VIEW' | 'WHATSAPP_CLICK' | 'EMAIL_CLICK' | 'PROJECT_LIKE' | 'PROJECT_SHARE'
+  targetId   String?  // Slug or ID of the target page/project/category
+  targetName String?  // Display name of the target item
+  createdAt  DateTime @default(now())
+
+  @@index([eventType])
+  @@index([createdAt])
 }

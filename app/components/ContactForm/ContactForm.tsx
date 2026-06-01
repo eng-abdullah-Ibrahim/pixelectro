@@ -4,8 +4,33 @@ import { MessageCircle, Mail } from 'lucide-react';
 import styles from './ContactForm.module.css';
 
 export default function ContactForm() {
-  const handleWhatsApp = () => window.open('https://wa.me/201060107536', '_blank');
-  const handleEmail = () => window.open('mailto:hello@pixelectro.com', '_blank');
+  const handleWhatsApp = () => {
+    fetch('/api/analytics/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        eventType: 'WHATSAPP_CLICK',
+        targetId: 'contact_page_whatsapp',
+        targetName: 'Contact Page WhatsApp Button',
+      }),
+    }).catch(err => console.error(err));
+
+    window.open('https://wa.me/201060107536', '_blank');
+  };
+
+  const handleEmail = () => {
+    fetch('/api/analytics/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        eventType: 'EMAIL_CLICK',
+        targetId: 'contact_page_email',
+        targetName: 'Contact Page Email Button',
+      }),
+    }).catch(err => console.error(err));
+
+    window.open('mailto:hello@pixelectro.com', '_blank');
+  };
 
   return (
     <section className={styles.contactSection}>
@@ -26,7 +51,19 @@ export default function ContactForm() {
         </div>
 
         <div className={styles.formSide}>
-          <form onSubmit={(e) => { e.preventDefault(); alert('Form submission mocked for now.'); }}>
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            fetch('/api/analytics/track', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                eventType: 'EMAIL_CLICK',
+                targetId: 'contact_form_submit',
+                targetName: 'Contact Form Message Submission',
+              }),
+            }).catch(err => console.error(err));
+            alert('Thank you! Your message has been sent successfully (mocked).');
+          }}>
             <div className={styles.formGroup}>
               <input type="text" placeholder="Your Name" className={styles.input} required />
             </div>

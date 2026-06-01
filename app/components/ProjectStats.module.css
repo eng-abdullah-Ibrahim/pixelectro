@@ -1,0 +1,68 @@
+.statsRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+}
+
+.statBtn, .statDisplay {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  color: var(--ink-dim, #888);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.statDisplay {
+  cursor: default;
+}
+
+.statBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ink-base, #fff);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btnIcon {
+  transition: all 0.2s ease;
+}
+
+.likedBtn {
+  color: #ff3b30;
+  border-color: rgba(255, 59, 48, 0.3);
+  cursor: default;
+}
+
+.heartFilled {
+  fill: #ff3b30;
+  color: #ff3b30;
+}
+
+.copiedBtn {
+  color: #34c759;
+  border-color: rgba(52, 199, 89, 0.3);
+}
+
+.count {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.pop {
+  animation: popAnimation 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popAnimation {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}

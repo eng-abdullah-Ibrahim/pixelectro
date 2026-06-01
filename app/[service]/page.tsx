@@ -42,6 +42,7 @@ export default async function ServicePage({ params }: { params: Promise<{ servic
         description={servicePage.description}
         categories={categories} 
         sceneIdentifier={servicePage.scene} 
+        serviceSlug={serviceSlug}
       />
     </main>
   );

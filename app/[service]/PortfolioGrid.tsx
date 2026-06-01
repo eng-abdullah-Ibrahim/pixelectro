@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from '../components/PortfolioGrid/PortfolioGrid.module.css';
 import { sceneRegistry } from '../components/ThreeCanvas/DisciplineScenes';
 import ProjectCarousel from '../components/ProjectCarousel';
+import ProjectStats from '../components/ProjectStats';
 
 type MediaItem = {
   id: string;
@@ -20,6 +21,12 @@ type Project = {
   description: string | null;
   media: MediaItem[];
   order: number;
+  likesCount?: number;
+  fakeLikes?: number;
+  viewsCount?: number;
+  fakeViews?: number;
+  sharesCount?: number;
+  fakeShares?: number;
 };
 
 type Category = {
@@ -30,11 +37,39 @@ type Category = {
   order: number;
 };
 
-export default function PortfolioGrid({ title, description, categories, sceneIdentifier }: { title: string, description: string | null, categories: Category[], sceneIdentifier: string }) {
+export default function PortfolioGrid({ title, description, categories, sceneIdentifier, serviceSlug }: { title: string, description: string | null, categories: Category[], sceneIdentifier: string, serviceSlug: string }) {
   const activeCategories = categories.filter(c => c.projects.length > 0);
   
   // Resolve the dynamic 3D scene from the registry, default to BrandingScene if missing
   const SceneComponent = sceneRegistry[sceneIdentifier] || sceneRegistry['BrandingScene'];
+
+  useEffect(() => {
+    activeCategories.forEach(cat => {
+      // Track category view
+      fetch('/api/analytics/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventType: 'CATEGORY_VIEW',
+          targetId: cat.id,
+          targetName: cat.name,
+        }),
+      }).catch(err => console.error('Failed to track category view:', err));
+
+      // Track project views in this category
+      cat.projects.forEach(proj => {
+        fetch('/api/analytics/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventType: 'PROJECT_VIEW',
+            targetId: proj.id,
+            targetName: proj.title,
+          }),
+        }).catch(err => console.error('Failed to track project view:', err));
+      });
+    });
+  }, [categories]);
 
   return (
     <>
@@ -52,10 +87,12 @@ export default function PortfolioGrid({ title, description, categories, sceneIde
                 <h2 className={styles.categoryTitle}>{cat.name}</h2>
                 <div className={styles.projectsContainer}>
                   {cat.projects.map(project => (
-                    <div key={project.id} className={styles.projectBlock}>
+                    <div key={project.id} id={`project-${project.id}`} className={styles.projectBlock}>
                       <div className={styles.projectHeader}>
-                        <h3 className={styles.projectTitle}>{project.title}</h3>
-                        {project.description && <p className={styles.projectDesc}>{project.description}</p>}
+                        <div>
+                          <h3 className={styles.projectTitle}>{project.title}</h3>
+                          {project.description && <p className={styles.projectDesc}>{project.description}</p>}
+                        </div>
                       </div>
                       <div style={{ marginTop: '1.5rem' }}>
                         <ProjectCarousel 
@@ -63,6 +100,16 @@ export default function PortfolioGrid({ title, description, categories, sceneIde
                           title={project.title} 
                         />
                       </div>
+                      <ProjectStats 
+                        projectId={project.id}
+                        serviceSlug={serviceSlug}
+                        initialLikes={project.likesCount ?? 0}
+                        initialFakeLikes={project.fakeLikes ?? 0}
+                        initialViews={project.viewsCount ?? 0}
+                        initialFakeViews={project.fakeViews ?? 0}
+                        initialShares={project.sharesCount ?? 0}
+                        initialFakeShares={project.fakeShares ?? 0}
+                      />
                     </div>
                   ))}
                 </div>

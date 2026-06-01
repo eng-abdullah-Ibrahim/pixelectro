@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
@@ -13,6 +14,21 @@ import ContentProtection from './components/ContentProtection';
 export default function ClientLayoutWrapper({ children, links = [] }: { children: React.ReactNode, links?: {href: string, label: string}[] }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith('/admin');
+
+  useEffect(() => {
+    if (isAdmin) return;
+
+    // Track the page view event
+    fetch('/api/analytics/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        eventType: 'PAGE_VIEW',
+        targetId: pathname || '/',
+        targetName: document.title || pathname || 'Home',
+      }),
+    }).catch(err => console.error('Failed to track page view:', err));
+  }, [pathname, isAdmin]);
 
   return (
     <>

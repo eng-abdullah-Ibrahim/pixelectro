@@ -19,10 +19,13 @@ export default async function ProjectsPage() {
     const title       = formData.get('title') as string;
     const description = formData.get('description') as string;
     const categoryId  = formData.get('categoryId') as string;
+    const fakeLikes   = parseInt(formData.get('fakeLikes') as string || "0", 10);
+    const fakeViews   = parseInt(formData.get('fakeViews') as string || "0", 10);
+    const fakeShares  = parseInt(formData.get('fakeShares') as string || "0", 10);
     
     const count = await prisma.project.count({ where: { categoryId } });
     const project = await prisma.project.create({ 
-      data: { title, description, categoryId, order: count } 
+      data: { title, description, categoryId, order: count, fakeLikes, fakeViews, fakeShares } 
     });
     
     redirect(`/admin/projects/${project.id}/edit`);
@@ -72,6 +75,21 @@ export default async function ProjectsPage() {
                     </optgroup>
                   ))}
                 </select>
+              </div>
+
+              <div className="field">
+                <label className="label">Mock Likes</label>
+                <input name="fakeLikes" type="number" min="0" defaultValue="0" className="input" />
+              </div>
+
+              <div className="field">
+                <label className="label">Mock Views</label>
+                <input name="fakeViews" type="number" min="0" defaultValue="0" className="input" />
+              </div>
+
+              <div className="field">
+                <label className="label">Mock Shares</label>
+                <input name="fakeShares" type="number" min="0" defaultValue="0" className="input" />
               </div>
 
               <div className="field formGridFull">

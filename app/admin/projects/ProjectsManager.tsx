@@ -12,6 +12,12 @@ type Project = {
   category: { name: string; servicePageId: string; servicePage: { title: string } };
   media: { url: string; type: string }[];
   isActive: boolean;
+  likesCount: number;
+  fakeLikes: number;
+  viewsCount: number;
+  fakeViews: number;
+  sharesCount: number;
+  fakeShares: number;
 };
 
 type Category = {
@@ -180,7 +186,7 @@ export default function ProjectsManager({
                   <th style={{ width: 72 }}>Media</th>
                   <th>Title</th>
                   <th>Category</th>
-                  <th>Service Page</th>
+                  <th style={{ width: 220 }}>Interactions</th>
                   <th style={{ width: 100 }}>Action</th>
                 </tr>
               </thead>
@@ -226,8 +232,29 @@ export default function ProjectsManager({
                         </div>
                       )}
                     </td>
-                    <td><span className="badge badgeBlue">{p.category.name}</span></td>
-                    <td><span className="badge badgeGreen">{p.category.servicePage.title}</span></td>
+                    <td>
+                      <span className="badge badgeGreen">{p.category.servicePage.title}</span><br />
+                      <span className="badge badgeBlue" style={{ marginTop: 4 }}>{p.category.name}</span>
+                    </td>
+                    <td>
+                      <div style={{ fontSize: "0.8rem", display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <div>
+                          <span style={{ color: "var(--adm-green)" }}>♥ {p.likesCount}</span> + 
+                          <span style={{ color: "var(--adm-muted)" }}>{p.fakeLikes}</span> = 
+                          <span style={{ fontWeight: "bold" }}>{p.likesCount + p.fakeLikes}</span> Likes
+                        </div>
+                        <div>
+                          <span style={{ color: "var(--adm-green)" }}>👁 {p.viewsCount}</span> + 
+                          <span style={{ color: "var(--adm-muted)" }}>{p.fakeViews}</span> = 
+                          <span style={{ fontWeight: "bold" }}>{p.viewsCount + p.fakeViews}</span> Views
+                        </div>
+                        <div>
+                          <span style={{ color: "var(--adm-green)" }}>🔗 {p.sharesCount}</span> + 
+                          <span style={{ color: "var(--adm-muted)" }}>{p.fakeShares}</span> = 
+                          <span style={{ fontWeight: "bold" }}>{p.sharesCount + p.fakeShares}</span> Shares
+                        </div>
+                      </div>
+                    </td>
                     <td>
                       <div style={{ display: 'flex', gap: '8px' }}>
                         <button 

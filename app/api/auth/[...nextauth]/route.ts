@@ -1,11 +1,11 @@
-import NextAuth from "next-auth"
+import NextAuth, { AuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 
 // ── Hardened Admin Credentials ──
 const ADMIN_EMAIL    = "pxl.dashboard.9x7k@pixelectro.com";
 const ADMIN_PASSWORD = "Px!L3ctr0#9K@mZ7qR$nW2&jT8vS!2026";
 
-const handler = NextAuth({
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -45,6 +45,8 @@ const handler = NextAuth({
       return session;
     }
   }
-})
+}
+
+const handler = NextAuth(authOptions as any)
 
 export { handler as GET, handler as POST }
