@@ -1,10 +1,15 @@
 "use server";
 
 import prisma from "../../../../../lib/prisma";
-import { promises as fs } from "fs";
-import path from "path";
-import crypto from "crypto";
 import { revalidatePath } from "next/cache";
+import { v2 as cloudinary } from "cloudinary";
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export async function updateMediaOrder(projectId: string, orderedIds: string[]) {
   // Update the order sequentially
@@ -20,11 +25,25 @@ export async function updateMediaOrder(projectId: string, orderedIds: string[]) 
 
 export async function deleteMediaItem(mediaId: string, projectId: string) {
   const media = await prisma.projectMedia.findUnique({ where: { id: mediaId } });
+  
   if (media) {
-    if (media.url && media.url.startsWith("/uploads/")) {
-      const publicDir = path.join(process.cwd(), "public");
-      try { await fs.unlink(path.join(publicDir, media.url)); } catch (e) {}
+    // If it's a Cloudinary URL, we can extract the public_id and delete it
+    if (media.url && media.url.includes("cloudinary.com")) {
+      try {
+        // Extract public ID from Cloudinary URL (e.g., .../upload/v1234/pixelectro/projects/xyz.jpg)
+        const parts = media.url.split('/');
+        const fileWithExt = parts[parts.length - 1];
+        const folderPath = parts.slice(parts.indexOf('upload') + 2, parts.length - 1).join('/');
+        const publicId = `${folderPath ? folderPath + '/' : ''}${fileWithExt.split('.')[0]}`;
+        
+        await cloudinary.uploader.destroy(publicId, {
+          resource_type: media.type === 'VIDEO' ? 'video' : 'image',
+        });
+      } catch (e) {
+        console.error("Failed to delete from Cloudinary:", e);
+      }
     }
+
     await prisma.projectMedia.delete({ where: { id: mediaId } });
   }
   revalidatePath(`/admin/projects/${projectId}/edit`);
@@ -35,9 +54,6 @@ export async function uploadNewMedia(projectId: string, formData: FormData) {
   const mediaFiles = formData.getAll("mediaFiles") as File[];
   const mediaItems: { url: string; type: string; projectId: string; order: number }[] = [];
 
-  const uploadsDir = path.join(process.cwd(), "public", "uploads");
-  try { await fs.mkdir(uploadsDir, { recursive: true }); } catch (e) {}
-
   // Find current max order
   const maxOrderMedia = await prisma.projectMedia.findFirst({
     where: { projectId },
@@ -47,13 +63,41 @@ export async function uploadNewMedia(projectId: string, formData: FormData) {
 
   for (const file of mediaFiles) {
     if (file && file.size > 0) {
-      const ext = path.extname(file.name) || "";
-      const filename = `${Date.now()}-${crypto.randomBytes(4).toString("hex")}${ext}`;
+      const isVideo = file.type.startsWith("video/");
       const bytes = await file.arrayBuffer();
-      await fs.writeFile(path.join(uploadsDir, filename), Buffer.from(bytes));
-      const fileType = file.type.startsWith("video/") ? "VIDEO" : "IMAGE";
-      mediaItems.push({ url: `/uploads/${filename}`, type: fileType, projectId, order: currentOrder });
-      currentOrder++;
+      const buffer = Buffer.from(bytes);
+
+      try {
+        // Upload to Cloudinary using a stream (avoids Read-Only file system errors on Vercel)
+        const result = await new Promise<{ secure_url: string }>((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            {
+              folder: "pixelectro/projects",
+              resource_type: isVideo ? "video" : "image",
+              quality: "auto",
+              fetch_format: "auto",
+            },
+            (error, result) => {
+              if (error || !result) reject(error ?? new Error("Upload failed"));
+              else resolve(result as { secure_url: string });
+            }
+          );
+          stream.end(buffer);
+        });
+
+        const fileType = isVideo ? "VIDEO" : "IMAGE";
+        
+        mediaItems.push({ 
+          url: result.secure_url, 
+          type: fileType, 
+          projectId, 
+          order: currentOrder 
+        });
+        currentOrder++;
+      } catch (error) {
+        console.error("Cloudinary upload error:", error);
+        throw new Error("Failed to upload media to Cloudinary.");
+      }
     }
   }
 

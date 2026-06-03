@@ -37,6 +37,8 @@ type Category = {
   order: number;
 };
 
+import { trackCategoryView, trackProjectView } from '../../lib/tracking';
+
 export default function PortfolioGrid({ title, description, categories, sceneIdentifier, serviceSlug }: { title: string, description: string | null, categories: Category[], sceneIdentifier: string, serviceSlug: string }) {
   const activeCategories = categories.filter(c => c.projects.length > 0);
   
@@ -45,28 +47,12 @@ export default function PortfolioGrid({ title, description, categories, sceneIde
 
   useEffect(() => {
     activeCategories.forEach(cat => {
-      // Track category view
-      fetch('/api/analytics/track', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          eventType: 'CATEGORY_VIEW',
-          targetId: cat.id,
-          targetName: cat.name,
-        }),
-      }).catch(err => console.error('Failed to track category view:', err));
+      // Track category view — once per browser per category
+      trackCategoryView(cat.id, cat.name);
 
-      // Track project views in this category
+      // Track project views in this category — once per browser per project
       cat.projects.forEach(proj => {
-        fetch('/api/analytics/track', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            eventType: 'PROJECT_VIEW',
-            targetId: proj.id,
-            targetName: proj.title,
-          }),
-        }).catch(err => console.error('Failed to track project view:', err));
+        trackProjectView(proj.id, proj.title);
       });
     });
   }, [categories]);

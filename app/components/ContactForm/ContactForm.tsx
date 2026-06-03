@@ -2,33 +2,16 @@
 
 import { MessageCircle, Mail } from 'lucide-react';
 import styles from './ContactForm.module.css';
+import { trackWhatsAppClick, trackEmailClick } from '../../../lib/tracking';
 
 export default function ContactForm() {
   const handleWhatsApp = () => {
-    fetch('/api/analytics/track', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        eventType: 'WHATSAPP_CLICK',
-        targetId: 'contact_page_whatsapp',
-        targetName: 'Contact Page WhatsApp Button',
-      }),
-    }).catch(err => console.error(err));
-
+    trackWhatsAppClick();
     window.open('https://wa.me/201060107536', '_blank');
   };
 
   const handleEmail = () => {
-    fetch('/api/analytics/track', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        eventType: 'EMAIL_CLICK',
-        targetId: 'contact_page_email',
-        targetName: 'Contact Page Email Button',
-      }),
-    }).catch(err => console.error(err));
-
+    trackEmailClick();
     window.open('mailto:hello@pixelectro.com', '_blank');
   };
 
@@ -53,15 +36,7 @@ export default function ContactForm() {
         <div className={styles.formSide}>
           <form onSubmit={(e) => {
             e.preventDefault();
-            fetch('/api/analytics/track', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                eventType: 'EMAIL_CLICK',
-                targetId: 'contact_form_submit',
-                targetName: 'Contact Form Message Submission',
-              }),
-            }).catch(err => console.error(err));
+            trackEmailClick();
             alert('Thank you! Your message has been sent successfully (mocked).');
           }}>
             <div className={styles.formGroup}>

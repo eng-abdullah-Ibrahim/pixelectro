@@ -9,6 +9,7 @@ import Preloader from './components/Preloader/Preloader';
 import GridBackground from './components/GridBackground/GridBackground';
 import GSAPInitializer from './components/GSAPInitializer';
 import ContentProtection from './components/ContentProtection';
+import { trackPageView } from '../lib/tracking';
 
 
 export default function ClientLayoutWrapper({ children, links = [] }: { children: React.ReactNode, links?: {href: string, label: string}[] }) {
@@ -17,18 +18,10 @@ export default function ClientLayoutWrapper({ children, links = [] }: { children
 
   useEffect(() => {
     if (isAdmin) return;
+    // Track unique site visit — fires only once per browser lifetime
+    trackPageView();
+  }, [isAdmin]);
 
-    // Track the page view event
-    fetch('/api/analytics/track', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        eventType: 'PAGE_VIEW',
-        targetId: pathname || '/',
-        targetName: document.title || pathname || 'Home',
-      }),
-    }).catch(err => console.error('Failed to track page view:', err));
-  }, [pathname, isAdmin]);
 
   return (
     <>
