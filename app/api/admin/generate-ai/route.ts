@@ -39,8 +39,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Gemini API key not configured' }, { status: 500 });
     }
 
-    const ai = new GoogleGenerativeAI(keys[0]);
-    const model = ai.getGenerativeModel({ model: 'gemini-flash-latest' });
+    // Prepare parts array first, then try keys
     let mediaUrls: string[] = [];
     let fetchTitle = title;
     let fetchCategory = category;
@@ -123,20 +122,41 @@ CRITICAL RULES:
       }
     }
 
-    const response = await model.generateContent(parts);
+    let htmlText = "";
+    let success = false;
+    let lastError: any = null;
 
-    const generatedText = response.response.text() || '';
-    
-    // Remove any markdown leftovers if the AI hallucinates them despite instructions
-    const cleanText = generatedText.replace(/[*#`]/g, '').trim();
+    for (const key of keys) {
+      try {
+        const ai = new GoogleGenerativeAI(key);
+        const model = ai.getGenerativeModel({ model: 'gemini-flash-latest' });
+        
+        const response = await model.generateContent(parts);
+        const generatedText = response.response.text() || '';
+        
+        // Remove any markdown leftovers if the AI hallucinates them despite instructions
+        const cleanText = generatedText.replace(/[*#`]/g, '').trim();
 
-    // Format as HTML for the Rich Text Editor
-    const htmlText = cleanText
-      .split('\n')
-      .map(line => line.trim())
-      .filter(line => line.length > 0)
-      .map(line => `<p>${line}</p>`)
-      .join('');
+        // Format as HTML for the Rich Text Editor
+        htmlText = cleanText
+          .split('\n')
+          .map(line => line.trim())
+          .filter(line => line.length > 0)
+          .map(line => `<p>${line}</p>`)
+          .join('');
+        
+        success = true;
+        break; // Stop trying if successful
+      } catch (err: any) {
+        lastError = err;
+        console.error('AI Generation Error with key:', err.message);
+        // Continue to next key
+      }
+    }
+
+    if (!success) {
+      throw lastError || new Error('All API keys failed');
+    }
 
     return NextResponse.json({ success: true, text: htmlText });
   } catch (error: any) {

@@ -19,18 +19,33 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Gemini API key not configured' }, { status: 500 });
     }
 
-    const ai = new GoogleGenerativeAI(keys[0]);
-    const model = ai.getGenerativeModel({ model: 'gemini-flash-latest' });
+    let cleanText = "";
+    let success = false;
+    let lastError: any = null;
 
-    const response = await model.generateContent([{ text: prompt }]);
-    const generatedText = response.response.text() || '';
-    
-    // Clean markdown bold or code blocks
-    const cleanText = generatedText.replace(/[*#`]/g, '').trim();
+    for (const key of keys) {
+      try {
+        const ai = new GoogleGenerativeAI(key);
+        const model = ai.getGenerativeModel({ model: 'gemini-flash-latest' });
+        const response = await model.generateContent([{ text: prompt }]);
+        const generatedText = response.response.text() || '';
+        cleanText = generatedText.replace(/[*#`]/g, '').trim();
+        success = true;
+        break; // Stop trying if successful
+      } catch (err: any) {
+        lastError = err;
+        console.error('AI Text Generation Error with key:', err.message);
+        // Continue to the next key
+      }
+    }
+
+    if (!success) {
+      throw lastError || new Error('All API keys failed');
+    }
 
     return NextResponse.json({ success: true, text: cleanText });
   } catch (error: any) {
-    console.error('AI Text Generation Error:', error);
+    console.error('AI Text Generation Error Final:', error);
     return NextResponse.json({ error: error.message || 'Failed to generate content' }, { status: 500 });
   }
 }
