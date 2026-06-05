@@ -12,11 +12,14 @@ export async function POST(req: Request) {
     
     if (!prompt) return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
 
-    if (!process.env.GEMINI_API_KEY) {
+    const keysString = process.env.GEMINI_API_KEYS || process.env.GEMINI_API_KEY || "";
+    const keys = keysString.split(',').map(k => k.trim()).filter(k => k.length > 0);
+
+    if (keys.length === 0) {
       return NextResponse.json({ error: 'Gemini API key not configured' }, { status: 500 });
     }
 
-    const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const ai = new GoogleGenerativeAI(keys[0]);
     const model = ai.getGenerativeModel({ model: 'gemini-flash-latest' });
 
     const response = await model.generateContent([{ text: prompt }]);
