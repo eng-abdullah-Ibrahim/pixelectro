@@ -114,7 +114,7 @@ export default function ProjectCarousel({ media, title }: { media: MediaItem[], 
               }}
             >
               <div style={{
-                width: '100%',
+                width: '70%',
                 height: 'auto',
                 boxShadow: isActive ? '0 25px 50px rgba(0,0,0,0.25)' : 'none',
                 borderRadius: '16px',
@@ -122,9 +122,9 @@ export default function ProjectCarousel({ media, title }: { media: MediaItem[], 
                 transition: 'box-shadow 0.6s ease'
               }}>
                 {m.type === 'IMAGE' ? (
-                  <img src={m.url} alt={title} style={{ width: '100%', height: 'auto', maxHeight: '80vh', objectFit: 'contain', pointerEvents: 'none', display: 'block' }} />
+                  <img src={m.url} alt={title} style={{ width: '100%', maxWidth: '70%', height: 'auto', maxHeight: '56vh', margin: '0 auto', objectFit: 'contain', pointerEvents: 'none', display: 'block' }} />
                 ) : (
-                  <video src={m.url} style={{ width: '100%', height: 'auto', maxHeight: '80vh', objectFit: 'contain', pointerEvents: 'none', display: 'block' }} muted loop playsInline autoPlay />
+                  <video src={m.url} style={{ width: '100%', maxWidth: '70%', height: 'auto', maxHeight: '56vh', margin: '0 auto', objectFit: 'contain', pointerEvents: 'none', display: 'block' }} muted loop playsInline autoPlay />
                 )}
               </div>
             </div>

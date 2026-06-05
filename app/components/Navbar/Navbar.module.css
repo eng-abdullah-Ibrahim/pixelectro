@@ -195,10 +195,18 @@
   box-shadow: 0 4px 20px rgba(21,101,216,0.35);
 }
 
+/* Nav Actions Group */
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 /* ── Responsive Breakpoints ── */
 @media (max-width: 900px) {
   .links { display: none; }
   .cta { display: none; }
+  .navActions { display: none; }
   .hamburger { display: flex; }
 }
 

@@ -1,0 +1,201 @@
+{
+  "common": {
+    "exploreOurWork": "Explora Nuestro Trabajo",
+    "startAProject": "Iniciar un Proyecto",
+    "getInTouch": "Contáctanos →",
+    "chatOnWhatsapp": "Chatea en WhatsApp",
+    "explore": "Explorar",
+    "projects": "Proyectos",
+    "clients": "Clientes",
+    "countries": "Países",
+    "learnMore": "Saber Más",
+    "viewAll": "Ver Todo",
+    "backToHome": "Volver al Inicio",
+    "loading": "Cargando...",
+    "error": "Algo salió mal"
+  },
+  "hero": {
+    "badge": "Alejandría · Estudio Creativo Global · Est. 2023",
+    "titleLine1": "Construimos",
+    "titleLine2": "Mundos Digitales",
+    "titleLine3Prefix": "con estilo ",
+    "titleLine3Highlight": "Cinematográfico.",
+    "sub": "Un estudio creativo y de publicidad global que opera en la intersección del diseño, la tecnología y la cultura. Diseñamos plataformas digitales insignia para marcas visionarias.",
+    "scroll": "Desplázate para explorar"
+  },
+  "stats": {
+    "projectsValue": "200+",
+    "projectsLabel": "Proyectos",
+    "projectsNote": "Entregados globalmente",
+    "clientsValue": "50+",
+    "clientsLabel": "Clientes",
+    "clientsNote": "En 5 países",
+    "disciplinesValue": "8",
+    "disciplinesLabel": "Disciplinas",
+    "disciplinesNote": "Áreas creativas",
+    "foundedValue": "2023",
+    "foundedLabel": "Fundación",
+    "foundedNote": "Alejandría, Egipto"
+  },
+  "marquee": {
+    "text": "PIXELECTRO ● CINE ● MARCA ● CÓDIGO ● 3D ●"
+  },
+  "services": {
+    "eyebrow": "Nuestras Disciplinas — {count}",
+    "titleLine1": "Todo lo que tu marca necesita",
+    "titleLine2": "para dominar el mercado.",
+    "exploreService": "Explorar {title}"
+  },
+  "statement": {
+    "eyebrow": "Nuestra Filosofía",
+    "quoteLine1": "\"No creamos contenido.",
+    "quoteLine2": "Diseñamos la percepción.\"",
+    "body": "Cada píxel tiene un propósito. Cada fotograma lleva una intención. Pixelectro es un instrumento de precisión, calibrado para cambiar la forma en que el mundo ve tu marca — desde Alejandría hasta Nueva York, traducimos ideas en arquitecturas visuales que superan las tendencias y definen categorías.",
+    "cta": "Comienza la Conversación",
+    "floatLabel": "ESTUDIO PIXELECTRO",
+    "floatSub": "Fuerza Creativa Global"
+  },
+  "process": {
+    "eyebrow": "Cómo Trabajamos",
+    "titleLine1": "Un proceso construido",
+    "titleLine2": "para la perfección.",
+    "step1Num": "01",
+    "step1Title": "Descubrimiento",
+    "step1Body": "Nos sumergimos en tu marca, mercado y audiencia para diseñar una estrategia.",
+    "step2Num": "02",
+    "step2Title": "Concepto",
+    "step2Body": "Creamos conceptos creativos audaces que desafían las convenciones.",
+    "step3Num": "03",
+    "step3Title": "Producción",
+    "step3Body": "Nuestros estudios ejecutan con precisión militar en cada disciplina.",
+    "step4Num": "04",
+    "step4Title": "Entrega",
+    "step4Body": "Lanzamos, medimos y optimizamos hasta que los resultados superan las expectativas."
+  },
+  "clients": {
+    "eyebrow": "Confían en Nosotros"
+  },
+  "cta": {
+    "eyebrow": "¿Listo para empezar?",
+    "titleLine1": "Construyamos algo",
+    "titleLine2": "permanente."
+  },
+  "navbar": {
+    "home": "Inicio",
+    "services": "Servicios",
+    "projects": "Proyectos",
+    "about": "Nosotros",
+    "contact": "Contacto",
+    "startProject": "Iniciar Proyecto",
+    "testimonials": "Testimonios"
+  },
+  "footer": {
+    "tagline": "Donde la Visión se Convierte en Arquitectura",
+    "copyright": "© 2023 Pixelectro. Todos los derechos reservados.",
+    "quickLinks": "Enlaces Rápidos",
+    "followUs": "Síguenos",
+    "contactUs": "Contáctanos"
+  },
+  "servicePages": {
+    "branding": "Branding e Identidad",
+    "brandingDesc": "Creamos identidades de marca distintivas que cautivan a las audiencias y definen categorías de mercado.",
+    "web": "Desarrollo Web",
+    "webDesc": "Plataformas digitales personalizadas diseñadas para el rendimiento, la estética y la escalabilidad.",
+    "video": "Producción de Video",
+    "videoDesc": "Narración cinematográfica que transforma las narrativas de la marca en experiencias visuales inolvidables.",
+    "graphic": "Diseño Gráfico",
+    "graphicDesc": "Sistemas visuales que se comunican con precisión y resuenan con intención.",
+    "threeD": "3D y Animación",
+    "threeDDesc": "Mundos tridimensionales y gráficos en movimiento que superan los límites creativos.",
+    "social": "Redes Sociales",
+    "socialDesc": "Presencia social estratégica que construye comunidades e impulsa la interacción.",
+    "ui": "Diseño UI/UX",
+    "uiDesc": "Experiencias de usuario diseñadas para la claridad, el deleite y la conversión.",
+    "marketing": "Marketing Digital",
+    "marketingDesc": "Campañas basadas en datos que maximizan el alcance y ofrecen resultados medibles."
+  },
+  "about": {
+    "eyebrow": "Quiénes Somos",
+    "titleLine1": "El Estudio",
+    "titleLine2": "Detrás del Arte.",
+    "intro": "Pixelectro es una empresa innovadora fundada en 2023, especializada en brindar soluciones integrales de publicidad, branding y marketing digital. Nuestro objetivo principal es empoderar a las empresas para que crezcan aprovechando el poder del diseño y la tecnología de vanguardia.",
+    "vision": {
+      "title": "Nuestra Visión",
+      "desc": "Ser el socio creativo preferido de las empresas ambiciosas de la región y contribuir a la transformación positiva del panorama digital, una marca a la vez."
+    },
+    "mission": {
+      "title": "Nuestra Misión",
+      "desc": "Ayudar a los dueños de negocios a desarrollar y escalar sus empresas a través de la fusión estratégica del diseño de clase mundial, la narración cinematográfica y el marketing digital impulsado por el rendimiento."
+    },
+    "goals": {
+      "title": "Lo Que Nos Diferencia",
+      "items": [
+        {
+          "title": "Experiencia Diversa",
+          "desc": "Nuestro equipo está formado por especialistas de élite en branding, cine, 3D, ingeniería de software y marketing, que ofrecen soluciones totalmente integradas bajo un mismo techo."
+        },
+        {
+          "title": "Resultados Comprobados",
+          "desc": "Hemos desarrollado con éxito más de 40 empresas y presencias en redes sociales, logrando resultados notables en el impulso de las ventas y el reconocimiento de marca para nuestros clientes."
+        },
+        {
+          "title": "Enfoque Centrado en el Cliente",
+          "desc": "Trabajamos en estrecha colaboración con cada cliente para comprender profundamente sus necesidades y ofrecer soluciones personalizadas que cumplan exactamente con sus objetivos."
+        }
+      ]
+    }
+  },
+  "contactPage": {
+    "title": "Ponte en Contacto",
+    "subtitle": "Construyamos algo extraordinario juntos.",
+    "nameLabel": "Tu Nombre",
+    "emailLabel": "Correo Electrónico",
+    "countryLabel": "País",
+    "servicePlaceholder": "Selecciona el Servicio Necesario",
+    "messageLabel": "Detalles del Proyecto",
+    "sendButton": "Enviar Mensaje",
+    "infoTitle": "Información de Contacto",
+    "emailText": "hello@pixelectro.com",
+    "addressText": "Alejandría, Egipto",
+    "services": {
+      "branding": "Branding y Diseño",
+      "video": "Edición de Video",
+      "animation": "Animación 2D",
+      "threeD": "3D y VFX",
+      "software": "Desarrollo de Software",
+      "content": "Gestión de Contenidos",
+      "ads": "Marketing de Rendimiento",
+      "ai": "Soluciones de IA"
+    }
+  },
+  "testimonialsPage": {
+    "title": "Lo que dicen nuestros clientes",
+    "subtitle": "Experiencias reales de las marcas y creadores con los que hemos colaborado en todo el mundo.",
+    "eyebrow": "Historias de Clientes",
+    "emptyState": "Aún no hay testimonios. ¡Sé el primero en compartir tu experiencia!",
+    "formTitle": "Comparte tu Experiencia",
+    "formDesc": "Tu testimonio aparecerá en esta página después de la moderación (normalmente dentro de las 24 horas).",
+    "nameLabel": "Tu Nombre",
+    "reviewLabel": "Tu Opinión",
+    "submitButton": "Enviar Testimonio",
+    "submitting": "Enviando...",
+    "successTitle": "¡Gracias por tu testimonio!",
+    "successDesc": "Tu opinión ha sido enviada y está en espera de moderación. Aparecerá una vez aprobada.",
+    "rateLimitedTitle": "Ya Enviado",
+    "rateLimitedDesc": "Ya has enviado un testimonio recientemente. ¡Gracias por tu apoyo!",
+    "editModeNotice": "Modo de Edición: Al enviar los cambios se ocultará temporalmente tu opinión hasta que nuestro equipo la apruebe de nuevo.",
+    "editButton": "Editar mi Opinión",
+    "saveChanges": "Guardar Cambios",
+    "cancel": "Cancelar"
+  },
+  "categories": {
+    "branding": "Branding",
+    "motion-graphics": "Gráficos en Movimiento",
+    "web-development": "Desarrollo Web",
+    "3d-design": "Diseño 3D",
+    "marketing": "Marketing",
+    "ui-ux": "Diseño UI/UX",
+    "social-media": "Redes Sociales",
+    "video-production": "Producción de Video"
+  }
+}

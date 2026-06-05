@@ -1,0 +1,201 @@
+{
+  "common": {
+    "exploreOurWork": "私たちの作品を見る",
+    "startAProject": "プロジェクトを始める",
+    "getInTouch": "お問い合わせ →",
+    "chatOnWhatsapp": "WhatsAppでチャットする",
+    "explore": "探索する",
+    "projects": "プロジェクト",
+    "clients": "クライアント",
+    "countries": "国",
+    "learnMore": "もっと詳しく",
+    "viewAll": "すべて表示",
+    "backToHome": "ホームに戻る",
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました"
+  },
+  "hero": {
+    "badge": "アレクサンドリア · グローバル・クリエイティブ・スタジオ · 2023年設立",
+    "titleLine1": "私たちは構築します",
+    "titleLine2": "映画のような",
+    "titleLine3Prefix": "デジタル",
+    "titleLine3Highlight": "世界を。",
+    "sub": "デザイン、テクノロジー、カルチャーの交差点で活動するグローバルな広告・クリエイティブスタジオ。先見の明のあるブランドのためのデジタルフラッグシップを設計します。",
+    "scroll": "スクロールして探索"
+  },
+  "stats": {
+    "projectsValue": "200+",
+    "projectsLabel": "プロジェクト",
+    "projectsNote": "世界中へ提供",
+    "clientsValue": "50+",
+    "clientsLabel": "クライアント",
+    "clientsNote": "5カ国に展開",
+    "disciplinesValue": "8",
+    "disciplinesLabel": "専門分野",
+    "disciplinesNote": "クリエイティブ領域",
+    "foundedValue": "2023",
+    "foundedLabel": "設立年",
+    "foundedNote": "エジプト、アレクサンドリア"
+  },
+  "marquee": {
+    "text": "PIXELECTRO ● シネマ ● ブランド ● コード ● 3D ●"
+  },
+  "services": {
+    "eyebrow": "私たちの専門分野 — {count}",
+    "titleLine1": "あなたのブランドが市場を",
+    "titleLine2": "支配するために必要なすべて。",
+    "exploreService": "{title} を見る"
+  },
+  "statement": {
+    "eyebrow": "私たちの哲学",
+    "quoteLine1": "「私たちはコンテンツを作るだけではない。",
+    "quoteLine2": "私たちは認識をデザインする。」",
+    "body": "すべてのピクセルには目的があります。すべてのフレームには意図が込められています。Pixelectroは精密なツールであり、世界があなたのブランドをどう見るかを変えるために調整されています。アレクサンドリアからニューヨークまで、私たちはアイデアをトレンドを超えてカテゴリーを定義する視覚的アーキテクチャに翻訳します。",
+    "cta": "会話を始める",
+    "floatLabel": "PIXELECTRO STUDIO",
+    "floatSub": "グローバルなクリエイティブの力"
+  },
+  "process": {
+    "eyebrow": "私たちのプロセス",
+    "titleLine1": "完璧を追求して",
+    "titleLine2": "構築されたプロセス。",
+    "step1Num": "01",
+    "step1Title": "発見",
+    "step1Body": "私たちはブランド、市場、オーディエンスに深く入り込み、戦略を構築します。",
+    "step2Num": "02",
+    "step2Title": "コンセプト",
+    "step2Body": "常識を打ち破る大胆なクリエイティブなコンセプトを作成します。",
+    "step3Num": "03",
+    "step3Title": "制作",
+    "step3Body": "私たちのスタジオは、あらゆる分野において軍隊のような精度で実行します。",
+    "step4Num": "04",
+    "step4Title": "納品",
+    "step4Body": "結果が期待を超えるまで、ローンチ、測定、最適化を行います。"
+  },
+  "clients": {
+    "eyebrow": "信頼の証"
+  },
+  "cta": {
+    "eyebrow": "始める準備はできましたか？",
+    "titleLine1": "永遠に残るものを",
+    "titleLine2": "共に創りましょう。"
+  },
+  "navbar": {
+    "home": "ホーム",
+    "services": "サービス",
+    "projects": "実績",
+    "about": "会社概要",
+    "contact": "お問い合わせ",
+    "startProject": "プロジェクトを開始",
+    "testimonials": "お客様の声"
+  },
+  "footer": {
+    "tagline": "ビジョンがアーキテクチャになる場所",
+    "copyright": "© 2023 Pixelectro. All rights reserved.",
+    "quickLinks": "クイックリンク",
+    "followUs": "フォローする",
+    "contactUs": "お問い合わせ"
+  },
+  "servicePages": {
+    "branding": "ブランディングとアイデンティティ",
+    "brandingDesc": "オーディエンスを魅了し、市場のカテゴリーを定義する独自のブランドアイデンティティを作成します。",
+    "web": "Web開発",
+    "webDesc": "パフォーマンス、美学、スケーラビリティのために設計されたカスタムデジタルプラットフォーム。",
+    "video": "ビデオ制作",
+    "videoDesc": "ブランドの物語を忘れられない視覚体験に変える映画のようなストーリーテリング。",
+    "graphic": "グラフィックデザイン",
+    "graphicDesc": "正確にコミュニケーションを取り、意図を持って共鳴する視覚システム。",
+    "threeD": "3Dとモーション",
+    "threeDDesc": "クリエイティブの限界を押し広げる3次元の世界とモーショングラフィックス。",
+    "social": "ソーシャルメディア",
+    "socialDesc": "コミュニティを構築し、エンゲージメントを促進する戦略的なソーシャルプレゼンス。",
+    "ui": "UI/UXデザイン",
+    "uiDesc": "明確さ、喜び、そしてコンバージョンのために設計されたユーザーエクスペリエンス。",
+    "marketing": "デジタルマーケティング",
+    "marketingDesc": "リーチを最大化し、測定可能な結果をもたらすデータ主導のキャンペーン。"
+  },
+  "about": {
+    "eyebrow": "私たちについて",
+    "titleLine1": "クラフトの背後にある",
+    "titleLine2": "スタジオ。",
+    "intro": "Pixelectroは2023年に設立された革新的な企業であり、包括的な広告、ブランディング、デジタルマーケティングソリューションの提供を専門としています。私たちの主な目標は、デザインと最先端のテクノロジーの力を活用することで、ビジネスの成長を支援することです。",
+    "vision": {
+      "title": "私たちのビジョン",
+      "desc": "地域の野心的なビジネスにとって好まれるクリエイティブパートナーとなり、一度に1つのブランドずつ、デジタルランドスケープのポジティブな変革に貢献すること。"
+    },
+    "mission": {
+      "title": "私たちのミッション",
+      "desc": "ワールドクラスのデザイン、映画のようなストーリーテリング、パフォーマンス重視のデジタルマーケティングの戦略的融合を通じて、ビジネスオーナーが事業を発展・拡大できるよう支援すること。"
+    },
+    "goals": {
+      "title": "私たちの特徴",
+      "items": [
+        {
+          "title": "多様な専門知識",
+          "desc": "私たちのチームは、ブランディング、映画、3D、ソフトウェアエンジニアリング、マーケティングの各分野のエリートスペシャリストで構成されており、完全に統合されたソリューションを1つ屋根の下で提供します。"
+        },
+        {
+          "title": "実績ある成果",
+          "desc": "私たちは40以上のビジネスとソーシャルメディアでのプレゼンスを成功裏に発展させ、クライアントの売上向上とブランド認知において顕著な結果を達成してきました。"
+        },
+        {
+          "title": "クライアントファーストのアプローチ",
+          "desc": "各クライアントと緊密に協力してニーズを深く理解し、目標を正確に満たすカスタマイズされたソリューションを提供します。"
+        }
+      ]
+    }
+  },
+  "contactPage": {
+    "title": "お問い合わせ",
+    "subtitle": "私たちと一緒に、特別なものを築き上げましょう。",
+    "nameLabel": "お名前",
+    "emailLabel": "メールアドレス",
+    "countryLabel": "国名",
+    "servicePlaceholder": "必要なサービスを選択",
+    "messageLabel": "プロジェクトの詳細",
+    "sendButton": "メッセージを送信",
+    "infoTitle": "連絡先情報",
+    "emailText": "hello@pixelectro.com",
+    "addressText": "エジプト、アレクサンドリア",
+    "services": {
+      "branding": "ブランディング＆デザイン",
+      "video": "動画編集",
+      "animation": "2Dアニメーション",
+      "threeD": "3D＆VFX",
+      "software": "ソフトウェア開発",
+      "content": "コンテンツ管理",
+      "ads": "パフォーマンスマーケティング",
+      "ai": "AIソリューション"
+    }
+  },
+  "testimonialsPage": {
+    "title": "お客様の声",
+    "subtitle": "世界中のブランドやクリエイターとの、確かな実績とリアルな体験談をご紹介します。",
+    "eyebrow": "お客様のストーリー",
+    "emptyState": "評価はまだありません。最初の体験談をぜひお寄せください！",
+    "formTitle": "体験談を投稿する",
+    "formDesc": "投稿いただいた体験談は、管理者の承認後（通常24時間以内）にこのページに掲載されます。",
+    "nameLabel": "お名前",
+    "reviewLabel": "評価・コメント",
+    "submitButton": "体験談を送信",
+    "submitting": "送信中...",
+    "successTitle": "体験談のご投稿ありがとうございます！",
+    "successDesc": "ご投稿いただいた内容は現在承認待ちです。承認され次第、掲載されます。",
+    "rateLimitedTitle": "投稿済み",
+    "rateLimitedDesc": "最近、すでに体験談を投稿されています。ご協力ありがとうございます！",
+    "editModeNotice": "編集モード：変更を保存すると、チームによる再承認が完了するまで一時的に非表示になります。",
+    "editButton": "投稿を編集する",
+    "saveChanges": "変更を保存",
+    "cancel": "キャンセル"
+  },
+  "categories": {
+    "branding": "ブランディング",
+    "motion-graphics": "モーショングラフィックス",
+    "web-development": "Web開発",
+    "3d-design": "3Dデザイン",
+    "marketing": "マーケティング",
+    "ui-ux": "UI/UXデザイン",
+    "social-media": "ソーシャルメディア",
+    "video-production": "ビデオ制作"
+  }
+}

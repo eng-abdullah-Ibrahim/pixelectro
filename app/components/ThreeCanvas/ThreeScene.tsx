@@ -56,27 +56,43 @@ const FastGlassMaterial = () => (
   />
 );
 
+// ── Custom useInView Hook ─────────────────────────────────────────────
+function useInView(ref: React.RefObject<Element | null>, options: IntersectionObserverInit = {}) {
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    if (!ref.current) return;
+    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), options);
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [ref, options.rootMargin]);
+  return inView;
+}
+
 // ── Reusable Canvas Wrapper ───────────────────────────────────────────
 
 const SectionCanvas = ({ children }: { children: React.ReactNode }) => {
   const [isMobile, setIsMobile] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { rootMargin: '200px' });
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
   }, []);
 
   return (
-    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, pointerEvents: 'none' }}>
-      <Canvas 
-        camera={{ position: [0, 0, 10], fov: 45 }} 
-        dpr={isMobile ? [0.5, 1] : [1, 1.5]}
-      >
-        <ambientLight intensity={1.5} />
-        <directionalLight position={[-10, 10, 5]} intensity={2} color="#ffffff" />
-        <directionalLight position={[10, -10, -5]} intensity={1} color="#1565D8" />
-        {children}
-        <Environment preset="city" />
-      </Canvas>
+    <div ref={ref} className="threeCanvasWrapper" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, pointerEvents: 'none' }}>
+      {inView && (
+        <Canvas 
+          camera={{ position: [0, 0, 10], fov: 45 }} 
+          dpr={isMobile ? [0.5, 1] : [1, 1.5]}
+        >
+          <ambientLight intensity={1.5} />
+          <directionalLight position={[-10, 10, 5]} intensity={2} color="#ffffff" />
+          <directionalLight position={[10, -10, -5]} intensity={1} color="#1565D8" />
+          {children}
+          <Environment preset="city" />
+        </Canvas>
+      )}
     </div>
   );
 };
@@ -316,6 +332,210 @@ export function ProcessScene() {
   return (
     <SectionCanvas>
       <ProcessShapes />
+    </SectionCanvas>
+  );
+}
+
+// ── 5. New 12 Premium 3D Models Library ──────────────────────────────
+
+// Abstract Group Helpers
+function createShapeState(count: number, spread: number) {
+  return Array.from({ length: count }).map(() => ({
+    pos: new THREE.Vector3((Math.random() - 0.5) * spread, (Math.random() - 0.5) * spread, (Math.random() - 0.5) * spread),
+    rot: new THREE.Euler(Math.random() * Math.PI, Math.random() * Math.PI, 0),
+    rotSpeed: new THREE.Euler((Math.random() - 0.5) * 0.02, (Math.random() - 0.5) * 0.02, (Math.random() - 0.5) * 0.02),
+    scale: 0.5 + Math.random() * 1.5
+  }));
+}
+
+// Model 1
+function BrandingShapes() {
+  const ref = useRef<THREE.Group>(null);
+  useFrame(() => { if (ref.current) ref.current.rotation.y += 0.005; });
+  return (
+    <group ref={ref} position={[0, 0, -2]}>
+      <Float speed={2} rotationIntensity={1} floatIntensity={2}>
+        <mesh><torusGeometry args={[1.5, 0.4, 32, 64]} /><SapphireGlassMaterial /></mesh>
+        <mesh rotation={[Math.PI/2, 0, 0]}><torusGeometry args={[1.2, 0.1, 16, 64]} /><MatteBlueMaterial /></mesh>
+      </Float>
+    </group>
+  );
+}
+export function BrandingScene() { return <SectionCanvas><BrandingShapes /></SectionCanvas>; }
+
+// Model 2
+function FilmShapes() {
+  const ref = useRef<THREE.Group>(null);
+  useFrame(() => { if (ref.current) { ref.current.rotation.x += 0.003; ref.current.rotation.y += 0.002; } });
+  return (
+    <group ref={ref} position={[0, 0, -2]}>
+      <Float speed={1.5} rotationIntensity={2} floatIntensity={1.5}>
+        <mesh><octahedronGeometry args={[1.8, 0]} /><FastGlassMaterial /></mesh>
+        <mesh scale={0.5}><octahedronGeometry args={[1.8, 0]} /><MatteBlueMaterial /></mesh>
+      </Float>
+    </group>
+  );
+}
+export function FilmScene() { return <SectionCanvas><FilmShapes /></SectionCanvas>; }
+
+// Model 3
+function VFXShapes() {
+  const ref = useRef<THREE.Group>(null);
+  const shapes = useRef(createShapeState(10, 4));
+  useFrame(() => {
+    if (!ref.current) return;
+    ref.current.rotation.y += 0.001;
+    ref.current.children.forEach((child, i) => {
+      child.rotation.x += shapes.current[i].rotSpeed.x;
+      child.rotation.y += shapes.current[i].rotSpeed.y;
+    });
+  });
+  return (
+    <group ref={ref} position={[0, 0, -3]}>
+      {shapes.current.map((s, i) => (
+        <mesh key={i} position={s.pos} rotation={s.rot} scale={s.scale * 0.4}>
+          <sphereGeometry args={[1, 32, 32]} />
+          {i % 2 === 0 ? <SapphireGlassMaterial /> : <FastGlassMaterial />}
+        </mesh>
+      ))}
+    </group>
+  );
+}
+export function VFXScene() { return <SectionCanvas><VFXShapes /></SectionCanvas>; }
+
+// Model 4
+function SoftwareShapes() {
+  const ref = useRef<THREE.Group>(null);
+  useFrame(() => { if (ref.current) ref.current.rotation.y -= 0.004; });
+  return (
+    <group ref={ref} position={[0, 0, -2]}>
+      <Float speed={1} rotationIntensity={0.5} floatIntensity={2}>
+        <mesh><boxGeometry args={[2, 2, 2]} /><FastGlassMaterial /></mesh>
+        <mesh><icosahedronGeometry args={[1.2, 0]} /><MatteBlueMaterial /></mesh>
+      </Float>
+    </group>
+  );
+}
+export function SoftwareScene() { return <SectionCanvas><SoftwareShapes /></SectionCanvas>; }
+
+// Model 5
+function PerformanceShapes() {
+  const ref = useRef<THREE.Group>(null);
+  useFrame(() => { if (ref.current) { ref.current.rotation.z += 0.002; ref.current.rotation.x += 0.002; } });
+  return (
+    <group ref={ref} position={[0, 0, -2]}>
+      <Float speed={3} rotationIntensity={1} floatIntensity={1}>
+        <mesh><torusKnotGeometry args={[1, 0.3, 128, 16]} /><SapphireGlassMaterial /></mesh>
+      </Float>
+    </group>
+  );
+}
+export function PerformanceScene() { return <SectionCanvas><PerformanceShapes /></SectionCanvas>; }
+
+// Model 6
+function AIShapes() {
+  const ref = useRef<THREE.Group>(null);
+  const shapes = useRef(createShapeState(6, 3));
+  useFrame(() => {
+    if (ref.current) ref.current.rotation.y += 0.002;
+  });
+  return (
+    <group ref={ref} position={[0, 0, -2]}>
+      {shapes.current.map((s, i) => (
+        <mesh key={i} position={s.pos} rotation={s.rot} scale={s.scale * 0.7}>
+          <tetrahedronGeometry args={[1, 0]} />
+          <FastGlassMaterial />
+        </mesh>
+      ))}
+      <mesh><sphereGeometry args={[0.5, 32, 32]} /><MatteBlueMaterial /></mesh>
+    </group>
+  );
+}
+export function AIScene() { return <SectionCanvas><AIShapes /></SectionCanvas>; }
+
+// Model 7
+export function IcosahedronScene() {
+  return (
+    <SectionCanvas>
+      <Float speed={2} rotationIntensity={2} floatIntensity={2}>
+        <mesh position={[0, 0, -2]} scale={1.8}>
+          <icosahedronGeometry args={[1, 1]} />
+          <SapphireGlassMaterial />
+        </mesh>
+      </Float>
+    </SectionCanvas>
+  );
+}
+
+// Model 8
+function BoxShapes() {
+  const ref = useRef<THREE.Group>(null);
+  useFrame(() => { if (ref.current) { ref.current.rotation.x += 0.002; ref.current.rotation.y += 0.003; } });
+  return (
+    <group ref={ref} position={[0, 0, -2]}>
+      <Float speed={1.5} rotationIntensity={1} floatIntensity={2}>
+        <mesh scale={1.5}><boxGeometry args={[1, 1, 1]} /><FastGlassMaterial /></mesh>
+        <mesh scale={0.7} position={[1, 1, 1]}><boxGeometry args={[1, 1, 1]} /><MatteBlueMaterial /></mesh>
+        <mesh scale={0.5} position={[-1, -1, -1]}><boxGeometry args={[1, 1, 1]} /><SapphireGlassMaterial /></mesh>
+      </Float>
+    </group>
+  );
+}
+export function BoxScene() { return <SectionCanvas><BoxShapes /></SectionCanvas>; }
+
+// Model 9
+export function RingScene() {
+  return (
+    <SectionCanvas>
+      <Float speed={2} rotationIntensity={1.5} floatIntensity={1.5}>
+        <group position={[0, 0, -2]}>
+          <mesh rotation={[Math.PI/4, 0, 0]}><torusGeometry args={[1.5, 0.05, 16, 100]} /><MatteBlueMaterial /></mesh>
+          <mesh rotation={[-Math.PI/4, 0, 0]}><torusGeometry args={[1.2, 0.1, 16, 100]} /><FastGlassMaterial /></mesh>
+          <mesh rotation={[0, Math.PI/4, 0]}><torusGeometry args={[0.9, 0.2, 16, 100]} /><SapphireGlassMaterial /></mesh>
+        </group>
+      </Float>
+    </SectionCanvas>
+  );
+}
+
+// Model 10
+export function CapsuleScene() {
+  return (
+    <SectionCanvas>
+      <Float speed={2} rotationIntensity={2} floatIntensity={2}>
+        <mesh position={[0, 0, -2]} scale={1.2}>
+          <capsuleGeometry args={[1, 1, 16, 32]} />
+          <SapphireGlassMaterial />
+        </mesh>
+      </Float>
+    </SectionCanvas>
+  );
+}
+
+// Model 11
+export function TorusKnotScene() {
+  return (
+    <SectionCanvas>
+      <Float speed={1.5} rotationIntensity={2} floatIntensity={1}>
+        <mesh position={[0, 0, -2]} scale={1.5}>
+          <torusKnotGeometry args={[1, 0.25, 100, 16, 3, 4]} />
+          <FastGlassMaterial />
+        </mesh>
+      </Float>
+    </SectionCanvas>
+  );
+}
+
+// Model 12
+export function TetrahedronScene() {
+  return (
+    <SectionCanvas>
+      <Float speed={3} rotationIntensity={2} floatIntensity={3}>
+        <group position={[0, 0, -2]}>
+          <mesh scale={1.8}><tetrahedronGeometry args={[1, 0]} /><SapphireGlassMaterial /></mesh>
+          <mesh scale={1.8} rotation={[Math.PI, 0, 0]}><tetrahedronGeometry args={[1, 0]} /><FastGlassMaterial /></mesh>
+        </group>
+      </Float>
     </SectionCanvas>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Environment, Float, MeshTransmissionMaterial } from '@react-three/drei';
 import * as THREE from 'three';
@@ -51,19 +51,38 @@ const MatteBlueMaterial = () => (
   />
 );
 
+// ── Custom useInView Hook ─────────────────────────────────────────────
+function useInView(ref: React.RefObject<Element | null>, options: IntersectionObserverInit = {}) {
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    if (!ref.current) return;
+    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), options);
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [ref, options.rootMargin]);
+  return inView;
+}
+
 // ── Canvas Wrapper ────────────────────────────────────────────────────
 
-const DisciplineCanvas = ({ children }: { children: React.ReactNode }) => (
-  <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, pointerEvents: 'none' }}>
-    <Canvas camera={{ position: [0, 0, 12], fov: 45 }} dpr={[1, 1.5]}>
-      <ambientLight intensity={1.5} />
-      <directionalLight position={[-10, 10, 5]} intensity={2} color="#ffffff" />
-      <directionalLight position={[10, -10, -5]} intensity={1} color="#1565D8" />
-      {children}
-      <Environment preset="city" />
-    </Canvas>
-  </div>
-);
+const DisciplineCanvas = ({ children }: { children: React.ReactNode }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { rootMargin: '200px' });
+  
+  return (
+    <div ref={ref} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, pointerEvents: 'none' }}>
+      {inView && (
+        <Canvas camera={{ position: [0, 0, 12], fov: 45 }} dpr={[1, 1.5]}>
+          <ambientLight intensity={1.5} />
+          <directionalLight position={[-10, 10, 5]} intensity={2} color="#ffffff" />
+          <directionalLight position={[10, -10, -5]} intensity={1} color="#1565D8" />
+          {children}
+          <Environment preset="city" />
+        </Canvas>
+      )}
+    </div>
+  );
+};
 
 // ── Bouncing shape hook ───────────────────────────────────────────────
 // Each shape bounces freely across the FULL section, bounded by:

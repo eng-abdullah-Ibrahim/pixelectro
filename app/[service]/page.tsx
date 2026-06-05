@@ -1,4 +1,4 @@
-import prisma from '../../lib/prisma';
+import prisma from '@/lib/prisma';
 import PortfolioGrid from './PortfolioGrid';
 import { notFound } from 'next/navigation';
 
@@ -18,13 +18,13 @@ export default async function ServicePage({ params }: { params: Promise<{ servic
   }
 
   // Fetch categories and projects for this specific service
+  // We pass ALL translations raw to the client so it can switch language instantly without a page refresh
   const categories = await prisma.category.findMany({
     where: { servicePageId: servicePage.id, isActive: true },
     orderBy: { order: 'asc' },
     include: {
       projects: {
         where: { isActive: true },
-
         include: {
           media: {
             orderBy: { order: 'asc' }
@@ -38,9 +38,10 @@ export default async function ServicePage({ params }: { params: Promise<{ servic
   return (
     <main>
       <PortfolioGrid 
-        title={servicePage.title} 
+        title={servicePage.title}
         description={servicePage.description}
-        categories={categories} 
+        allTranslations={(servicePage.translations as any) || {}}
+        categories={categories as any}
         sceneIdentifier={servicePage.scene} 
         serviceSlug={serviceSlug}
       />

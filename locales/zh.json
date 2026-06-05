@@ -1,0 +1,201 @@
+{
+  "common": {
+    "exploreOurWork": "探索我们的作品",
+    "startAProject": "开始项目",
+    "getInTouch": "联系我们 →",
+    "chatOnWhatsapp": "通过WhatsApp聊天",
+    "explore": "探索",
+    "projects": "项目",
+    "clients": "客户",
+    "countries": "国家",
+    "learnMore": "了解更多",
+    "viewAll": "查看全部",
+    "backToHome": "返回首页",
+    "loading": "加载中...",
+    "error": "出了些问题"
+  },
+  "hero": {
+    "badge": "亚历山大港 · 全球创意工作室 · 成立于2023年",
+    "titleLine1": "我们构建",
+    "titleLine2": "电影般震撼的",
+    "titleLine3Prefix": "数字",
+    "titleLine3Highlight": "世界。",
+    "sub": "一家在设计、技术和文化的交汇点上运营的全球广告与创意工作室。我们为具有远见的品牌打造数字旗舰。",
+    "scroll": "滚动探索"
+  },
+  "stats": {
+    "projectsValue": "200+",
+    "projectsLabel": "项目",
+    "projectsNote": "全球交付",
+    "clientsValue": "50+",
+    "clientsLabel": "客户",
+    "clientsNote": "横跨5个国家",
+    "disciplinesValue": "8",
+    "disciplinesLabel": "领域",
+    "disciplinesNote": "创意领域",
+    "foundedValue": "2023",
+    "foundedLabel": "成立年份",
+    "foundedNote": "埃及，亚历山大港"
+  },
+  "marquee": {
+    "text": "PIXELECTRO ● 电影 ● 品牌 ● 代码 ● 3D ●"
+  },
+  "services": {
+    "eyebrow": "我们的专业领域 — {count}",
+    "titleLine1": "您的品牌称霸市场",
+    "titleLine2": "所需的一切。",
+    "exploreService": "探索 {title}"
+  },
+  "statement": {
+    "eyebrow": "我们的哲学",
+    "quoteLine1": "\"我们不只是制作内容。",
+    "quoteLine2": "我们在塑造认知。\"",
+    "body": "每个像素都有其用途。每一帧都承载着意图。Pixelectro 是一台精密的仪器，经过校准，旨在改变世界对您品牌的看法 — 从亚历山大港到纽约，我们将创意转化为超越潮流、定义类别的视觉架构。",
+    "cta": "开启对话",
+    "floatLabel": "PIXELECTRO 工作室",
+    "floatSub": "全球创意力量"
+  },
+  "process": {
+    "eyebrow": "我们的工作方式",
+    "titleLine1": "为追求完美",
+    "titleLine2": "而构建的流程。",
+    "step1Num": "01",
+    "step1Title": "探索",
+    "step1Body": "我们沉浸在您的品牌、市场和受众中，以构建战略。",
+    "step2Num": "02",
+    "step2Title": "概念",
+    "step2Body": "我们打造打破常规的大胆创意概念。",
+    "step3Num": "03",
+    "step3Title": "制作",
+    "step3Body": "我们的工作室在所有领域以军事般的精确度执行。",
+    "step4Num": "04",
+    "step4Title": "交付",
+    "step4Body": "我们发布、衡量并优化，直到结果超越预期。"
+  },
+  "clients": {
+    "eyebrow": "信任我们的客户"
+  },
+  "cta": {
+    "eyebrow": "准备好开始了吗？",
+    "titleLine1": "让我们构建一些",
+    "titleLine2": "永恒的东西。"
+  },
+  "navbar": {
+    "home": "首页",
+    "services": "服务",
+    "projects": "项目",
+    "about": "关于我们",
+    "contact": "联系我们",
+    "startProject": "开始项目",
+    "testimonials": "客户评价"
+  },
+  "footer": {
+    "tagline": "在这里，愿景成为架构",
+    "copyright": "© 2023 Pixelectro. 保留所有权利。",
+    "quickLinks": "快速链接",
+    "followUs": "关注我们",
+    "contactUs": "联系我们"
+  },
+  "servicePages": {
+    "branding": "品牌与身份",
+    "brandingDesc": "我们打造独特的品牌标识，吸引受众并定义市场类别。",
+    "web": "网页开发",
+    "webDesc": "专为性能、美观和扩展性而设计的定制数字平台。",
+    "video": "视频制作",
+    "videoDesc": "电影般的叙事，将品牌故事转化为难忘的视觉体验。",
+    "graphic": "平面设计",
+    "graphicDesc": "精确传达信息并引起共鸣的视觉系统。",
+    "threeD": "3D与动画",
+    "threeDDesc": "突破创意边界的3D世界和动态图形。",
+    "social": "社交媒体",
+    "socialDesc": "建立社区并推动参与的战略性社交网络形象。",
+    "ui": "UI/UX 设计",
+    "uiDesc": "为清晰度、愉悦感和转化率而设计的用户体验。",
+    "marketing": "数字营销",
+    "marketingDesc": "数据驱动的活动，最大化影响力并带来可衡量的结果。"
+  },
+  "about": {
+    "eyebrow": "我们是谁",
+    "titleLine1": "工艺背后的",
+    "titleLine2": "工作室。",
+    "intro": "Pixelectro 是一家成立于2023年的创新公司，专注于提供全面的广告、品牌和数字营销解决方案。我们的主要目标是利用设计和尖端技术的力量赋能企业发展。",
+    "vision": {
+      "title": "我们的愿景",
+      "desc": "成为该地区雄心勃勃的企业首选的创意合作伙伴，并为数字环境的积极转变做出贡献——一次一个品牌。"
+    },
+    "mission": {
+      "title": "我们的使命",
+      "desc": "通过世界级设计、电影化叙事和注重性能的数字营销的战略融合，帮助企业主发展和扩大其业务。"
+    },
+    "goals": {
+      "title": "我们的与众不同之处",
+      "items": [
+        {
+          "title": "多元化专业知识",
+          "desc": "我们的团队由品牌、电影、3D、软件工程和营销领域的精英专家组成——在一个屋檐下提供完全集成的解决方案。"
+        },
+        {
+          "title": "经过验证的结果",
+          "desc": "我们已经成功为40多家企业和社交媒体平台进行了开发，在提高客户的销售额和品牌知名度方面取得了显著成果。"
+        },
+        {
+          "title": "客户至上的理念",
+          "desc": "我们与每位客户密切合作，深入了解他们的需求，并提供精确实现其目标的定制解决方案。"
+        }
+      ]
+    }
+  },
+  "contactPage": {
+    "title": "取得联系",
+    "subtitle": "让我们携手打造非凡之作。",
+    "nameLabel": "您的姓名",
+    "emailLabel": "电子邮箱",
+    "countryLabel": "国家/地区",
+    "servicePlaceholder": "选择所需服务",
+    "messageLabel": "项目详情",
+    "sendButton": "发送消息",
+    "infoTitle": "联系信息",
+    "emailText": "hello@pixelectro.com",
+    "addressText": "埃及 亚历山大",
+    "services": {
+      "branding": "品牌与设计",
+      "video": "视频剪辑",
+      "animation": "2D 动画",
+      "threeD": "3D 与特效",
+      "software": "软件开发",
+      "content": "内容管理",
+      "ads": "效果营销",
+      "ai": "人工智能解决方案"
+    }
+  },
+  "testimonialsPage": {
+    "title": "客户心声",
+    "subtitle": "来自全球品牌和创作者的真实合作体验。",
+    "eyebrow": "客户故事",
+    "emptyState": "暂无评价。成为第一个分享您体验的人吧！",
+    "formTitle": "分享您的体验",
+    "formDesc": "您的评价将在审核后显示（通常在 24 小时内）。",
+    "nameLabel": "您的姓名",
+    "reviewLabel": "您的评价",
+    "submitButton": "提交评价",
+    "submitting": "提交中...",
+    "successTitle": "感谢您的评价！",
+    "successDesc": "您的评价已提交并等待审核，审核通过后即可显示。",
+    "rateLimitedTitle": "已提交",
+    "rateLimitedDesc": "您最近已提交过评价。感谢您的支持！",
+    "editModeNotice": "编辑模式：提交修改将暂时隐藏您的评价，直到团队重新审核通过。",
+    "editButton": "修改我的评价",
+    "saveChanges": "保存修改",
+    "cancel": "取消"
+  },
+  "categories": {
+    "branding": "品牌建设",
+    "motion-graphics": "动态图形",
+    "web-development": "网页开发",
+    "3d-design": "3D 设计",
+    "marketing": "市场营销",
+    "ui-ux": "UI/UX 设计",
+    "social-media": "社交媒体",
+    "video-production": "视频制作"
+  }
+}

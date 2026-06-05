@@ -1,0 +1,201 @@
+{
+  "common": {
+    "exploreOurWork": "Jelajahi Karya Kami",
+    "startAProject": "Mulai Proyek",
+    "getInTouch": "Hubungi Kami →",
+    "chatOnWhatsapp": "Obrolan di WhatsApp",
+    "explore": "Jelajahi",
+    "projects": "Proyek",
+    "clients": "Klien",
+    "countries": "Negara",
+    "learnMore": "Pelajari Lebih Lanjut",
+    "viewAll": "Lihat Semua",
+    "backToHome": "Kembali ke Beranda",
+    "loading": "Memuat...",
+    "error": "Terjadi kesalahan"
+  },
+  "hero": {
+    "badge": "Alexandria · Studio Kreatif Global · Est. 2023",
+    "titleLine1": "Kami Membangun",
+    "titleLine2": "Dunia Digital",
+    "titleLine3Prefix": "Yang ",
+    "titleLine3Highlight": "Sinematik.",
+    "sub": "Studio kreatif dan periklanan global yang beroperasi di persimpangan desain, teknologi, dan budaya. Kami merancang platform digital andalan untuk merek-merek visioner.",
+    "scroll": "Gulir untuk menjelajahi"
+  },
+  "stats": {
+    "projectsValue": "200+",
+    "projectsLabel": "Proyek",
+    "projectsNote": "Dikirim secara global",
+    "clientsValue": "50+",
+    "clientsLabel": "Klien",
+    "clientsNote": "Di 5 negara",
+    "disciplinesValue": "8",
+    "disciplinesLabel": "Disiplin Ilmu",
+    "disciplinesNote": "Domain kreatif",
+    "foundedValue": "2023",
+    "foundedLabel": "Didirikan",
+    "foundedNote": "Alexandria, Mesir"
+  },
+  "marquee": {
+    "text": "PIXELECTRO ● SINEMA ● MEREK ● KODE ● 3D ●"
+  },
+  "services": {
+    "eyebrow": "Disiplin Kami — {count}",
+    "titleLine1": "Segala yang dibutuhkan merek Anda",
+    "titleLine2": "untuk mendominasi.",
+    "exploreService": "Jelajahi {title}"
+  },
+  "statement": {
+    "eyebrow": "Filosofi Kami",
+    "quoteLine1": "\"Kami tidak sekadar membuat konten.",
+    "quoteLine2": "Kami merancang persepsi.\"",
+    "body": "Setiap piksel memiliki tujuan. Setiap bingkai membawa niat. Pixelectro adalah instrumen presisi, dikalibrasi untuk mengubah cara dunia memandang merek Anda — dari Alexandria hingga New York, kami menerjemahkan ide ke dalam arsitektur visual yang bertahan lebih lama dari tren dan mendefinisikan kategori.",
+    "cta": "Mulai Percakapan",
+    "floatLabel": "STUDIO PIXELECTRO",
+    "floatSub": "Kekuatan Kreatif Global"
+  },
+  "process": {
+    "eyebrow": "Cara Kami Bekerja",
+    "titleLine1": "Proses yang dibangun",
+    "titleLine2": "untuk kesempurnaan.",
+    "step1Num": "01",
+    "step1Title": "Penemuan",
+    "step1Body": "Kami mendalami merek, pasar, dan audiens Anda untuk merancang strategi.",
+    "step2Num": "02",
+    "step2Title": "Konsep",
+    "step2Body": "Kami menyusun konsep kreatif yang berani dan menantang konvensi.",
+    "step3Num": "03",
+    "step3Title": "Produksi",
+    "step3Body": "Studio kami mengeksekusi dengan presisi militer di setiap disiplin ilmu.",
+    "step4Num": "04",
+    "step4Title": "Pengiriman",
+    "step4Body": "Kami meluncurkan, mengukur, dan mengoptimalkan hingga hasil melampaui harapan."
+  },
+  "clients": {
+    "eyebrow": "Dipercaya Oleh"
+  },
+  "cta": {
+    "eyebrow": "Siap untuk memulai?",
+    "titleLine1": "Mari kita bangun sesuatu",
+    "titleLine2": "yang permanen."
+  },
+  "navbar": {
+    "home": "Beranda",
+    "services": "Layanan",
+    "projects": "Proyek",
+    "about": "Tentang Kami",
+    "contact": "Kontak",
+    "startProject": "Mulai Proyek",
+    "testimonials": "Testimoni"
+  },
+  "footer": {
+    "tagline": "Di Mana Visi Menjadi Arsitektur",
+    "copyright": "© 2023 Pixelectro. Hak cipta dilindungi undang-undang.",
+    "quickLinks": "Tautan Cepat",
+    "followUs": "Ikuti Kami",
+    "contactUs": "Hubungi Kami"
+  },
+  "servicePages": {
+    "branding": "Branding & Identitas",
+    "brandingDesc": "Kami merancang identitas merek yang khas yang memikat audiens dan mendefinisikan kategori pasar.",
+    "web": "Pengembangan Web",
+    "webDesc": "Platform digital khusus yang dirancang untuk kinerja, estetika, dan skala.",
+    "video": "Produksi Video",
+    "videoDesc": "Penceritaan sinematik yang mengubah narasi merek menjadi pengalaman visual yang tak terlupakan.",
+    "graphic": "Desain Grafis",
+    "graphicDesc": "Sistem visual yang berkomunikasi dengan presisi dan bergema dengan niat.",
+    "threeD": "3D & Animasi",
+    "threeDDesc": "Dunia tiga dimensi dan grafik gerak yang melampaui batas kreatif.",
+    "social": "Media Sosial",
+    "socialDesc": "Kehadiran sosial strategis yang membangun komunitas dan mendorong keterlibatan.",
+    "ui": "Desain UI/UX",
+    "uiDesc": "Pengalaman pengguna yang dirancang untuk kejelasan, kesenangan, dan konversi.",
+    "marketing": "Pemasaran Digital",
+    "marketingDesc": "Kampanye berbasis data yang memaksimalkan jangkauan dan memberikan hasil yang terukur."
+  },
+  "about": {
+    "eyebrow": "Siapa Kami",
+    "titleLine1": "Studio",
+    "titleLine2": "Di Balik Mahakarya.",
+    "intro": "Pixelectro adalah perusahaan inovatif yang didirikan pada tahun 2023, yang mengkhususkan diri dalam menyediakan solusi periklanan, branding, dan pemasaran digital yang komprehensif. Tujuan utama kami adalah memberdayakan bisnis untuk tumbuh dengan memanfaatkan kekuatan desain dan teknologi mutakhir.",
+    "vision": {
+      "title": "Visi Kami",
+      "desc": "Menjadi mitra kreatif pilihan bagi bisnis ambisius di seluruh wilayah, dan berkontribusi pada transformasi positif lanskap digital — satu per satu merek."
+    },
+    "mission": {
+      "title": "Misi Kami",
+      "desc": "Membantu pemilik bisnis mengembangkan dan menskalakan usaha mereka melalui perpaduan strategis antara desain kelas dunia, penceritaan sinematik, dan pemasaran digital yang berorientasi pada kinerja."
+    },
+    "goals": {
+      "title": "Apa yang Membedakan Kami",
+      "items": [
+        {
+          "title": "Keahlian Beragam",
+          "desc": "Tim kami terdiri dari spesialis elit di bidang branding, film, 3D, rekayasa perangkat lunak, dan pemasaran — memberikan solusi yang terintegrasi penuh di bawah satu atap."
+        },
+        {
+          "title": "Hasil Terbukti",
+          "desc": "Kami telah berhasil mengembangkan lebih dari 40 bisnis dan kehadiran media sosial, mencapai hasil yang luar biasa dalam meningkatkan penjualan dan pengenalan merek untuk klien kami."
+        },
+        {
+          "title": "Pendekatan Mengutamakan Klien",
+          "desc": "Kami bekerja sama dengan setiap klien untuk memahami kebutuhan mereka secara mendalam dan memberikan solusi khusus yang memenuhi tujuan mereka dengan tepat."
+        }
+      ]
+    }
+  },
+  "contactPage": {
+    "title": "Hubungi Kami",
+    "subtitle": "Mari kita bangun sesuatu yang luar biasa bersama.",
+    "nameLabel": "Nama Anda",
+    "emailLabel": "Alamat Email",
+    "countryLabel": "Negara",
+    "servicePlaceholder": "Pilih Layanan yang Dibutuhkan",
+    "messageLabel": "Detail Proyek",
+    "sendButton": "Kirim Pesan",
+    "infoTitle": "Informasi Kontak",
+    "emailText": "hello@pixelectro.com",
+    "addressText": "Alexandria, Mesir",
+    "services": {
+      "branding": "Branding & Desain",
+      "video": "Penyuntingan Video",
+      "animation": "Animasi 2D",
+      "threeD": "3D & VFX",
+      "software": "Pengembangan Perangkat Lunak",
+      "content": "Manajemen Konten",
+      "ads": "Performance Marketing",
+      "ai": "Solusi AI"
+    }
+  },
+  "testimonialsPage": {
+    "title": "Apa Kata Klien Kami",
+    "subtitle": "Pengalaman nyata dari berbagai merek dan kreator yang telah bekerja sama dengan kami di seluruh dunia.",
+    "eyebrow": "Kisah Klien",
+    "emptyState": "Belum ada testimoni. Jadilah yang pertama untuk berbagi pengalaman Anda!",
+    "formTitle": "Bagikan Pengalaman Anda",
+    "formDesc": "Testimoni Anda akan muncul di halaman ini setelah proses moderasi (biasanya dalam 24 jam).",
+    "nameLabel": "Nama Anda",
+    "reviewLabel": "Ulasan Anda",
+    "submitButton": "Kirim Testimoni",
+    "submitting": "Mengirimkan...",
+    "successTitle": "Terima kasih atas testimoni Anda!",
+    "successDesc": "Ulasan Anda telah dikirim dan sedang menunggu moderasi. Ulasan akan muncul setelah disetujui.",
+    "rateLimitedTitle": "Sudah Mengirimkan",
+    "rateLimitedDesc": "Anda baru saja mengirimkan testimoni baru-baru ini. Terima kasih atas dukungan Anda!",
+    "editModeNotice": "Mode Pengeditan: Mengirimkan perubahan akan menyembunyikan ulasan Anda untuk sementara waktu sampai disetujui kembali oleh tim kami.",
+    "editButton": "Edit Ulasan Saya",
+    "saveChanges": "Simpan Perubahan",
+    "cancel": "Batal"
+  },
+  "categories": {
+    "branding": "Branding",
+    "motion-graphics": "Grafik Gerak",
+    "web-development": "Pengembangan Web",
+    "3d-design": "Desain 3D",
+    "marketing": "Pemasaran",
+    "ui-ux": "Desain UI/UX",
+    "social-media": "Media Sosial",
+    "video-production": "Produksi Video"
+  }
+}

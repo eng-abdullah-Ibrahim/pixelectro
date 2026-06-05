@@ -36,10 +36,8 @@ const nextConfig: NextConfig = {
             value: 'strict-origin-when-cross-origin'
           },
           {
-            // Note: In a fully strict setup, you might lock down Content-Security-Policy more.
-            // For now, this is a basic level that allows inline styles and scripts required by Next.js and GSAP/Three.
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https: wss:;"
+            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://va.vercel-scripts.com https://upload-widget.cloudinary.com https://widget.cloudinary.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https: wss:; frame-src https://upload-widget.cloudinary.com;"
           }
         ]
       }

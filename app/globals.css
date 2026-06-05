@@ -39,6 +39,26 @@
   --font-mono:    var(--font-mono), 'Courier New', monospace;
 }
 
+[data-lang="ar"], [data-lang="ur"], [data-lang="fa"] {
+  --font-display: var(--font-arabic), 'Tahoma', sans-serif;
+  --font-sans:    var(--font-arabic), 'Tahoma', sans-serif;
+}
+
+[dir="rtl"] * {
+  letter-spacing: normal !important; /* Arabic cursive script breaks with letter-spacing */
+}
+
+[dir="rtl"] svg {
+  /* Some icons should be flipped in RTL */
+  transform-origin: center;
+}
+
+[data-lang="ar"] .threeCanvasWrapper canvas,
+[data-lang="ur"] .threeCanvasWrapper canvas,
+[data-lang="fa"] .threeCanvasWrapper canvas {
+  transform: scaleX(-1);
+}
+
 /* ── Reset ──────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -112,3 +132,18 @@ button, [role="button"] { min-height: 44px; touch-action: manipulation; }
   33%       { transform: translateY(-18px) rotateZ(1deg); }
   66%       { transform: translateY(-8px) rotateZ(-0.5deg); }
 }
+
+/* ── Rich Text Prose Styling ────────────────────────────────────── */
+.prose-custom {
+  color: inherit;
+  line-height: 1.8;
+}
+.prose-custom p { margin-bottom: 1em; }
+.prose-custom p:last-child { margin-bottom: 0; }
+.prose-custom strong { font-weight: 700; color: inherit; }
+.prose-custom em { font-style: italic; }
+.prose-custom u { text-decoration: underline; text-underline-offset: 4px; }
+.prose-custom h1, .prose-custom h2, .prose-custom h3 { margin: 1.5em 0 0.5em; font-weight: 700; line-height: 1.2; }
+.prose-custom ul, .prose-custom ol { padding-left: 1.5em; margin-bottom: 1em; }
+.prose-custom li { margin-bottom: 0.25em; }
+[dir="rtl"] .prose-custom ul, [dir="rtl"] .prose-custom ol { padding-left: 0; padding-right: 1.5em; }

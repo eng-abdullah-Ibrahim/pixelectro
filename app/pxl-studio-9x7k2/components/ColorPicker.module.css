@@ -1,0 +1,120 @@
+.pickerPopup {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule-light);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  padding: 16px;
+  width: 260px;
+  z-index: 100;
+  font-family: var(--font-sans);
+}
+
+.section {
+  margin-bottom: 16px;
+}
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.hexRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.nativeInput {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  overflow: hidden;
+}
+.nativeInput::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.nativeInput::-webkit-color-swatch {
+  border: 1px solid var(--rule-light);
+  border-radius: 6px;
+}
+
+.hexTextInput {
+  flex: 1;
+  border: 1px solid var(--rule-light);
+  border-radius: 6px;
+  padding: 0 8px;
+  font-size: 0.85rem;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+.applyBtn {
+  background: var(--blue-core);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.eyedropperBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--rule-light);
+  border-radius: 6px;
+  color: var(--ink);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.eyedropperBtn:hover {
+  background: var(--rule-light);
+}
+
+.colorGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.colorSwatch {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  border: 1px solid rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.colorSwatch:hover {
+  transform: scale(1.1);
+  border-color: rgba(0,0,0,0.3);
+}
+
+.emptyMsg {
+  grid-column: 1 / -1;
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+  text-align: center;
+  padding: 8px 0;
+}

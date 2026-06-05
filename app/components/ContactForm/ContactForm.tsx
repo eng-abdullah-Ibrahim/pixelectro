@@ -1,10 +1,12 @@
 "use client";
 
+import { useTranslation } from '../TranslationProvider';
 import { MessageCircle, Mail } from 'lucide-react';
 import styles from './ContactForm.module.css';
 import { trackWhatsAppClick, trackEmailClick } from '../../../lib/tracking';
 
 export default function ContactForm() {
+  const { t } = useTranslation();
   const handleWhatsApp = () => {
     trackWhatsAppClick();
     window.open('https://wa.me/201060107536', '_blank');
@@ -19,16 +21,16 @@ export default function ContactForm() {
     <section className={styles.contactSection}>
       <div className={styles.container}>
         <div className={styles.infoSide}>
-          <h1 className={styles.title}>Let's <span className={styles.titleAccent}>Create</span><br/>Together</h1>
+          <h1 className={styles.title} dangerouslySetInnerHTML={{ __html: t('contactPage.title') }} />
           <p className={styles.subtitle}>
-            Ready to elevate your brand to a cinematic level? Reach out to us directly or fill out the form, and our creative directors will get back to you.
+            {t('contactPage.subtitle')}
           </p>
           <div className={styles.directAction}>
             <button className={`${styles.actionBtn} ${styles.whatsappBtn}`} onClick={handleWhatsApp}>
-              <MessageCircle size={20} /> Chat on WhatsApp
+              <MessageCircle size={20} /> {t('common.chatOnWhatsapp')}
             </button>
             <button className={`${styles.actionBtn} ${styles.emailBtn}`} onClick={handleEmail}>
-              <Mail size={20} /> Email Us
+              <Mail size={20} /> {t('common.getInTouch')}
             </button>
           </div>
         </div>
@@ -40,31 +42,31 @@ export default function ContactForm() {
             alert('Thank you! Your message has been sent successfully (mocked).');
           }}>
             <div className={styles.formGroup}>
-              <input type="text" placeholder="Your Name" className={styles.input} required />
+              <input type="text" placeholder={t('contactPage.nameLabel')} className={styles.input} required />
             </div>
             <div className={styles.formGroup}>
-              <input type="email" placeholder="Your Email" className={styles.input} required />
+              <input type="email" placeholder={t('contactPage.emailLabel')} className={styles.input} required />
             </div>
             <div className={styles.formGroup}>
-              <input type="text" placeholder="Country" className={styles.input} required />
+              <input type="text" placeholder={t('contactPage.countryLabel') || 'Country'} className={styles.input} required />
             </div>
             <div className={styles.formGroup}>
               <select className={styles.select} required>
-                <option value="">Select Service Needed</option>
-                <option value="branding">Branding & Design</option>
-                <option value="video">Video Editing</option>
-                <option value="animation">2D Animation</option>
-                <option value="3d">3D & VFX</option>
-                <option value="software">Software Development</option>
-                <option value="content">Content Management</option>
-                <option value="ads">Performance Marketing</option>
-                <option value="ai">AI Solutions</option>
+                <option value="">{t('contactPage.servicePlaceholder') || 'Select Service'}</option>
+                <option value="branding">{t('contactPage.services.branding') || 'Branding & Design'}</option>
+                <option value="video">{t('contactPage.services.video') || 'Video Editing'}</option>
+                <option value="animation">{t('contactPage.services.animation') || '2D Animation'}</option>
+                <option value="3d">{t('contactPage.services.threeD') || '3D & VFX'}</option>
+                <option value="software">{t('contactPage.services.software') || 'Software Development'}</option>
+                <option value="content">{t('contactPage.services.content') || 'Content Management'}</option>
+                <option value="ads">{t('contactPage.services.ads') || 'Performance Marketing'}</option>
+                <option value="ai">{t('contactPage.services.ai') || 'AI Solutions'}</option>
               </select>
             </div>
             <div className={styles.formGroup}>
-              <textarea placeholder="Tell us about your project..." className={styles.textarea} required></textarea>
+              <textarea placeholder={t('contactPage.messageLabel')} className={styles.textarea} required></textarea>
             </div>
-            <button type="submit" className={styles.submitBtn}>Send Message</button>
+            <button type="submit" className={styles.submitBtn}>{t('contactPage.sendButton')}</button>
           </form>
         </div>
       </div>

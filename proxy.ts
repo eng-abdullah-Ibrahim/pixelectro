@@ -1,14 +1,9 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// ── Secret Entry Path & Gate ──────────────────────────────────────────────────
-// ONLY this path grants access to the admin panel.
-// Visiting /admin/login directly shows the homepage (no error, no hint).
-const SECRET_ENTRY  = '/pxl-studio-9x7k2';   // The hidden URL you visit
-const GATE_COOKIE    = 'pxl_sg';              // Cookie name (obscure)
-const GATE_VALUE     = 'k9Px2mZ7qRnW3vS8jT'; // Cookie value (secret)
+const DASHBOARD_PATH = '/pxl-studio-9x7k2';
+const LOGIN_PATH = '/pxl-studio-9x7k2/login';
 
-// دالة الـ proxy الأساسية لحماية لوحة التحكم (بديلة للـ middleware في Next.js 16)
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '127.0.0.1';
@@ -18,51 +13,34 @@ export function proxy(request: NextRequest) {
     return new NextResponse('Too Many Requests.', { status: 429 });
   }
 
-  // ── Secret Entry Point ────────────────────────────────────────────────────
-  // When the hidden URL is visited → set gate cookie → redirect to login page
-  if (pathname === SECRET_ENTRY) {
-    const response = NextResponse.redirect(new URL('/admin/login', request.url));
-    response.cookies.set(GATE_COOKIE, GATE_VALUE, {
-      httpOnly: true,
-      secure:   true,
-      sameSite: 'strict',
-      maxAge:   60 * 60 * 6, // valid for 6 hours
-      path:     '/',
-    });
-    return response;
+  // ── Legacy /admin redirect → silently send to new dashboard path ───────
+  if (pathname.startsWith('/admin')) {
+    return NextResponse.redirect(new URL(DASHBOARD_PATH, request.url));
   }
 
-  // ── Guard all /admin/* routes ─────────────────────────────────────────────
-  if (pathname.startsWith('/admin')) {
-    const gateCookie = request.cookies.get(GATE_COOKIE)?.value;
-
-    // No gate cookie → silently redirect to homepage (visitor has no clue /admin exists)
-    if (gateCookie !== GATE_VALUE) {
-      return NextResponse.redirect(new URL('/', request.url));
-    }
-
-    const isLoginPage = pathname === '/admin/login';
+  // Guard all /pxl-studio-9x7k2 routes
+  if (pathname.startsWith(DASHBOARD_PATH)) {
+    const isLoginPage = pathname === LOGIN_PATH;
 
     // Check for NextAuth session cookie
     const sessionToken =
       request.cookies.get('next-auth.session-token')?.value ||
       request.cookies.get('__Secure-next-auth.session-token')?.value;
 
-    // Gate passed but no session → show login page
+    // No session → show login page
     if (!sessionToken && !isLoginPage) {
-      return NextResponse.redirect(new URL('/admin/login', request.url));
+      return NextResponse.redirect(new URL(LOGIN_PATH, request.url));
     }
 
-    // Gate passed + has session + on login page → go to dashboard
+    // Has session + on login page → go to dashboard
     if (sessionToken && isLoginPage) {
-      return NextResponse.redirect(new URL('/admin', request.url));
+      return NextResponse.redirect(new URL(DASHBOARD_PATH, request.url));
     }
   }
 
   return NextResponse.next();
 }
 
-// تصدير ديفولت ليتوافق مع نظام Next.js تماماً
 export default proxy;
 
 export const config = {

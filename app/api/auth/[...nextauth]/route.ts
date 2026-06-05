@@ -29,7 +29,7 @@ export const authOptions: AuthOptions = {
     })
   ],
   pages: {
-    signIn: '/admin/login',
+    signIn: '/pxl-studio-9x7k2/login',
   },
   session: {
     strategy: 'jwt',

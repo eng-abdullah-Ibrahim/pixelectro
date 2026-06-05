@@ -5,10 +5,29 @@ import Link from 'next/link';
 import s from './page.module.css';
 import dynamic from 'next/dynamic';
 import { HeroScene } from './components/ThreeCanvas/ThreeScene';
+import { useTranslation } from './components/TranslationProvider';
 
 const ServicesScene = dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(mod => mod.ServicesScene), { ssr: false });
 const StatementScene = dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(mod => mod.StatementScene), { ssr: false });
 const ProcessScene = dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(mod => mod.ProcessScene), { ssr: false });
+const BoxScene = dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.BoxScene), { ssr: false });
+const TorusKnotScene = dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.TorusKnotScene), { ssr: false });
+const TetrahedronScene = dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.TetrahedronScene), { ssr: false });
+
+const SceneMap: Record<string, React.ComponentType<any>> = {
+  BrandingScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.BrandingScene), { ssr: false }),
+  FilmScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.FilmScene), { ssr: false }),
+  VFXScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.VFXScene), { ssr: false }),
+  SoftwareScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.SoftwareScene), { ssr: false }),
+  PerformanceScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.PerformanceScene), { ssr: false }),
+  AIScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.AIScene), { ssr: false }),
+  IcosahedronScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.IcosahedronScene), { ssr: false }),
+  BoxScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.BoxScene), { ssr: false }),
+  RingScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.RingScene), { ssr: false }),
+  CapsuleScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.CapsuleScene), { ssr: false }),
+  TorusKnotScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.TorusKnotScene), { ssr: false }),
+  TetrahedronScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.TetrahedronScene), { ssr: false }),
+};
 
 type ServiceData = {
   n: string;
@@ -16,6 +35,16 @@ type ServiceData = {
   sub: string;
   href: string;
   icon: string;
+  homeImage: string | null;
+  homeScene: string | null;
+  translations?: any;
+};
+
+type ClientData = {
+  id: string;
+  name: string;
+  logoUrl: string;
+  link: string;
 };
 
 const STATS = [
@@ -25,10 +54,40 @@ const STATS = [
   { value: '2023', label: 'Founded',      note: 'Alexandria, Egypt' },
 ];
 
-export default function HomeClient({ services }: { services: ServiceData[] }) {
+export default function HomeClient({ services = [], clients = [], dynamicContent = null }: { services?: any[], clients?: any[], dynamicContent?: any }) {
   const meshRef = useRef<HTMLCanvasElement>(null);
-
   const [isMobile, setIsMobile] = useState(false);
+  const { t, locale } = useTranslation();
+
+  // Helper to safely get dynamic content or fallback to JSON translation
+  const getDc = (path: string, fallbackKey: string) => {
+    if (dynamicContent && dynamicContent.content && dynamicContent.content[locale]) {
+      const parts = path.split('.');
+      let val = dynamicContent.content[locale];
+      for (const p of parts) {
+        if (!val) break;
+        val = val[p];
+      }
+      if (val) return val;
+    }
+    return t(fallbackKey);
+  };
+
+  const getScene = (section: string, FallbackComponent: any) => {
+    if (dynamicContent && dynamicContent.scenes && dynamicContent.scenes[section]) {
+      const sceneName = dynamicContent.scenes[section];
+      if (sceneName && SceneMap[sceneName]) return SceneMap[sceneName];
+    }
+    return FallbackComponent;
+  };
+
+  const HeroDynamicScene = getScene('hero', HeroScene);
+  const AboutDynamicScene = getScene('about', StatementScene);
+  const VisionDynamicScene = getScene('vision', BoxScene);
+  const MissionDynamicScene = getScene('mission', TorusKnotScene);
+  const GoalsDynamicScene = getScene('goals', TetrahedronScene);
+  const PhilosophyDynamicScene = getScene('philosophy', StatementScene);
+  const ProcessDynamicScene = getScene('process', ProcessScene);
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
@@ -50,11 +109,9 @@ export default function HomeClient({ services }: { services: ServiceData[] }) {
     const ro = new ResizeObserver(resize);
     ro.observe(canvas);
 
-    // Reduce particle count on mobile for performance
     const isMobile = window.innerWidth < 768;
     const orbCount = isMobile ? 8 : 18;
 
-    /* Floating orb particles */
     const ORBS = Array.from({ length: orbCount }, (_, i) => ({
       x: Math.random(),
       y: Math.random(),
@@ -84,7 +141,6 @@ export default function HomeClient({ services }: { services: ServiceData[] }) {
         ctx.fill();
       });
 
-      /* Grid of dots */
       const STEP = 60;
       for (let gx = 0; gx <= w + STEP; gx += STEP) {
         for (let gy = 0; gy <= h + STEP; gy += STEP) {
@@ -95,11 +151,9 @@ export default function HomeClient({ services }: { services: ServiceData[] }) {
           ctx.fill();
         }
       }
-
       raf = requestAnimationFrame(draw);
     };
 
-    // Only run animation when the canvas is in view
     let isVisible = true;
     const observer = new IntersectionObserver((entries) => {
       isVisible = entries[0].isIntersecting;
@@ -108,7 +162,7 @@ export default function HomeClient({ services }: { services: ServiceData[] }) {
 
     const loop = () => {
       if (isVisible) draw();
-      else raf = requestAnimationFrame(loop); // Still request frame to check visibility, but skip drawing
+      else raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
 
@@ -161,53 +215,45 @@ export default function HomeClient({ services }: { services: ServiceData[] }) {
 
       {/* ══ HERO ═══════════════════════════════════════════════════ */}
       <section className={s.hero}>
-        {!isMobile && <HeroScene />}
-        {/* Animated mesh background */}
+        {!isMobile && <HeroDynamicScene />}
         <canvas ref={meshRef} className={s.heroMesh} aria-hidden />
 
-
-
-        <div className={s.heroContent}>
-          <div className={s.heroBadge} data-reveal="true">
-            <span className={s.heroBadgeDot} />
-            Alexandria · Global Creative Studio · Est. 2023
+        <div className={s.heroContent} style={{ position: 'relative', zIndex: 1 }} data-reveal="true">
+          <div className={s.heroBadge} dangerouslySetInnerHTML={{ __html: getDc('hero.badge', 'hero.badge') }} />
+          <div className={s.heroTitle}>
+            <div className={s.heroLine1} dangerouslySetInnerHTML={{ __html: getDc('hero.titleLine1', 'hero.titleLine1') }} />
+            <div className={`${s.heroLine2} ${s.heroItalic}`} dangerouslySetInnerHTML={{ __html: getDc('hero.titleLine2', 'hero.titleLine2') }} />
+            <div className={s.heroLine3}>
+              <span dangerouslySetInnerHTML={{ __html: getDc('hero.titleLine3Prefix', 'hero.titleLine3Prefix') }} />
+              <span className={s.heroBlue} dangerouslySetInnerHTML={{ __html: getDc('hero.titleLine3Highlight', 'hero.titleLine3Highlight') }} />
+            </div>
           </div>
-
-          <h1 className={s.heroTitle}>
-            <span className={s.heroLine1}>We Build</span>
-            <span className={s.heroLine2}>
-              <em className={s.heroItalic}>Cinematic</em>
-            </span>
-            <span className={s.heroLine3}>
-              Digital <span className={s.heroBlue}>Worlds.</span>
-            </span>
-          </h1>
-
-          <p className={s.heroSub} data-reveal="true">
-            A global advertising & creative studio operating at the intersection of design, technology, and culture. We engineer digital flagships for visionary brands.
-          </p>
-
+          <div className={s.heroSub} dangerouslySetInnerHTML={{ __html: getDc('hero.sub', 'hero.sub') }} />
           <div className={s.heroActions} data-reveal="true">
-            <Link href="/branding" className={s.btnBlue}>
-              Explore Our Work
+            <Link href="/projects" className={s.btnBlue}>
+              {t('common.exploreOurWork')}
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
                 <path d="M3.5 9h11M10 4l5 5-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </Link>
-            <Link href="/contact" className={s.btnOutline}>Start a Project</Link>
+            <Link href="/contact" className={s.btnOutline}>{t('common.startAProject')}</Link>
           </div>
 
-          {/* Scroll indicator */}
           <div className={s.heroScroll} data-reveal="true" aria-hidden>
             <div className={s.heroScrollTrack}><div className={s.heroScrollThumb}/></div>
-            <span>Scroll to explore</span>
+            <span>{t('hero.scroll')}</span>
           </div>
         </div>
       </section>
 
       {/* ══ STATS BELT ══════════════════════════════════════════════ */}
       <div className={s.statsBelt} data-stagger-container="true">
-        {STATS.map((st, i) => (
+        {[
+          { value: dynamicContent?.stats?.projectsValue || t('stats.projectsValue'), label: dynamicContent?.stats?.projectsLabel || t('common.projects'),     note: dynamicContent?.stats?.projectsNote || t('stats.projectsNote') },
+          { value: dynamicContent?.stats?.clientsValue || t('stats.clientsValue'),  label: dynamicContent?.stats?.clientsLabel || t('common.clients'),      note: dynamicContent?.stats?.clientsNote || t('stats.clientsNote') },
+          { value: dynamicContent?.stats?.disciplinesValue || '8',                      label: dynamicContent?.stats?.disciplinesLabel || t('common.disciplines'),  note: dynamicContent?.stats?.disciplinesNote || t('stats.disciplinesNote') },
+          { value: dynamicContent?.stats?.foundedValue || '2023',                   label: dynamicContent?.stats?.foundedLabel || t('common.founded'),      note: dynamicContent?.stats?.foundedNote || t('stats.foundedNote') },
+        ].map((st, i) => (
           <div key={i} className={s.statCell} data-stagger-item="true" data-reveal style={{ transitionDelay: `${i * 0.06}s` }}>
             <span className={s.statVal}>{st.value}</span>
             <span className={s.statLbl}>{st.label}</span>
@@ -227,68 +273,169 @@ export default function HomeClient({ services }: { services: ServiceData[] }) {
         </div>
       </div>
 
-      {/* ══ SERVICES ═════════════════════════════════════════════════ */}
-      <section className={s.services}>
-        <ServicesScene />
-        <div className={s.servicesHead} data-reveal="true">
-          <p className={s.eyebrow}>Our Disciplines — {services.length.toString().padStart(2, '0')}</p>
-          <h2 className={s.sectionTitle}>
-            Everything your brand<br />
-            <em>needs to dominate.</em>
-          </h2>
-        </div>
-
-        <div className={s.servicesGrid} data-stagger-container="true">
-          {services.map((svc, i) => (
-            <Link
-              key={svc.n}
-              href={svc.href}
-              className={s.serviceCard}
-              data-stagger-item="true"
-              data-tilt
-              data-reveal
-              style={{ transitionDelay: `${i * 0.07}s` }}
-            >
-              <div className={s.cardGlow} />
-              <span className={s.cardIcon}>{svc.icon}</span>
-              <span className={s.cardNum}>{svc.n}</span>
-              <h3 className={s.cardTitle}>{svc.title}</h3>
-              <p className={s.cardSub}>{svc.sub}</p>
-              <div className={s.cardArrow}>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
-                  <path d="M4 10h12M12 5l5 5-5 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-            </Link>
-          ))}
+      {/* ══ ABOUT / VISION / MISSION / GOALS ════════════════════════ */}
+      <section className={s.aboutSection} data-reveal style={{ paddingBottom: 0 }}>
+        <AboutDynamicScene />
+        <div style={{ padding: '7rem 6%', position: 'relative', zIndex: 2 }} data-reveal="true">
+          <div className={s.eyebrow} style={{ color: 'var(--blue-core)' }} dangerouslySetInnerHTML={{ __html: getDc('about.eyebrow', 'about.eyebrow') }} />
+          <div className={s.sectionTitle} style={{ color: 'var(--ink)', display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '2rem' }}>
+            <div dangerouslySetInnerHTML={{ __html: getDc('about.titleLine1', 'about.titleLine1') }} />
+            <div style={{ fontStyle: 'italic', fontWeight: 300, fontFamily: 'var(--font-cormorant)' }} dangerouslySetInnerHTML={{ __html: getDc('about.titleLine2', 'about.titleLine2') }} />
+          </div>
+          <div className={s.statementBody} style={{ color: 'var(--ink-dim)' }} dangerouslySetInnerHTML={{ __html: getDc('about.intro', 'about.intro') }} />
         </div>
       </section>
 
+      {/* Vision Section */}
+      <section data-reveal style={{ minHeight: 'auto', padding: '100px 0', position: 'relative', overflow: 'hidden' }}>
+        {/* Full-width absolute background scene */}
+        {!isMobile && (
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, opacity: 0.9 }}>
+            <VisionDynamicScene />
+          </div>
+        )}
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1200px', margin: '0 auto', padding: '0 2rem', textAlign: 'center' }}>
+          <div style={{ padding: '5rem 3rem', borderRadius: '2rem' }}>
+            <div style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 600, color: 'var(--ink)', marginBottom: '1.5rem', letterSpacing: '-0.02em' }} dangerouslySetInnerHTML={{ __html: getDc('vision.title', 'about.vision.title') }} />
+            <div style={{ fontSize: 'clamp(1.1rem, 2vw, 1.4rem)', color: 'var(--ink-dim)', lineHeight: 1.8, maxWidth: '900px', margin: '0 auto' }} dangerouslySetInnerHTML={{ __html: getDc('vision.desc', 'about.vision.desc') }} />
+          </div>
+        </div>
+      </section>
+
+      {/* Mission Section */}
+      <section data-reveal style={{ minHeight: 'auto', padding: '100px 0', position: 'relative', overflow: 'hidden' }}>
+        {/* Full-width absolute background scene */}
+        {!isMobile && (
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, opacity: 0.9 }}>
+            <MissionDynamicScene />
+          </div>
+        )}
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1200px', margin: '0 auto', padding: '0 2rem', textAlign: 'center' }}>
+          <div style={{ padding: '5rem 3rem', borderRadius: '2rem' }}>
+            <div style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 600, color: 'var(--ink)', marginBottom: '1.5rem', letterSpacing: '-0.02em' }} dangerouslySetInnerHTML={{ __html: getDc('mission.title', 'about.mission.title') }} />
+            <div style={{ fontSize: 'clamp(1.1rem, 2vw, 1.4rem)', color: 'var(--ink-dim)', lineHeight: 1.8, maxWidth: '900px', margin: '0 auto' }} dangerouslySetInnerHTML={{ __html: getDc('mission.desc', 'about.mission.desc') }} />
+          </div>
+        </div>
+      </section>
+
+      {/* Goals Section Redesigned */}
+      <section className={s.aboutSection} data-reveal style={{ paddingTop: '40px' }}>
+        <GoalsDynamicScene />
+        <div className={s.aboutHead} data-reveal="true" style={{ marginBottom: '40px' }}>
+          <div className={s.sectionTitle} style={{ color: 'var(--ink)' }} dangerouslySetInnerHTML={{ __html: getDc('goals.title', 'about.goals.title') }} />
+        </div>
+        <div className={s.aboutGrid} data-stagger-container="true">
+          {[0, 1, 2].map((i) => {
+            const itemTitle = getDc(`goals.items.${i}.title`, `about.goals.items.${i}.title`);
+            const itemDesc = getDc(`goals.items.${i}.desc`, `about.goals.items.${i}.desc`);
+            if (!itemTitle || itemTitle === `about.goals.items.${i}.title`) return null;
+            return (
+              <div key={i} className={s.aboutCard} data-stagger-item="true" data-reveal style={{ transitionDelay: `${i * 0.1}s` }}>
+                <div className={s.aboutCardNum}>0{i + 1}</div>
+                <div className={s.aboutCardTitle} dangerouslySetInnerHTML={{ __html: itemTitle }} />
+                <div className={s.aboutCardDesc} dangerouslySetInnerHTML={{ __html: itemDesc }} />
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+
+      {/* ══ SERVICES — ALTERNATING SECTIONS ════════════════════════ */}
+      <section className={s.services}>
+        <div className={s.servicesHead} data-reveal="true" style={{ marginBottom: 0 }}>
+          <p className={s.eyebrow}>{t('services.eyebrow', { count: services.length.toString().padStart(2, '0') })}</p>
+          <h2 className={s.sectionTitle}>
+            {t('services.titleLine1')}<br />
+            <em>{t('services.titleLine2')}</em>
+          </h2>
+        </div>
+      </section>
+
+      {/* Alternating Service Sections */}
+      {services.map((svc, i) => {
+        const getLocField = (field: string) => {
+          if (locale === 'en') return (svc as any)[field];
+          const tr = svc.translations?.[locale];
+          return tr?.[field] || (svc as any)[field];
+        };
+        const title = getLocField('title');
+        const sub = getLocField('description') || getLocField('excerpt') || getLocField('sub');
+        const DynamicScene = svc.homeScene && SceneMap[svc.homeScene] ? SceneMap[svc.homeScene] : null;
+
+        const isEven = i % 2 === 0;
+
+        return (
+          <section key={svc.n} className={s.serviceSection} data-reveal>
+            <div className={s.serviceSectionInner} style={{ flexDirection: isEven ? 'row' : 'row-reverse' }}>
+              <div className={s.serviceSectionText}>
+                <div className={s.serviceSectionEyebrow}>
+                  <span className={s.serviceSectionIcon}>{svc.icon}</span>
+                  <span className={s.serviceSectionNum}>{svc.n}</span>
+                </div>
+                <h3 className={s.serviceSectionTitle}>{title}</h3>
+                <div className={s.serviceSectionSub} dangerouslySetInnerHTML={{ __html: sub || '' }} />
+                <Link href={svc.href} className={s.serviceSectionLink}>
+                  {t('services.exploreService', { title: title || '' })}
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
+                    <path d="M4 10h12M12 5l5 5-5 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </Link>
+              </div>
+
+              {/* Right side for image/video and 3D scene */}
+              <div className={s.serviceSectionVisualEmpty}>
+                {svc.homeImage ? (
+                  <div className={s.serviceSectionImageWrap}>
+                    {svc.homeImage.match(/\.(mp4|webm|mov)$/i) ? (
+                      <video 
+                        src={svc.homeImage} 
+                        className={s.serviceSectionImage} 
+                        autoPlay 
+                        loop 
+                        muted 
+                        playsInline 
+                      />
+                    ) : (
+                      <img 
+                        src={svc.homeImage} 
+                        alt={title} 
+                        className={s.serviceSectionImage} 
+                        loading="lazy"
+                      />
+                    )}
+                    <div className={s.serviceSectionImageGlow} />
+                  </div>
+                ) : (
+                  !isMobile && DynamicScene && (
+                    <div className={s.serviceSectionDynamicScene}>
+                      <DynamicScene />
+                    </div>
+                  )
+                )}
+              </div>
+            </div>
+          </section>
+        );
+      })}
+
       {/* ══ DARK NAVY STATEMENT ══════════════════════════════════════ */}
       <section className={s.statement} data-reveal>
-        <StatementScene />
+        <PhilosophyDynamicScene />
         <div className={s.statementOrbs} aria-hidden>
           <div className={s.statOrb1} />
           <div className={s.statOrb2} />
         </div>
-        <div className={s.statementInner}>
-          <p className={s.eyebrowLight}>Our Philosophy</p>
-          <blockquote className={s.statementQuote} data-reveal="true">
-            "We don't make content.<br />
-            We <em>engineer perception.</em>"
-          </blockquote>
-          <p className={s.statementBody} data-reveal="true">
-            Every pixel has a purpose. Every frame carries intention. Pixelectro is a
-            precision instrument, calibrated to shift how the world sees your brand —
-            from Alexandria to New York, we translate ideas into visual architectures that
-            outlast trends and define categories.
-          </p>
-          <Link href="/contact" className={s.btnWhite}>
-            Start the Conversation
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </Link>
+        <div className={s.statementInner} data-reveal="true">
+          <div className={s.eyebrowLight} dangerouslySetInnerHTML={{ __html: getDc('philosophy.eyebrow', 'statement.eyebrow') }} />
+          <div className={s.statementQuote} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <div dangerouslySetInnerHTML={{ __html: getDc('philosophy.quoteLine1', 'statement.quoteLine1') }} />
+            <div style={{ fontStyle: 'italic', fontWeight: 300, fontFamily: 'var(--font-cormorant)' }} dangerouslySetInnerHTML={{ __html: getDc('philosophy.quoteLine2', 'statement.quoteLine2') }} />
+          </div>
+          <div className={s.statementBody} dangerouslySetInnerHTML={{ __html: getDc('philosophy.body', 'statement.body') }} />
+          <div>
+            <Link href="/contact" className={s.btnWhite} dangerouslySetInnerHTML={{ __html: getDc('philosophy.cta', 'statement.cta') || 'Start the Conversation' }} />
+          </div>
         </div>
 
         {/* 3D floating card visual */}
@@ -296,12 +443,12 @@ export default function HomeClient({ services }: { services: ServiceData[] }) {
           <div className={s.floatCard} data-reveal="true" data-tilt>
             <div className={s.floatCardInner}>
               <div className={s.floatSphere} />
-              <p className={s.floatLabel}>PIXELECTRO STUDIO</p>
-              <p className={s.floatSub}>Global Creative Force</p>
+              <p className={s.floatLabel}>{getDc('philosophy.floatLabel', 'statement.floatLabel') || 'PIXELECTRO STUDIO'}</p>
+              <p className={s.floatSub}>{getDc('philosophy.floatSub', 'statement.floatSub') || 'Global Creative Force'}</p>
               <div className={s.floatStats}>
-                <div><span>200+</span><small>Projects</small></div>
-                <div><span>50+</span><small>Clients</small></div>
-                <div><span>5</span><small>Countries</small></div>
+                <div><span>{dynamicContent?.stats?.projectsValue || t('stats.projectsValue')}</span><small>{dynamicContent?.stats?.projectsLabel || t('stats.projectsLabel')}</small></div>
+                <div><span>{dynamicContent?.stats?.clientsValue || t('stats.clientsValue')}</span><small>{dynamicContent?.stats?.clientsLabel || t('stats.clientsLabel')}</small></div>
+                <div><span>{dynamicContent?.stats?.disciplinesValue || '5'}</span><small>{dynamicContent?.stats?.disciplinesLabel || t('common.countries')}</small></div>
               </div>
             </div>
           </div>
@@ -310,26 +457,54 @@ export default function HomeClient({ services }: { services: ServiceData[] }) {
 
       {/* ══ PROCESS ══════════════════════════════════════════════════ */}
       <section className={s.process}>
-        <ProcessScene />
+        <ProcessDynamicScene />
         <div className={s.processHead} data-reveal="true">
-          <p className={s.eyebrow}>How We Work</p>
-          <h2 className={s.sectionTitle}>A process built for<br /><em>perfection.</em></h2>
+          <div className={s.eyebrow} dangerouslySetInnerHTML={{ __html: getDc('process.eyebrow', 'process.eyebrow') }} />
+          <div className={s.sectionTitle} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <div dangerouslySetInnerHTML={{ __html: getDc('process.titleLine1', 'process.titleLine1') }} />
+            <div style={{ fontStyle: 'italic', fontWeight: 300, fontFamily: 'var(--font-cormorant)' }} dangerouslySetInnerHTML={{ __html: getDc('process.titleLine2', 'process.titleLine2') }} />
+          </div>
         </div>
         <div className={s.processSteps} data-stagger-container="true">
-          {[
-            { n: '01', t: 'Discovery',    b: 'We immerse in your brand, market, and audience to architect a strategy.' },
-            { n: '02', t: 'Concept',      b: 'We craft bold creative concepts that challenge convention.' },
-            { n: '03', t: 'Production',   b: 'Our studios execute with military precision across every discipline.' },
-            { n: '04', t: 'Delivery',     b: 'We launch, measure, and optimize until results exceed expectations.' },
-          ].map((step, i) => (
-            <div key={step.n} className={s.processStep} data-stagger-item="true" data-reveal style={{ transitionDelay: `${i * 0.1}s` }}>
-              <span className={s.stepNum}>{step.n}</span>
-              <h3 className={s.stepTitle}>{step.t}</h3>
-              <p className={s.stepBody}>{step.b}</p>
-            </div>
-          ))}
+          {[0, 1, 2, 3].map((i) => {
+            const stepNum = getDc(`process.items.${i}.num`, `process.step${i+1}Num`);
+            const stepTitle = getDc(`process.items.${i}.title`, `process.step${i+1}Title`);
+            const stepBody = getDc(`process.items.${i}.body`, `process.step${i+1}Body`);
+            if (!stepTitle || stepTitle === `process.step${i+1}Title`) return null;
+            return (
+              <div key={i} className={s.processStep} data-stagger-item="true" data-reveal style={{ transitionDelay: `${i * 0.1}s` }}>
+                <div className={s.stepNum} dangerouslySetInnerHTML={{ __html: stepNum }} />
+                <div className={s.stepTitle} style={{ color: 'var(--ink)' }} dangerouslySetInnerHTML={{ __html: stepTitle }} />
+                <div className={s.stepBody} style={{ color: 'var(--ink-dim)' }} dangerouslySetInnerHTML={{ __html: stepBody }} />
+              </div>
+            );
+          })}
         </div>
       </section>
+
+      {/* ══ PROMINENT CLIENTS ══════════════════════════════════════ */}
+      {clients.length > 0 && (
+        <section className={s.clientsSection} data-reveal>
+          <div className={s.clientsInner}>
+            <p className={s.eyebrow} style={{ color: 'var(--blue-core)' }}>{t('clients.eyebrow')}</p>
+            <div className={s.clientsGrid}>
+              {clients.map(c => (
+                c.link ? (
+                  <a key={c.id} href={c.link} target="_blank" rel="noopener noreferrer" className={s.clientItem}>
+                    {c.logoUrl && <img src={c.logoUrl} alt={c.name} className={s.clientLogo} />}
+                    {!c.logoUrl && <span className={s.clientName}>{c.name}</span>}
+                  </a>
+                ) : (
+                  <div key={c.id} className={s.clientItem}>
+                    {c.logoUrl && <img src={c.logoUrl} alt={c.name} className={s.clientLogo} />}
+                    {!c.logoUrl && <span className={s.clientName}>{c.name}</span>}
+                  </div>
+                )
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ══ CTA FULL ═════════════════════════════════════════════════ */}
       <section className={s.ctaSection} data-reveal>
@@ -338,17 +513,17 @@ export default function HomeClient({ services }: { services: ServiceData[] }) {
           <div className={s.ctaOrb2} />
         </div>
         <div className={s.ctaInner} data-reveal="true">
-          <p className={s.eyebrowLight}>Ready to begin?</p>
+          <p className={s.eyebrowLight}>{t('cta.eyebrow')}</p>
           <h2 className={s.ctaTitle}>
-            Let's build something<br />
-            <em>permanent.</em>
+            {t('cta.titleLine1')}<br />
+            <em>{t('cta.titleLine2')}</em>
           </h2>
           <div className={s.ctaActions}>
             <Link href="/contact" className={s.btnWhite}>
-              Get in Touch →
+              {t('common.getInTouch')}
             </Link>
             <a href="https://wa.me/201060107536" target="_blank" rel="noopener noreferrer" className={s.btnGhostLight}>
-              Chat on WhatsApp
+              {t('common.chatOnWhatsapp')}
             </a>
           </div>
         </div>

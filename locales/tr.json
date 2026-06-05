@@ -1,0 +1,201 @@
+{
+  "common": {
+    "exploreOurWork": "Çalışmalarımızı Keşfedin",
+    "startAProject": "Projeye Başla",
+    "getInTouch": "İletişime Geçin →",
+    "chatOnWhatsapp": "WhatsApp'tan Yazın",
+    "explore": "Keşfet",
+    "projects": "Projeler",
+    "clients": "Müşteriler",
+    "countries": "Ülkeler",
+    "learnMore": "Daha Fazla Bilgi",
+    "viewAll": "Tümünü Gör",
+    "backToHome": "Ana Sayfaya Dön",
+    "loading": "Yükleniyor...",
+    "error": "Bir şeyler ters gitti"
+  },
+  "hero": {
+    "badge": "İskenderiye · Küresel Yaratıcı Stüdyo · Kur. 2023",
+    "titleLine1": "Biz İnşa Ediyoruz",
+    "titleLine2": "Sinematik",
+    "titleLine3Prefix": "Dijital ",
+    "titleLine3Highlight": "Dünyalar.",
+    "sub": "Tasarım, teknoloji ve kültürün kesiştiği noktada faaliyet gösteren küresel bir reklam ve yaratıcı stüdyo. Vizyoner markalar için dijital amiral gemileri tasarlıyoruz.",
+    "scroll": "Keşfetmek için kaydırın"
+  },
+  "stats": {
+    "projectsValue": "200+",
+    "projectsLabel": "Projeler",
+    "projectsNote": "Küresel olarak teslim edildi",
+    "clientsValue": "50+",
+    "clientsLabel": "Müşteriler",
+    "clientsNote": "5 ülkede",
+    "disciplinesValue": "8",
+    "disciplinesLabel": "Disiplin",
+    "disciplinesNote": "Yaratıcı alanlar",
+    "foundedValue": "2023",
+    "foundedLabel": "Kuruluş",
+    "foundedNote": "İskenderiye, Mısır"
+  },
+  "marquee": {
+    "text": "PIXELECTRO ● SİNEMA ● MARKA ● KOD ● 3D ●"
+  },
+  "services": {
+    "eyebrow": "Disiplinlerimiz — {count}",
+    "titleLine1": "Markanızın domine etmesi",
+    "titleLine2": "için gereken her şey.",
+    "exploreService": "{title} Keşfedin"
+  },
+  "statement": {
+    "eyebrow": "Felsefemiz",
+    "quoteLine1": "\"Biz içerik üretmiyoruz.",
+    "quoteLine2": "Algıyı tasarlıyoruz.\"",
+    "body": "Her pikselin bir amacı vardır. Her karenin bir niyeti vardır. Pixelectro, dünyanın markanızı nasıl gördüğünü değiştirmek için kalibre edilmiş hassas bir araçtır — İskenderiye'den New York'a kadar, fikirleri trendleri geride bırakan ve kategorileri tanımlayan görsel mimarilere dönüştürüyoruz.",
+    "cta": "Sohbete Başla",
+    "floatLabel": "PIXELECTRO STÜDYO",
+    "floatSub": "Küresel Yaratıcı Güç"
+  },
+  "process": {
+    "eyebrow": "Nasıl Çalışıyoruz",
+    "titleLine1": "Mükemmellik için",
+    "titleLine2": "inşa edilmiş bir süreç.",
+    "step1Num": "01",
+    "step1Title": "Keşif",
+    "step1Body": "Bir strateji oluşturmak için markanıza, pazarınıza ve hedef kitlenize dalarız.",
+    "step2Num": "02",
+    "step2Title": "Konsept",
+    "step2Body": "Geleneklere meydan okuyan cesur yaratıcı konseptler üretiyoruz.",
+    "step3Num": "03",
+    "step3Title": "Üretim",
+    "step3Body": "Stüdyolarımız her disiplinde askeri bir hassasiyetle çalışır.",
+    "step4Num": "04",
+    "step4Title": "Teslimat",
+    "step4Body": "Sonuçlar beklentileri aşana kadar başlatır, ölçer ve optimize ederiz."
+  },
+  "clients": {
+    "eyebrow": "Güvenenler"
+  },
+  "cta": {
+    "eyebrow": "Başlamaya hazır mısınız?",
+    "titleLine1": "Kalıcı bir şey",
+    "titleLine2": "inşa edelim."
+  },
+  "navbar": {
+    "home": "Ana Sayfa",
+    "services": "Hizmetler",
+    "projects": "Projeler",
+    "about": "Hakkımızda",
+    "contact": "İletişim",
+    "startProject": "Projeyi Başlat",
+    "testimonials": "Müşteri Yorumları"
+  },
+  "footer": {
+    "tagline": "Vizyonun Mimariye Dönüştüğü Yer",
+    "copyright": "© 2023 Pixelectro. Tüm hakları saklıdır.",
+    "quickLinks": "Hızlı Bağlantılar",
+    "followUs": "Bizi Takip Edin",
+    "contactUs": "Bize Ulaşın"
+  },
+  "servicePages": {
+    "branding": "Markalaşma ve Kimlik",
+    "brandingDesc": "İzleyicileri büyüleyen ve pazar kategorilerini tanımlayan ayırt edici marka kimlikleri yaratıyoruz.",
+    "web": "Web Geliştirme",
+    "webDesc": "Performans, estetik ve ölçek için tasarlanmış özel dijital platformlar.",
+    "video": "Video Prodüksiyonu",
+    "videoDesc": "Marka anlatılarını unutulmaz görsel deneyimlere dönüştüren sinematik hikaye anlatımı.",
+    "graphic": "Grafik Tasarım",
+    "graphicDesc": "Hassasiyetle iletişim kuran ve niyetle yankılanan görsel sistemler.",
+    "threeD": "3D ve Hareketli Grafik",
+    "threeDDesc": "Yaratıcı sınırları zorlayan üç boyutlu dünyalar ve hareketli grafikler.",
+    "social": "Sosyal Medya",
+    "socialDesc": "Topluluklar oluşturan ve etkileşimi artıran stratejik sosyal varlık.",
+    "ui": "UI/UX Tasarımı",
+    "uiDesc": "Netlik, keyif ve dönüşüm için tasarlanmış kullanıcı deneyimleri.",
+    "marketing": "Dijital Pazarlama",
+    "marketingDesc": "Erişimi en üst düzeye çıkaran ve ölçülebilir sonuçlar sunan veriye dayalı kampanyalar."
+  },
+  "about": {
+    "eyebrow": "Biz Kimiz",
+    "titleLine1": "Zanaatın Arkasındaki",
+    "titleLine2": "Stüdyo.",
+    "intro": "Pixelectro, 2023 yılında kurulmuş, kapsamlı reklam, markalaşma ve dijital pazarlama çözümleri sunma konusunda uzmanlaşmış yenilikçi bir şirkettir. Birincil hedefimiz, tasarımın ve en son teknolojinin gücünden yararlanarak işletmelerin büyümesini sağlamaktır.",
+    "vision": {
+      "title": "Vizyonumuz",
+      "desc": "Bölge genelindeki iddialı işletmeler için tercih edilen yaratıcı ortak olmak ve dijital ortamın olumlu dönüşümüne katkıda bulunmak — her seferinde tek bir marka."
+    },
+    "mission": {
+      "title": "Misyonumuz",
+      "desc": "İşletme sahiplerinin birinci sınıf tasarım, sinematik hikaye anlatımı ve performans odaklı dijital pazarlamanın stratejik birleşimi yoluyla girişimlerini geliştirmelerine ve büyütmelerine yardımcı olmak."
+    },
+    "goals": {
+      "title": "Bizi Farklı Kılan Nedir",
+      "items": [
+        {
+          "title": "Çeşitli Uzmanlık",
+          "desc": "Ekibimiz, markalaşma, film, 3D, yazılım mühendisliği ve pazarlama alanlarındaki seçkin uzmanlardan oluşur ve tek bir çatı altında tam entegre çözümler sunar."
+        },
+        {
+          "title": "Kanıtlanmış Sonuçlar",
+          "desc": "Müşterilerimiz için satışları ve marka tanınırlığını artırmada dikkate değer sonuçlar elde ederek 40'tan fazla işletmeyi ve sosyal medya varlığını başarıyla geliştirdik."
+        },
+        {
+          "title": "Müşteri Odaklı Yaklaşım",
+          "desc": "İhtiyaçlarını derinlemesine anlamak ve hedeflerini tam olarak karşılayan özel çözümler sunmak için her müşteriyle yakın bir şekilde çalışıyoruz."
+        }
+      ]
+    }
+  },
+  "contactPage": {
+    "title": "Bize Ulaşın",
+    "subtitle": "Birlikte sıra dışı bir şey inşa edelim.",
+    "nameLabel": "Adınız",
+    "emailLabel": "E-posta Adresi",
+    "countryLabel": "Ülke",
+    "servicePlaceholder": "Gerekli Hizmeti Seçin",
+    "messageLabel": "Proje Detayları",
+    "sendButton": "Mesaj Gönder",
+    "infoTitle": "İletişim Bilgileri",
+    "emailText": "hello@pixelectro.com",
+    "addressText": "İskenderiye, Mısır",
+    "services": {
+      "branding": "Markalaşma ve Tasarım",
+      "video": "Video Kurgu",
+      "animation": "2D Animasyon",
+      "threeD": "3D ve VFX",
+      "software": "Yazılım Geliştirme",
+      "content": "İçerik Yönetimi",
+      "ads": "Performans Pazarlaması",
+      "ai": "Yapay Zeka Çözümleri"
+    }
+  },
+  "testimonialsPage": {
+    "title": "Müşterilerimiz Ne Diyor?",
+    "subtitle": "Dünya genelinde çalıştığımız markaların ve içerik üreticilerinin gerçek deneyimleri.",
+    "eyebrow": "Müşteri Hikayeleri",
+    "emptyState": "Henüz yorum yapılmamış. Deneyiminizi paylaşan ilk kişi olun!",
+    "formTitle": "Deneyiminizi Paylaşın",
+    "formDesc": "Yorumunuz, moderasyondan sonra (genellikle 24 saat içinde) bu sayfada görünecektir.",
+    "nameLabel": "Adınız",
+    "reviewLabel": "Yorumunuz",
+    "submitButton": "Yorum Gönder",
+    "submitting": "Gönderiliyor...",
+    "successTitle": "Yorumunuz için teşekkür ederiz!",
+    "successDesc": "Yorumunuz başarıyla gönderildi ve onay bekliyor. Onaylandıktan sonra görünecektir.",
+    "rateLimitedTitle": "Zaten Gönderildi",
+    "rateLimitedDesc": "Yakın zamanda zaten bir yorum gönderdiniz. Desteğiniz için teşekkür ederiz!",
+    "editModeNotice": "Düzenleme Modu: Değişiklikleri kaydetmek, ekibimiz tarafından tekrar onaylanana kadar yorumunuzu geçici olarak gizleyecektir.",
+    "editButton": "Yorumumu Düzenle",
+    "saveChanges": "Değişiklikleri Kaydet",
+    "cancel": "İptal"
+  },
+  "categories": {
+    "branding": "Markalaşma",
+    "motion-graphics": "Hareketli Grafikler",
+    "web-development": "Web Geliştirme",
+    "3d-design": "3D Tasarım",
+    "marketing": "Pazarlama",
+    "ui-ux": "UI/UX Tasarımı",
+    "social-media": "Sosyal Medya",
+    "video-production": "Video Prodüksiyonu"
+  }
+}
