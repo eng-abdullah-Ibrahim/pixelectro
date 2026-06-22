@@ -77,7 +77,7 @@ export async function POST(req: Request) {
     let finalPrompt = "";
     
     if (projectId) {
-      finalPrompt = `You are an expert marketing copywriter for Pixelectro. Read the project name "${fetchTitle || 'Unknown Project'}", category "${fetchCategory || 'Creative Work'}", and page name "${fetchTitle || 'Unknown Project'}". Analyze the attached visual snapshots of our work for this project. Write a highly engaging and professional description of exactly 2 continuous sentences (a single short paragraph) about this project.
+      finalPrompt = `You are an expert marketing copywriter for Pixelectro. Read the project name "${fetchTitle || 'Unknown Project'}", category "${fetchCategory || 'Creative Work'}", and page name "${fetchTitle || 'Unknown Project'}". Analyze the attached visual snapshots of our work for this project. Write a highly engaging and professional description of exactly 1 continuous sentence (a single short paragraph) about this project.
 CRITICAL RULES:
 1. Output the description in ENGLISH ONLY.
 2. DO NOT output any conversational text, introductions, or explanations (e.g. do not say "Here is your description" or "As a copywriter").
@@ -91,7 +91,7 @@ CRITICAL RULES:
 3. Start each of the 3 lines with a big bullet point character (•).
 4. DO NOT use any markdown formatting, asterisks (*), backticks (\`), or bold text. Just plain text with the • bullet.`;
       } else {
-        finalPrompt = `You are an expert marketing copywriter for Pixelectro. Read the page name "${fetchTitle || 'Unknown Page'}". Write a highly engaging and professional description of exactly 3 continuous sentences (a single paragraph) about the magnificence, beauty, and creativity of our company in executing this service.
+        finalPrompt = `You are an expert marketing copywriter for Pixelectro. Read the page name "${fetchTitle || 'Unknown Page'}". Write a highly engaging and professional description of exactly 1 continuous sentence (a single paragraph) about the magnificence, beauty, and creativity of our company in executing this service.
 CRITICAL RULES:
 1. Output the description in ENGLISH ONLY.
 2. DO NOT output any conversational text, introductions, or explanations.

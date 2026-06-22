@@ -21,8 +21,8 @@ const slugify = (str: string) => str.toLowerCase().replace(/[\s_]+/g, '-').repla
 async function generateDescription(topic: string, type: 'page' | 'project') {
   try {
     const prompt = type === 'page' 
-      ? `Write a professional, catchy English description (about 2 sentences) for a creative agency's service page titled "${topic}". Return only the description text.`
-      : `Write a captivating English description (about 3 sentences) for a creative project titled "${topic}". Focus on design, impact, and excellence. Return only the description text.`;
+      ? `Write a professional, catchy English description (exactly 1 sentence) for a creative agency's service page titled "${topic}". Return only the description text.`
+      : `Write a captivating English description (exactly 1 sentence) for a creative project titled "${topic}". Focus on design, impact, and excellence. Return only the description text.`;
     
     const result = await model.generateContent(prompt);
     return result.response.text().trim();

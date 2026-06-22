@@ -65,6 +65,35 @@ export default function ProjectCarousel({ media, title }: { media: MediaItem[], 
     setTouchStartX(null);
   };
 
+  const [loadedSlides, setLoadedSlides] = useState<boolean[]>([]);
+
+  useEffect(() => {
+    if (!isVisible) return; // Wait until carousel is in viewport
+    setLoadedSlides(prev => {
+      const newLoaded = [...prev];
+      if (newLoaded.length !== items.length) {
+        newLoaded.length = items.length;
+        newLoaded.fill(false);
+      }
+      let changed = false;
+      items.forEach((_, idx) => {
+        let offset = idx - currentIndex;
+        const half = Math.floor(items.length / 2);
+        if (items.length > 2) {
+          if (offset < -half) offset += items.length;
+          if (offset > half) offset -= items.length;
+        }
+        if (offset >= -1 && offset <= 1) {
+          if (!newLoaded[idx]) {
+            newLoaded[idx] = true;
+            changed = true;
+          }
+        }
+      });
+      return changed ? newLoaded : prev;
+    });
+  }, [currentIndex, items.length, isVisible]);
+
   if (items.length === 0) return null;
 
   return (
@@ -108,6 +137,8 @@ export default function ProjectCarousel({ media, title }: { media: MediaItem[], 
           let opacity = isActive ? 1 : (isVisibleSlide ? 0.4 : 0);
           let zIndex = isActive ? 10 : (isVisibleSlide ? 5 : 1);
           let filter = isActive ? 'blur(0px)' : (isVisibleSlide ? 'blur(6px)' : 'blur(12px)');
+          
+          const shouldLoadSrc = loadedSlides[idx];
 
           return (
             <div 
@@ -138,9 +169,9 @@ export default function ProjectCarousel({ media, title }: { media: MediaItem[], 
                   const optimizedUrl = m.url.includes('cloudinary.com/') && m.url.includes('/upload/') 
                     ? m.url.replace('/upload/', '/upload/f_auto,q_auto,w_600/') 
                     : m.url;
-                  return <img src={optimizedUrl} alt={title} loading={isActive || isNext || isPrev ? "eager" : "lazy"} style={{ width: '100%', maxWidth: '70%', height: 'auto', maxHeight: '56vh', margin: '0 auto', objectFit: 'contain', pointerEvents: 'none', display: 'block' }} />;
+                  return <img src={shouldLoadSrc ? optimizedUrl : undefined} alt={title} loading="lazy" style={{ width: '100%', maxWidth: '70%', height: 'auto', maxHeight: '56vh', margin: '0 auto', objectFit: 'contain', pointerEvents: 'none', display: 'block' }} />;
                 })() : (
-                  <video src={m.url} style={{ width: '100%', maxWidth: '70%', height: 'auto', maxHeight: '56vh', margin: '0 auto', objectFit: 'contain', pointerEvents: 'none', display: 'block' }} muted loop playsInline autoPlay />
+                  <video src={shouldLoadSrc ? m.url : undefined} style={{ width: '100%', maxWidth: '70%', height: 'auto', maxHeight: '56vh', margin: '0 auto', objectFit: 'contain', pointerEvents: 'none', display: 'block' }} muted loop playsInline autoPlay={isActive} />
                 )}
               </div>
             </div>
