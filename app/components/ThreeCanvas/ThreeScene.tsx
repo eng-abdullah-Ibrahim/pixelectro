@@ -81,18 +81,17 @@ const SectionCanvas = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div ref={ref} className="threeCanvasWrapper" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, pointerEvents: 'none' }}>
-      {inView && (
-        <Canvas 
-          camera={{ position: [0, 0, 10], fov: 45 }} 
-          dpr={isMobile ? [0.5, 1] : [1, 1.5]}
-        >
-          <ambientLight intensity={1.5} />
-          <directionalLight position={[-10, 10, 5]} intensity={2} color="#ffffff" />
-          <directionalLight position={[10, -10, -5]} intensity={1} color="#1565D8" />
-          {children}
-          <Environment preset="city" />
-        </Canvas>
-      )}
+      <Canvas 
+        camera={{ position: [0, 0, 10], fov: 45 }} 
+        dpr={isMobile ? [0.5, 1] : [1, 1.5]}
+        frameloop={inView ? "always" : "never"}
+      >
+        <ambientLight intensity={1.5} />
+        <directionalLight position={[-10, 10, 5]} intensity={2} color="#ffffff" />
+        <directionalLight position={[10, -10, -5]} intensity={1} color="#1565D8" />
+        {children}
+        <Environment preset="city" />
+      </Canvas>
     </div>
   );
 };

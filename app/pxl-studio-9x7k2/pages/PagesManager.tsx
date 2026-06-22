@@ -33,26 +33,47 @@ const AVAILABLE_SCENES = [
 
 const ICONS = ["◈", "▶", "◎", "⬡", "◆", "◉", "✧", "▤", "△", "□", "○", "☆"];
 
+import { useTasks } from "../../components/TaskProvider";
+
 export default function PagesManager({ initialPages }: { initialPages: ServicePage[] }) {
   const [pages, setPages] = useState(initialPages);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
+  const { addTask, updateTaskStatus } = useTasks();
 
   async function handleAdd(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsSubmitting(true);
     const fd = new FormData(e.currentTarget);
-    await createPage({
-      title: fd.get("title") as string,
-      description: fd.get("description") as string,
+    const title = fd.get("title") as string;
+    const description = fd.get("description") as string;
+    
+    const pageId = await createPage({
+      title,
+      description,
       excerpt: fd.get("excerpt") as string,
       scene: fd.get("scene") as string,
       icon: fd.get("icon") as string,
       homeImage: fd.get("homeImage") as string,
       homeScene: fd.get("homeScene") as string
     });
-    // Let Server Action revalidate and refresh the page, but optimistically we just reload or wait for next.js
-    window.location.reload(); 
+    
+    const taskId = `translate-page-${pageId}`;
+    addTask(taskId, `Translating Page: ${title}`);
+    
+    setIsSubmitting(false);
+
+    fetch('/api/admin/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'servicePage', id: pageId, title, description })
+    }).then(res => {
+      if (!res.ok) throw new Error();
+      updateTaskStatus(taskId, 'success');
+      window.location.reload();
+    }).catch(() => {
+      updateTaskStatus(taskId, 'error', 'AI Translation failed.');
+    });
   }
 
   async function handleDelete(id: string) {

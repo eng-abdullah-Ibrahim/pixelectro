@@ -7,15 +7,8 @@ import { generateTranslations } from "../../../lib/translationEngine";
 export async function createPage(data: { title: string, description: string, excerpt: string, scene: string, icon: string, homeImage?: string, homeScene?: string }) {
   const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
   const count = await prisma.servicePage.count();
-  
-  // Background/Inline Translation
-  const translations = await generateTranslations({
-    title: data.title,
-    description: data.description,
-    excerpt: data.excerpt
-  });
 
-  await prisma.servicePage.create({
+  const page = await prisma.servicePage.create({
     data: {
       title: data.title,
       slug,
@@ -26,11 +19,12 @@ export async function createPage(data: { title: string, description: string, exc
       homeImage: data.homeImage,
       homeScene: data.homeScene,
       order: count,
-      translations
+      translations: { en: { title: data.title, description: data.description, excerpt: data.excerpt } }
     }
   });
   revalidatePath('/');
   revalidatePath('/pxl-studio-9x7k2/pages');
+  return page.id;
 }
 
 export async function deletePage(id: string) {
@@ -61,13 +55,6 @@ export async function editPage(
   }
 ) {
   const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-  
-  // Background/Inline Translation
-  const translations = await generateTranslations({
-    title: data.title,
-    description: data.description,
-    excerpt: data.excerpt
-  });
 
   await prisma.servicePage.update({
     where: { id },
@@ -80,11 +67,11 @@ export async function editPage(
       excerpt: data.excerpt,
       homeImage: data.homeImage,
       homeScene: data.homeScene,
-      translations
     }
   });
   revalidatePath('/');
   revalidatePath('/pxl-studio-9x7k2/pages');
+  return id;
 }
 
 export async function togglePageActive(id: string, isActive: boolean) {

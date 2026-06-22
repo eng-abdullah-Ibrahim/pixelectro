@@ -7,21 +7,20 @@ import { generateTranslations } from "../../../lib/translationEngine";
 export async function createCategory(data: { name: string, servicePageId: string }) {
   const slug = data.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
   const count = await prisma.category.count({ where: { servicePageId: data.servicePageId } });
-  
-  const translations = await generateTranslations({ title: data.name });
 
-  await prisma.category.create({
+  const cat = await prisma.category.create({
     data: {
       name: data.name,
       slug,
       servicePageId: data.servicePageId,
       order: count,
-      translations
+      translations: { en: { title: data.name } }
     }
   });
   
   revalidatePath('/');
-  revalidatePath('/admin/categories');
+  revalidatePath('/pxl-studio-9x7k2/categories');
+  return cat.id;
 }
 
 export async function deleteCategory(id: string) {
@@ -42,14 +41,12 @@ export async function updateCategoriesOrder(ids: string[]) {
 export async function editCategory(id: string, data: { name: string, servicePageId: string }) {
   const slug = data.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
   
-  const translations = await generateTranslations({ title: data.name });
-
   await prisma.category.update({
     where: { id },
-    data: { name: data.name, slug, servicePageId: data.servicePageId, translations }
+    data: { name: data.name, slug, servicePageId: data.servicePageId }
   });
   revalidatePath('/');
-  revalidatePath('/admin/categories');
+  revalidatePath('/pxl-studio-9x7k2/categories');
 }
 
 export async function toggleCategoryActive(id: string, isActive: boolean) {

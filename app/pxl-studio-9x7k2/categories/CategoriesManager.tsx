@@ -19,6 +19,8 @@ type ServicePage = {
   title: string;
 };
 
+import { useTasks } from "../../components/TaskProvider";
+
 export default function CategoriesManager({ 
   initialCategories, 
   servicePages 
@@ -29,23 +31,43 @@ export default function CategoriesManager({
   const [categories, setCategories] = useState(initialCategories);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
+  const { addTask, updateTaskStatus } = useTasks();
 
   // Group categories by service page for cleaner drag and drop
   const [filterPageId, setFilterPageId] = useState<string>("");
 
   const filteredCategories = filterPageId 
     ? categories.filter(c => c.servicePageId === filterPageId).sort((a,b) => a.order - b.order)
-    : categories.sort((a,b) => a.order - b.order); // global sort is tricky, best when filtered
+    : categories.sort((a,b) => a.order - b.order);
 
   async function handleAdd(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsSubmitting(true);
     const fd = new FormData(e.currentTarget);
-    await createCategory({
-      name: fd.get("name") as string,
+    const name = fd.get("name") as string;
+    const catId = await createCategory({
+      name,
       servicePageId: fd.get("servicePageId") as string
     });
-    window.location.reload(); 
+    
+    const taskId = `translate-cat-${catId}`;
+    addTask(taskId, `Translating Category: ${name}`);
+    
+    // Close submitting state immediately to unblock UI
+    setIsSubmitting(false);
+    
+    // Background translation
+    fetch('/api/admin/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'category', id: catId, name, description: '' })
+    }).then(res => {
+      if (!res.ok) throw new Error();
+      updateTaskStatus(taskId, 'success');
+      window.location.reload();
+    }).catch(() => {
+      updateTaskStatus(taskId, 'error', 'AI Translation failed.');
+    });
   }
 
   async function handleDelete(id: string) {

@@ -9,7 +9,7 @@ import GridBackground from './components/GridBackground/GridBackground';
 import GSAPInitializer from './components/GSAPInitializer';
 import ContentProtection from './components/ContentProtection';
 import { trackPageView } from '../lib/tracking';
-
+import SmoothScroll from './components/SmoothScroll';
 
 export default function ClientLayoutWrapper({ children, links = [] }: { children: React.ReactNode, links?: {href: string, label: string, translations?: any}[] }) {
   const pathname = usePathname();
@@ -30,7 +30,11 @@ export default function ClientLayoutWrapper({ children, links = [] }: { children
       <div style={{ position: 'relative', zIndex: 10 }}>
         {!isAdmin && <Navbar links={links} />}
         <main>
-          {children}
+          {isAdmin ? (
+            children
+          ) : (
+            <SmoothScroll>{children}</SmoothScroll>
+          )}
         </main>
         {!isAdmin && <Footer />}
         {!isAdmin && <WhatsAppWidget />}

@@ -170,13 +170,14 @@ async function run() {
             return ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.mp4', '.webm'].includes(ext);
         });
 
-        const localFileNames = validFiles.map(f => f.name);
+        const crypto = require('crypto');
+        const localFileHashes = validFiles.map(f => crypto.createHash('md5').update(f.name).digest('hex'));
 
         // Delete DB Media if file is removed locally
         for (const m of dbProj.media) {
-            // Check if any local file name is included in the URL
-            const fileStillExists = localFileNames.some(fileName => m.url.includes(encodeURIComponent(fileName)) || m.url.includes(fileName));
-            if (!fileStillExists) {
+            // Check if this media's URL contains any of our local file hashes
+            const fileStillExists = localFileHashes.some(hash => m.url.includes(hash));
+            if (!fileStillExists && m.url.includes('pixelectro/sync')) {
                 console.log(`[SYNC DELETE] Removing Media from DB: ${m.url}`);
                 await prisma.projectMedia.delete({ where: { id: m.id } });
             }
@@ -185,7 +186,8 @@ async function run() {
         // Upload new media files
         for (const file of validFiles) {
           const ext = path.extname(file.name).toLowerCase();
-          const isUploaded = dbProj.media.some(m => m.url.includes(encodeURIComponent(file.name)) || m.url.includes(file.name));
+          const fileHash = crypto.createHash('md5').update(file.name).digest('hex');
+          const isUploaded = dbProj.media.some(m => m.url.includes(fileHash));
           
           if (!isUploaded) {
             console.log(`[SYNC ADD] Uploading missing media for ${projTitle}: ${file.name}`);
@@ -193,6 +195,8 @@ async function run() {
               const isVideo = ['.mp4', '.webm'].includes(ext);
               const result = await cloudinary.uploader.upload(path.join(projPath, file.name), {
                 folder: 'pixelectro/sync',
+                public_id: fileHash,
+                overwrite: true,
                 resource_type: isVideo ? 'video' : 'image'
               });
               

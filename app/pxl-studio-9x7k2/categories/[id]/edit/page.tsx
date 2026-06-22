@@ -1,7 +1,7 @@
 import prisma from '@/lib/prisma';
-import { redirect, notFound } from "next/navigation";
-import { editCategory } from "../../categoryActions";
+import { notFound } from "next/navigation";
 import Link from "next/link";
+import EditCategoryForm from "./EditCategoryForm";
 
 export default async function EditCategoryPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
@@ -18,14 +18,6 @@ export default async function EditCategoryPage({ params }: { params: Promise<{ i
     select: { id: true, title: true }
   });
 
-  async function handleEdit(formData: FormData) {
-    "use server";
-    const name = formData.get("name") as string;
-    const servicePageId = formData.get("servicePageId") as string;
-    await editCategory(categoryId, { name, servicePageId });
-    redirect("/pxl-studio-9x7k2/categories");
-  }
-
   return (
     <>
       <div className="pageHeader">
@@ -41,27 +33,7 @@ export default async function EditCategoryPage({ params }: { params: Promise<{ i
           <div className="cardTitle">Category Details</div>
         </div>
         <div className="cardBody">
-          <form action={handleEdit}>
-            <div className="formGrid">
-              <div className="field">
-                <label className="label">Category Name *</label>
-                <input name="name" className="input" defaultValue={category.name} required />
-              </div>
-
-              <div className="field formGridFull">
-                <label className="label">Assign to Service Page *</label>
-                <select name="servicePageId" className="select" required defaultValue={category.servicePageId}>
-                  {servicePages.map(p => (
-                    <option key={p.id} value={p.id}>{p.title}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div className="formActions" style={{ display: "flex", gap: "1rem" }}>
-              <button type="submit" className="btnPrimary">Save Changes</button>
-              <button type="reset" className="btnGhost">Discard Changes</button>
-            </div>
-          </form>
+          <EditCategoryForm category={category} servicePages={servicePages} />
         </div>
       </div>
     </>
