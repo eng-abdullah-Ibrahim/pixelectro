@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Lightbox from './Lightbox';
 
 type MediaItem = {
@@ -16,18 +16,30 @@ export default function ProjectCarousel({ media, title }: { media: MediaItem[], 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const carouselRef = useRef<HTMLDivElement>(null);
   
   const sortedMedia = [...media].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   const items = sortedMedia;
 
-  // Timer auto-play logic that resets whenever currentIndex changes
+  // Track visibility
   useEffect(() => {
-    if (items.length <= 1) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0.1 } // triggers when 10% of carousel is visible
+    );
+    if (carouselRef.current) observer.observe(carouselRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // Timer auto-play logic that runs ONLY when visible
+  useEffect(() => {
+    if (items.length <= 1 || !isVisible) return;
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % items.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, [items.length, currentIndex]);
+  }, [items.length, currentIndex, isVisible]);
 
   const nextSlide = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -58,6 +70,7 @@ export default function ProjectCarousel({ media, title }: { media: MediaItem[], 
   return (
     <>
       <div 
+        ref={carouselRef}
         style={{ 
           position: 'relative', 
           width: '100%', 
@@ -89,12 +102,12 @@ export default function ProjectCarousel({ media, title }: { media: MediaItem[], 
           const isActive = offset === 0;
           const isPrev = offset === -1 || (items.length === 2 && offset === 1 && false);
           const isNext = offset === 1;
-          const isVisible = isActive || isPrev || isNext;
+          const isVisibleSlide = isActive || isPrev || isNext;
           
           let transform = `translateX(${offset * 65}%) scale(${isActive ? 1 : 0.75})`;
-          let opacity = isActive ? 1 : (isVisible ? 0.4 : 0);
-          let zIndex = isActive ? 10 : (isVisible ? 5 : 1);
-          let filter = isActive ? 'blur(0px)' : (isVisible ? 'blur(6px)' : 'blur(12px)');
+          let opacity = isActive ? 1 : (isVisibleSlide ? 0.4 : 0);
+          let zIndex = isActive ? 10 : (isVisibleSlide ? 5 : 1);
+          let filter = isActive ? 'blur(0px)' : (isVisibleSlide ? 'blur(6px)' : 'blur(12px)');
 
           return (
             <div 
@@ -123,7 +136,7 @@ export default function ProjectCarousel({ media, title }: { media: MediaItem[], 
               }}>
                 {m.type === 'IMAGE' ? (() => {
                   const optimizedUrl = m.url.includes('cloudinary.com/') && m.url.includes('/upload/') 
-                    ? m.url.replace('/upload/', '/upload/f_auto,q_auto,w_800/') 
+                    ? m.url.replace('/upload/', '/upload/f_auto,q_auto,w_600/') 
                     : m.url;
                   return <img src={optimizedUrl} alt={title} loading={isActive || isNext || isPrev ? "eager" : "lazy"} style={{ width: '100%', maxWidth: '70%', height: 'auto', maxHeight: '56vh', margin: '0 auto', objectFit: 'contain', pointerEvents: 'none', display: 'block' }} />;
                 })() : (
