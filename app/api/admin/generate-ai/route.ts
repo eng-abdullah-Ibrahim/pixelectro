@@ -77,11 +77,14 @@ export async function POST(req: Request) {
     let finalPrompt = "";
     
     if (projectId) {
-      finalPrompt = `You are an expert marketing copywriter for Pixelectro. Read the project name "${fetchTitle || 'Unknown Project'}", category "${fetchCategory || 'Creative Work'}", and page name "${fetchTitle || 'Unknown Project'}". Analyze the attached visual snapshots of our work for this project. Write a highly engaging and professional description of exactly 1 continuous sentence (a single short paragraph) about this project.
+      finalPrompt = `You are an expert marketing copywriter for Pixelectro. Read the project name "${fetchTitle || 'Unknown Project'}", category "${fetchCategory || 'Creative Work'}". 
+Analyze the attached visual snapshots, which are just a few examples of the work. Write a highly engaging, ultra-short catchphrase (maximum 10 words, just half a sentence) about the brand in general.
 CRITICAL RULES:
 1. Output the description in ENGLISH ONLY.
-2. DO NOT output any conversational text, introductions, or explanations (e.g. do not say "Here is your description" or "As a copywriter").
-3. DO NOT use any markdown formatting, asterisks (*), backticks (\`), or bold text. Just plain text.`;
+2. Must be under 10 words. Extremely concise.
+3. Talk about the brand broadly based on the aesthetic style, do NOT describe the specific contents or layout of the provided images.
+4. DO NOT output any conversational text, introductions, or explanations.
+5. DO NOT use any markdown formatting, asterisks (*), backticks (\`), or bold text. Just plain text.`;
     } else if (serviceId) {
       if (name === 'excerpt') {
         finalPrompt = `You are an expert marketing copywriter for Pixelectro. Read the page name "${fetchTitle || 'Unknown Page'}". Write a highly engaging and professional description of exactly 3 lines about how we perform this service for our clients with the best results.
@@ -99,10 +102,12 @@ CRITICAL RULES:
       }
     }
 
-    // For projects, user requested to only send the first and last image if there are many.
+    // For projects, feed the AI the first 2 images so it understands the general vibe without fixating on one image.
     let filteredUrls = imageUrls;
-    if (projectId && imageUrls.length > 2) {
-      filteredUrls = [imageUrls[0], imageUrls[imageUrls.length - 1]];
+    if (projectId && imageUrls.length >= 2) {
+      filteredUrls = [imageUrls[0], imageUrls[1]];
+    } else if (projectId && imageUrls.length === 1) {
+      filteredUrls = [imageUrls[0]];
     }
 
     // Limit to max 5 images to prevent payload too large or timeouts
