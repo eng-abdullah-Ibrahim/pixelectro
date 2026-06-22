@@ -12,7 +12,16 @@
     "viewAll": "Voir tout",
     "backToHome": "Retour à l'accueil",
     "loading": "Chargement...",
-    "error": "Une erreur s'est produite"
+    "error": "Une erreur s'est produite",
+    "selectLanguage": "Select Language",
+    "skipToContent": "Skip to content",
+    "noProjectsYet": "No projects have been added yet.",
+    "likeThisProject": "Like this project",
+    "alreadyLiked": "Already liked",
+    "totalViews": "Total views",
+    "shareThisProject": "Share this project",
+    "copied": "Copied!",
+    "messageSent": "Thank you! Your message has been sent successfully."
   },
   "hero": {
     "badge": "Alexandrie · Studio Créatif Mondial · Créé en 2023",
@@ -197,5 +206,11 @@
     "ui-ux": "Design UI/UX",
     "social-media": "Réseaux Sociaux",
     "video-production": "Production Vidéo"
+  },
+  "brand": {
+    "forAdvertising": "POUR LA PUBLICITÉ",
+    "calibrating": "Étalonnage de l'expérience électrique",
+    "location": "Alexandrie, Égypte · Portée mondiale",
+    "builtWithLocation": "Alexandrie, Égypte"
   }
 }

@@ -12,7 +12,16 @@
     "viewAll": "Alle ansehen",
     "backToHome": "Zurück zur Startseite",
     "loading": "Wird geladen...",
-    "error": "Etwas ist schiefgelaufen"
+    "error": "Etwas ist schiefgelaufen",
+    "selectLanguage": "Select Language",
+    "skipToContent": "Skip to content",
+    "noProjectsYet": "No projects have been added yet.",
+    "likeThisProject": "Like this project",
+    "alreadyLiked": "Already liked",
+    "totalViews": "Total views",
+    "shareThisProject": "Share this project",
+    "copied": "Copied!",
+    "messageSent": "Thank you! Your message has been sent successfully."
   },
   "hero": {
     "badge": "Alexandria · Globales Kreativstudio · Gegr. 2023",
@@ -197,5 +206,11 @@
     "ui-ux": "UI/UX Design",
     "social-media": "Social Media",
     "video-production": "Videoproduktion"
+  },
+  "brand": {
+    "forAdvertising": "FÜR WERBUNG",
+    "calibrating": "Kalibrierung des elektrischen Erlebnisses",
+    "location": "Alexandria, Ägypten · Globale Reichweite",
+    "builtWithLocation": "Alexandria, Ägypten"
   }
 }

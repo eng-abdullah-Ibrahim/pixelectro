@@ -12,7 +12,16 @@
     "viewAll": "সব দেখুন",
     "backToHome": "হোমে ফিরে যান",
     "loading": "লোড হচ্ছে...",
-    "error": "কিছু ভুল হয়েছে"
+    "error": "কিছু ভুল হয়েছে",
+    "selectLanguage": "Select Language",
+    "skipToContent": "Skip to content",
+    "noProjectsYet": "No projects have been added yet.",
+    "likeThisProject": "Like this project",
+    "alreadyLiked": "Already liked",
+    "totalViews": "Total views",
+    "shareThisProject": "Share this project",
+    "copied": "Copied!",
+    "messageSent": "Thank you! Your message has been sent successfully."
   },
   "hero": {
     "badge": "আলেকজান্দ্রিয়া · গ্লোবাল ক্রিয়েটিভ স্টুডিও · স্থাপিত ২০২৩",
@@ -197,5 +206,11 @@
     "ui-ux": "UI/UX ডিজাইন",
     "social-media": "সোশ্যাল মিডিয়া",
     "video-production": "ভিডিও প্রোডাকশন"
+  },
+  "brand": {
+    "forAdvertising": "FOR ADVERTISING",
+    "calibrating": "Calibrating the electric experience",
+    "location": "Alexandria, Egypt · Global Reach",
+    "builtWithLocation": "Alexandria, Egypt"
   }
 }

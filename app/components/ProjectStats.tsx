@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Heart, Eye, Share2, Check } from "lucide-react";
 import styles from "./ProjectStats.module.css";
+import { useTranslation } from "./TranslationProvider";
 
 interface ProjectStatsProps {
   projectId: string;
@@ -25,6 +26,7 @@ export default function ProjectStats({
   initialShares,
   initialFakeShares,
 }: ProjectStatsProps) {
+  const { t } = useTranslation();
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(initialLikes + initialFakeLikes);
   const [views, setViews] = useState(initialViews + initialFakeViews);
@@ -98,8 +100,8 @@ export default function ProjectStats({
         onClick={handleLike}
         disabled={liked}
         className={`${styles.statBtn} ${liked ? styles.likedBtn : ""} ${likeAnimate ? styles.pop : ""}`}
-        aria-label="Like this project"
-        title={liked ? "Already liked" : "Like this project"}
+        aria-label={t('common.likeThisProject') || "Like this project"}
+        title={liked ? (t('common.alreadyLiked') || "Already liked") : (t('common.likeThisProject') || "Like this project")}
       >
         <Heart
           className={`${styles.btnIcon} ${liked ? styles.heartFilled : ""}`}
@@ -109,7 +111,7 @@ export default function ProjectStats({
       </button>
 
       {/* ── Eye / Views ── */}
-      <div className={styles.statDisplay} title="Total views">
+      <div className={styles.statDisplay} title={t('common.totalViews') || "Total views"}>
         <Eye className={styles.btnIcon} size={16} />
         <span className={styles.count}>{views.toLocaleString()}</span>
       </div>
@@ -118,8 +120,8 @@ export default function ProjectStats({
       <button
         onClick={handleShare}
         className={`${styles.statBtn} ${styles.shareBtn} ${copied ? styles.copiedBtn : ""}`}
-        aria-label="Share this project"
-        title="Share this project"
+        aria-label={t('common.shareThisProject') || "Share this project"}
+        title={t('common.shareThisProject') || "Share this project"}
       >
         {copied ? (
           <Check className={styles.btnIcon} size={16} />
@@ -127,7 +129,7 @@ export default function ProjectStats({
           <Share2 className={styles.btnIcon} size={16} />
         )}
         <span className={styles.count}>
-          {copied ? "Copied!" : shares.toLocaleString()}
+          {copied ? (t('common.copied') || "Copied!") : shares.toLocaleString()}
         </span>
       </button>
     </div>

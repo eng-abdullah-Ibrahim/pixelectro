@@ -12,7 +12,16 @@
     "viewAll": "Ver Todo",
     "backToHome": "Volver al Inicio",
     "loading": "Cargando...",
-    "error": "Algo salió mal"
+    "error": "Algo salió mal",
+    "selectLanguage": "Select Language",
+    "skipToContent": "Skip to content",
+    "noProjectsYet": "No projects have been added yet.",
+    "likeThisProject": "Like this project",
+    "alreadyLiked": "Already liked",
+    "totalViews": "Total views",
+    "shareThisProject": "Share this project",
+    "copied": "Copied!",
+    "messageSent": "Thank you! Your message has been sent successfully."
   },
   "hero": {
     "badge": "Alejandría · Estudio Creativo Global · Est. 2023",
@@ -197,5 +206,11 @@
     "ui-ux": "Diseño UI/UX",
     "social-media": "Redes Sociales",
     "video-production": "Producción de Video"
+  },
+  "brand": {
+    "forAdvertising": "PARA PUBLICIDAD",
+    "calibrating": "Calibrando la experiencia eléctrica",
+    "location": "Alejandría, Egipto · Alcance Global",
+    "builtWithLocation": "Alejandría, Egipto"
   }
 }

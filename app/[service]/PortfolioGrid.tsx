@@ -108,7 +108,9 @@ export default function PortfolioGrid({ title, description, categories, sceneIde
                   <div className={styles.projectsContainer}>
                     {cat.projects.map(project => {
                       // Client-side project title/description translation
-                      // Project titles stay in English always as per user request
+                      const projTitle = (locale !== 'en' && project.translations?.[locale]?.title)
+                        ? project.translations[locale].title
+                        : project.title;
                       const projDesc = (locale !== 'en' && project.translations?.[locale]?.description)
                         ? project.translations[locale].description
                         : project.description;
@@ -116,7 +118,7 @@ export default function PortfolioGrid({ title, description, categories, sceneIde
                         <div key={project.id} id={`project-${project.id}`} className={styles.projectBlock}>
                           <div className={styles.projectHeader}>
                             <div>
-                              <h3 className={styles.projectTitle}>{project.title}</h3>
+                              <h3 className={styles.projectTitle}>{projTitle}</h3>
                               {projDesc && (
                                 <div 
                                   className={`${styles.projectDesc} prose-custom`} 
@@ -128,7 +130,7 @@ export default function PortfolioGrid({ title, description, categories, sceneIde
                           <div style={{ marginTop: '1.5rem' }}>
                             <ProjectCarousel 
                               media={project.media} 
-                              title={project.title} 
+                              title={projTitle} 
                             />
                           </div>
                           <ProjectStats 
@@ -150,7 +152,7 @@ export default function PortfolioGrid({ title, description, categories, sceneIde
             })
           ) : (
             <p style={{ textAlign: 'center', color: 'var(--ink-dim)', fontSize: '1.2rem' }}>
-              No projects have been added yet.
+              {t('common.noProjectsYet') || 'No projects have been added yet.'}
             </p>
           )}
         </div>

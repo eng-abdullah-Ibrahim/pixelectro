@@ -27,7 +27,7 @@ const LANGUAGES = [
 export const availableLanguages = LANGUAGES.map(l => l.code);
 
 export default function LanguageSwitcher() {
-  const { locale, setLocale } = useTranslation();
+  const { locale, setLocale, t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -73,7 +73,7 @@ export default function LanguageSwitcher() {
 
       {isOpen && (
         <div className={s.dropdown} role="listbox" aria-label="Language options">
-          <div className={s.dropdownHeader}>Select Language</div>
+          <div className={s.dropdownHeader}>{t('common.selectLanguage') || 'Select Language'}</div>
           <div className={s.dropdownGrid}>
             {LANGUAGES.map(lang => (
               <button

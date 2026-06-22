@@ -39,7 +39,7 @@ export default function ContactForm() {
           <form onSubmit={(e) => {
             e.preventDefault();
             trackEmailClick();
-            alert('Thank you! Your message has been sent successfully (mocked).');
+            alert(t('common.messageSent') || 'Thank you! Your message has been sent successfully.');
           }}>
             <div className={styles.formGroup}>
               <input type="text" placeholder={t('contactPage.nameLabel')} className={styles.input} required />

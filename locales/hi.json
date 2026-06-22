@@ -12,7 +12,16 @@
     "viewAll": "सभी देखें",
     "backToHome": "होम पर वापस जाएं",
     "loading": "लोड हो रहा है...",
-    "error": "कुछ गलत हो गया"
+    "error": "कुछ गलत हो गया",
+    "selectLanguage": "Select Language",
+    "skipToContent": "Skip to content",
+    "noProjectsYet": "No projects have been added yet.",
+    "likeThisProject": "Like this project",
+    "alreadyLiked": "Already liked",
+    "totalViews": "Total views",
+    "shareThisProject": "Share this project",
+    "copied": "Copied!",
+    "messageSent": "Thank you! Your message has been sent successfully."
   },
   "hero": {
     "badge": "अलेक्जेंड्रिया · ग्लोबल क्रिएटिव स्टूडियो · स्थापित २०२३",
@@ -197,5 +206,11 @@
     "ui-ux": "UI/UX डिजाइन",
     "social-media": "सोशल मीडिया",
     "video-production": "वीडियो उत्पादन"
+  },
+  "brand": {
+    "forAdvertising": "FOR ADVERTISING",
+    "calibrating": "Calibrating the electric experience",
+    "location": "Alexandria, Egypt · Global Reach",
+    "builtWithLocation": "Alexandria, Egypt"
   }
 }

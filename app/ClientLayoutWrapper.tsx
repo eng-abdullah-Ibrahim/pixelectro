@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
 import WhatsAppWidget from './components/WhatsAppWidget/WhatsAppWidget';
-import Preloader from './components/Preloader/Preloader';
 import GridBackground from './components/GridBackground/GridBackground';
 import GSAPInitializer from './components/GSAPInitializer';
 import ContentProtection from './components/ContentProtection';
@@ -26,7 +25,6 @@ export default function ClientLayoutWrapper({ children, links = [] }: { children
   return (
     <>
       {!isAdmin && <ContentProtection />}
-      <Preloader />
       {!isAdmin && <GSAPInitializer />}
       <GridBackground />
       <div style={{ position: 'relative', zIndex: 10 }}>

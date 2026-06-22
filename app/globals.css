@@ -1,57 +1,122 @@
-/* ════════════════════════════════════════════════════════════════
-   PIXELECTRO — DESIGN SYSTEM v6  "Sapphire Studio"
-   Palette: Pearl White + Royal Navy + Electric Blue
-   Inspired by: Stripe, Arc, Linear, Awwwards winners 2025
-   ════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════
+   PIXELECTRO — DESIGN SYSTEM v9  "Brand Electric"
+   Direction: Glow + Grain  |  Brand: Electric Blue × Deep Navy
+   Palette: Brand Blue (hue 250) · Compressed Luminosity · Film Grain
+   Proportion: Silver Ratio (δs ≈ 1.414) · 8-Point Grid
+   Logo: P-mark with pen nib + lightning bolt · FOR ADVERTISING
+   ═══════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* ── Brand Blues (extracted from Pixelectro logo) ── */
-  --blue-sky:    #2FA8E8;   /* logo top gradient */
-  --blue-core:   #1565D8;   /* primary brand blue */
-  --blue-royal:  #0C2461;   /* logo bottom / deep navy */
-  --blue-deep:   #071440;   /* darkest navy */
+  /* ── Cinematic Color System (OKLCH) ── */
+  /* Luminosity compressed to 8–92% — the Kubrick standard */
+  --lum-void:      oklch(0.08 0.018 242);   /* velvet dark — NOT black */
+  --lum-dark:      oklch(0.13 0.022 242);
+  --lum-surface:   oklch(0.18 0.018 242);
+  --lum-mid-dark:  oklch(0.28 0.010 242);
+  --lum-mid:       oklch(0.45 0.006 242);
+  --lum-light:     oklch(0.88 0.010 88);
+  --lum-cloud:     oklch(0.94 0.008 88);    /* film highlight — NOT white */
 
-  /* ── Backgrounds ── */
-  --bg:          #F5F8FF;   /* pearl white — main */
-  --bg-card:     #FFFFFF;   /* pure white — elevated */
-  --bg-navy:     #071440;   /* deep navy — hero/CTA sections */
-  --bg-blue:     #0C2461;   /* royal navy — sections */
-  --bg-ice:      #EBF3FD;   /* icy blue — subtle panels */
+  /* ── Primary Backgrounds ── */
+  --bg:            oklch(0.08 0.018 242);   /* charged void */
+  --bg-card:       oklch(0.13 0.020 242);   /* elevated surface */
+  --bg-navy:       oklch(0.07 0.016 242);   /* absolute dark */
+  --bg-surface:    oklch(0.16 0.018 242);   /* subtle panel lift */
 
-  /* ── Text ── */
-  --ink:         #060F2B;   /* near-black navy — primary text */
-  --ink-dim:     rgba(6, 15, 43, 0.52);
-  --ink-faint:   rgba(6, 15, 43, 0.22);
-  --on-navy:     #EBF3FD;   /* text on dark navy */
-  --on-navy-dim: rgba(235, 243, 253, 0.5);
+  /* ── Text (warm off-white — film highlight principle) ── */
+  --ink:           oklch(0.93 0.010 88);    /* warm off-white, NOT #fff */
+  --ink-dim:       oklch(0.65 0.008 88);
+  --ink-faint:     oklch(0.40 0.006 88);
+  --on-navy:       oklch(0.93 0.010 88);
+  --on-navy-dim:   oklch(0.60 0.008 88);
 
-  /* ── Accents ── */
-  --accent:      var(--blue-core);
-  --accent-glow: rgba(21, 101, 216, 0.18);
+  /* ── BRAND IDENTITY (Pixelectro — Electric Blue × Deep Navy) ── */
+  /* Derived from the official logo gradient */
+  --brand-blue:       oklch(0.56 0.22 250);  /* logo bright blue  (#1976D2 range) */
+  --brand-navy:       oklch(0.28 0.18 268);  /* logo deep navy    (#0D47A1 range) */
+  --brand-gradient:   linear-gradient(135deg, oklch(0.65 0.22 245), oklch(0.28 0.18 268));
 
-  /* ── Rules ── */
-  --rule-light:  rgba(6, 15, 43, 0.07);
-  --rule-navy:   rgba(235, 243, 253, 0.08);
+  /* ── THE SIGNAL COLOR (Brand Electric Blue — logo-matched) ── */
+  --accent:        oklch(0.68 0.22 250);    /* electric brand blue */
+  --accent-glow:   oklch(0.68 0.22 250 / 0.16);
+  --accent-strong: oklch(0.68 0.22 250 / 0.35);
+  --accent-rgb:    41, 128, 255;            /* for rgba() usage */
 
-  /* ── Typography ── */
+  /* Brand hex compatibility (for Three.js and non-oklch contexts) */
+  --blue-sky:      #4FC3F7;   /* logo highlight blue */
+  --blue-core:     #1976D2;   /* logo primary blue */
+  --blue-royal:    #0D47A1;   /* logo deep navy */
+  --blue-deep:     #030B1A;   /* void dark */
+
+  /* ── Rules / Borders ── */
+  --rule:          oklch(0.93 0.010 88 / 0.07);
+  --rule-strong:   oklch(0.93 0.010 88 / 0.14);
+
+  /* ── Backward-compat aliases (untouched page CSS still uses these) ── */
+  --rule-light:         var(--rule);
+  --rule-navy:          var(--rule);
+  --bg-blue:            oklch(0.13 0.018 242);
+  --bg-ice:             oklch(0.16 0.018 242);
+  --accent-glow-strong: var(--accent-strong);
+
+  /* ── Typography Scale (Silver Ratio: ×√2 ≈ 1.414) ── */
+  /* --font-cormorant, --font-space, --font-mono, --font-arabic are injected
+     by Next.js font classes on <body>. CSS resolves var() lazily at use time,
+     so these aliases work correctly on all elements inside body. */
   --font-display: var(--font-cormorant), 'Georgia', serif;
   --font-sans:    var(--font-space), 'Helvetica Neue', sans-serif;
-  --font-mono:    var(--font-mono), 'Courier New', monospace;
+  /* --font-mono is used directly as var(--font-mono) in CSS modules — 
+     it is provided by the JetBrains Mono Next.js font class on body */
+
+  --text-xs:    0.707rem;   /* ÷√2 */
+  --text-sm:    1rem;
+  --text-md:    1.414rem;   /* ×√2 */
+  --text-lg:    2rem;       /* ×2 */
+  --text-xl:    2.828rem;   /* ×2√2 */
+  --text-2xl:   4rem;       /* ×4 */
+  --text-3xl:   5.656rem;   /* ×4√2 */
+  --text-4xl:   8rem;       /* ×8 */
+
+  /* ── 8-Point Spatial System ── */
+  --space-1:   0.25rem;   /*  4px */
+  --space-2:   0.5rem;    /*  8px */
+  --space-3:   0.75rem;   /* 12px */
+  --space-4:   1rem;      /* 16px */
+  --space-6:   1.5rem;    /* 24px */
+  --space-8:   2rem;      /* 32px */
+  --space-10:  2.5rem;    /* 40px */
+  --space-12:  3rem;      /* 48px */
+  --space-16:  4rem;      /* 64px */
+  --space-20:  5rem;      /* 80px */
+  --space-24:  6rem;      /* 96px */
+  --space-32:  8rem;      /* 128px */
+  --space-40:  10rem;     /* 160px */
+  --gutter:    clamp(1.25rem, 5vw, 6rem);
+
+  /* ── Silver Ratio Grid ── */
+  --grid-minor: 1fr;
+  --grid-major: 1.414fr;  /* √2 — A-series paper ratio */
+
+  /* ── Cursor ── */
+  --cursor-dot:      10px;
+  --cursor-ring:     44px;
+
+  /* ── Timing ── */
+  --ease-velvet:   cubic-bezier(0.0, 0.95, 0.45, 0.98);
+  --ease-breath:   cubic-bezier(0.05, 0, 0.08, 0.35);
+  --ease-precise:  cubic-bezier(0.85, 0, 0.15, 1);
+  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-[data-lang="ar"], [data-lang="ur"], [data-lang="fa"] {
-  --font-display: var(--font-arabic), 'Tahoma', sans-serif;
-  --font-sans:    var(--font-arabic), 'Tahoma', sans-serif;
+/* ── RTL / Arabic ─────────────────────────────────────────── */
+[data-lang="ar"] body, [data-lang="ur"] body, [data-lang="fa"] body {
+  --font-display: var(--font-arabic), 'Tahoma', sans-serif !important;
+  --font-sans:    var(--font-arabic), 'Tahoma', sans-serif !important;
+  font-family: var(--font-arabic), 'Tahoma', sans-serif !important;
 }
 
-[dir="rtl"] * {
-  letter-spacing: normal !important; /* Arabic cursive script breaks with letter-spacing */
-}
-
-[dir="rtl"] svg {
-  /* Some icons should be flipped in RTL */
-  transform-origin: center;
-}
+[dir="rtl"] * { letter-spacing: normal !important; }
+[dir="rtl"] svg { transform-origin: center; }
 
 [data-lang="ar"] .threeCanvasWrapper canvas,
 [data-lang="ur"] .threeCanvasWrapper canvas,
@@ -59,91 +124,240 @@
   transform: scaleX(-1);
 }
 
-/* ── Reset ──────────────────────────────────────────────────── */
+/* ── Reset ─────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; overflow-x: hidden; }
-
-body {
-  background-color: var(--bg);
-  color: var(--ink);
-  font-family: var(--font-sans);
+html {
+  scroll-behavior: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
   overflow-x: hidden;
   line-height: 1.6;
-  /* Safe area insets for notched/island devices */
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
 }
 
+@media (pointer: coarse) {
+  body { cursor: auto; }
+}
+
 a { color: inherit; text-decoration: none; }
-img, video { display: block; max-width: 100%; height: auto; }
+img, video { display: block; max-width: 100%; }
 
-/* Touch targets — minimum 44px for accessibility */
-button, [role="button"] { min-height: 44px; touch-action: manipulation; }
+button, [role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
+  cursor: pointer;
+}
 
-/* Prevent iOS auto-zoom on input focus */
+@media (pointer: coarse) {
+  button, [role="button"] { cursor: pointer; }
+}
+
+/* Prevent iOS zoom on inputs */
 @supports (-webkit-touch-callout: none) {
   input, select, textarea { font-size: max(16px, 1em) !important; }
 }
 
-/* ── Scrollbar ───────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 3px; }
+/* ── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 2px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: rgba(21,101,216,0.3); }
-::-webkit-scrollbar-thumb:hover { background: var(--blue-core); }
+::-webkit-scrollbar-thumb { background: oklch(0.68 0.22 250 / 0.30); }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-::selection { background: var(--blue-core); color: #fff; }
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
 
-/* ── Global Reveal Animations ─────────────────────────────── */
+/* ── Removed global hide cursor rule ── */
+
+@media (pointer: coarse) {
+  .cursor, .follower { display: none !important; }
+}
+
+/* ── Film Grain Overlay ─────────────────────────────────────── */
+/* Animated SVG noise — analog warmth, 0.04 opacity window */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9997;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  animation: grain 0.4s steps(1) infinite;
+}
+
+@keyframes grain {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-2%, -3%); }
+  40%  { transform: translate(3%, 2%); }
+  60%  { transform: translate(-1%, 4%); }
+  80%  { transform: translate(2%, -1%); }
+  100% { transform: translate(-3%, 1%); }
+}
+
+/* ── Global Reveal System ──────────────────────────────────── */
+/* GSAP controls these via ScrollTrigger — CSS provides initial state */
 [data-reveal] {
   opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(48px);
+  transition: opacity 1.1s var(--ease-velvet),
+              transform 1.1s var(--ease-velvet);
+  will-change: opacity, transform;
 }
+
 [data-reveal][data-visible="true"] {
   opacity: 1;
   transform: none;
 }
 
-/* ── CSS 3D Sphere — pure CSS, no WebGL ─────────────────── */
-.px-sphere {
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 33% 33%,
-      #76c8f7 0%,
-      #2FA8E8 20%,
-      #1565D8 45%,
-      #0C2461 70%,
-      #071440 100%
-    );
-  box-shadow:
-    inset -20px -20px 50px rgba(7, 20, 64, 0.7),
-    inset 15px 15px 35px rgba(118, 200, 247, 0.25),
-    0 30px 70px rgba(21, 101, 216, 0.35),
-    0 0 0 1px rgba(47, 168, 232, 0.2);
-  animation: sphereFloat 7s ease-in-out infinite;
+/* Stagger children */
+[data-stagger-container] > [data-stagger-item] {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.9s var(--ease-velvet) var(--stagger-delay, 0s),
+              transform 0.9s var(--ease-velvet) var(--stagger-delay, 0s);
+  will-change: opacity, transform;
 }
 
-@keyframes sphereFloat {
-  0%, 100% { transform: translateY(0) rotateZ(0deg); }
-  33%       { transform: translateY(-18px) rotateZ(1deg); }
-  66%       { transform: translateY(-8px) rotateZ(-0.5deg); }
+[data-stagger-container][data-visible="true"] > [data-stagger-item],
+[data-stagger-container] > [data-stagger-item][data-visible="true"] {
+  opacity: 1;
+  transform: none;
 }
 
-/* ── Rich Text Prose Styling ────────────────────────────────────── */
-.prose-custom {
-  color: inherit;
-  line-height: 1.8;
+/* Slide from left */
+[data-reveal-left] {
+  opacity: 0;
+  transform: translateX(-60px);
+  transition: opacity 1.2s var(--ease-velvet),
+              transform 1.2s var(--ease-velvet);
+  will-change: opacity, transform;
 }
+[data-reveal-left][data-visible="true"] { opacity: 1; transform: none; }
+
+/* Slide from right */
+[data-reveal-right] {
+  opacity: 0;
+  transform: translateX(60px);
+  transition: opacity 1.2s var(--ease-velvet),
+              transform 1.2s var(--ease-velvet);
+  will-change: opacity, transform;
+}
+[data-reveal-right][data-visible="true"] { opacity: 1; transform: none; }
+
+/* ── Reduced Motion ─────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  [data-reveal], [data-reveal-left], [data-reveal-right] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── Accessibility ─────────────────────────────────────────── */
+.skip-link {
+  position: absolute;
+  top: 0; left: 0;
+  transform: translateY(-100%);
+  background: var(--accent);
+  color: var(--bg);
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  z-index: 10000;
+  transition: transform 0.3s;
+}
+.skip-link:focus { transform: translateY(0); }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ── Split-tone image enhancement ──────────────────────────── */
+.split-tone::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    oklch(0.13 0.030 230 / 0.30),
+    transparent 45%,
+    transparent 55%,
+    oklch(0.90 0.015 80 / 0.12)
+  );
+  mix-blend-mode: color;
+  pointer-events: none;
+}
+
+/* ── Skeleton shimmer ──────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg,
+    oklch(0.18 0.012 242) 25%,
+    oklch(0.24 0.012 242) 50%,
+    oklch(0.18 0.012 242) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ── Electric rule decoration ─────────────────────────────── */
+.electric-rule {
+  width: 48px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  display: block;
+}
+
+/* ── Rich Text Prose ────────────────────────────────────────── */
+.prose-custom { color: inherit; line-height: 1.8; }
 .prose-custom p { margin-bottom: 1em; }
 .prose-custom p:last-child { margin-bottom: 0; }
-.prose-custom strong { font-weight: 700; color: inherit; }
+.prose-custom strong { font-weight: 700; }
 .prose-custom em { font-style: italic; }
 .prose-custom u { text-decoration: underline; text-underline-offset: 4px; }
-.prose-custom h1, .prose-custom h2, .prose-custom h3 { margin: 1.5em 0 0.5em; font-weight: 700; line-height: 1.2; }
+.prose-custom h1, .prose-custom h2, .prose-custom h3 {
+  margin: 1.5em 0 0.5em; font-weight: 700; line-height: 1.2;
+}
 .prose-custom ul, .prose-custom ol { padding-left: 1.5em; margin-bottom: 1em; }
 .prose-custom li { margin-bottom: 0.25em; }
-[dir="rtl"] .prose-custom ul, [dir="rtl"] .prose-custom ol { padding-left: 0; padding-right: 1.5em; }
+[dir="rtl"] .prose-custom ul,
+[dir="rtl"] .prose-custom ol { padding-left: 0; padding-right: 1.5em; }
+
+/* ── Utility Classes ──────────────────────────────────────── */
+.glow-text {
+  text-shadow:
+    0 0 40px oklch(0.68 0.22 250 / 0.32),
+    0 0 80px oklch(0.68 0.22 250 / 0.12);
+}
+
+.glow-box {
+  box-shadow:
+    0 0 60px oklch(0.68 0.22 250 / 0.09),
+    0 0 120px oklch(0.68 0.22 250 / 0.04);
+}
+
+/* Optical center correction for display type */
+.optical-center {
+  padding-top: 1.08em;
+  padding-bottom: 0.92em;
+}

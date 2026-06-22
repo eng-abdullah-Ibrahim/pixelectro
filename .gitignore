@@ -38,4 +38,7 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# dynamic content (avoid pushing huge images)
+content/
 next-env.d.ts

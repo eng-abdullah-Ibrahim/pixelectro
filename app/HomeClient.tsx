@@ -1,34 +1,36 @@
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import s from './page.module.css';
 import dynamic from 'next/dynamic';
 import { HeroScene } from './components/ThreeCanvas/ThreeScene';
 import { useTranslation } from './components/TranslationProvider';
 
-const ServicesScene = dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(mod => mod.ServicesScene), { ssr: false });
-const StatementScene = dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(mod => mod.StatementScene), { ssr: false });
-const ProcessScene = dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(mod => mod.ProcessScene), { ssr: false });
-const BoxScene = dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.BoxScene), { ssr: false });
+/* ─── Dynamic 3D scenes (SSR disabled — Three.js is client-only) ─── */
+const ServicesScene  = dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.ServicesScene),  { ssr: false });
+const StatementScene = dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.StatementScene), { ssr: false });
+const ProcessScene   = dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.ProcessScene),   { ssr: false });
+const BoxScene       = dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.BoxScene),       { ssr: false });
 const TorusKnotScene = dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.TorusKnotScene), { ssr: false });
 const TetrahedronScene = dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.TetrahedronScene), { ssr: false });
 
 const SceneMap: Record<string, React.ComponentType<any>> = {
-  BrandingScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.BrandingScene), { ssr: false }),
-  FilmScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.FilmScene), { ssr: false }),
-  VFXScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.VFXScene), { ssr: false }),
-  SoftwareScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.SoftwareScene), { ssr: false }),
+  BrandingScene:   dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.BrandingScene),   { ssr: false }),
+  FilmScene:       dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.FilmScene),       { ssr: false }),
+  VFXScene:        dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.VFXScene),        { ssr: false }),
+  SoftwareScene:   dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.SoftwareScene),   { ssr: false }),
   PerformanceScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.PerformanceScene), { ssr: false }),
-  AIScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.AIScene), { ssr: false }),
+  AIScene:         dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.AIScene),         { ssr: false }),
   IcosahedronScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.IcosahedronScene), { ssr: false }),
-  BoxScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.BoxScene), { ssr: false }),
-  RingScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.RingScene), { ssr: false }),
-  CapsuleScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.CapsuleScene), { ssr: false }),
-  TorusKnotScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.TorusKnotScene), { ssr: false }),
-  TetrahedronScene: dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.TetrahedronScene), { ssr: false }),
+  BoxScene,
+  RingScene:       dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.RingScene),       { ssr: false }),
+  CapsuleScene:    dynamic(() => import('./components/ThreeCanvas/ThreeScene').then(m => m.CapsuleScene),    { ssr: false }),
+  TorusKnotScene,
+  TetrahedronScene,
 };
 
+/* ─── Types ────────────────────────────────────────────────────── */
 type ServiceData = {
   n: string;
   title: string;
@@ -47,457 +49,676 @@ type ClientData = {
   link: string;
 };
 
-const STATS = [
-  { value: '200+', label: 'Projects',     note: 'Delivered globally' },
-  { value: '50+',  label: 'Clients',      note: 'Across 5 countries' },
-  { value: '8',    label: 'Disciplines',  note: 'Creative domains' },
-  { value: '2023', label: 'Founded',      note: 'Alexandria, Egypt' },
-];
+/* ─── Split text into spans for character animation ─────────────── */
+function SplitChars({ text, className }: { text: string; className?: string }) {
+  // Complex scripts (Arabic, Devanagari/Hindi, Bengali) form ligatures.
+  // Splitting them by character breaks rendering and shows dotted circles.
+  const isComplexScript = /[\u0600-\u06FF\u0900-\u097F\u0980-\u09FF]/.test(text);
 
-export default function HomeClient({ services = [], clients = [], dynamicContent = null }: { services?: any[], clients?: any[], dynamicContent?: any }) {
-  const meshRef = useRef<HTMLCanvasElement>(null);
+  if (isComplexScript) {
+    const parts = text.split(/(\s+)/);
+    return (
+      <span className={className} aria-label={text}>
+        {parts.map((part, i) => {
+          if (!part) return null;
+          return (
+            <span
+              key={i}
+              data-char
+              aria-hidden="true"
+              style={{ display: 'inline-block', willChange: 'transform, opacity', whiteSpace: 'pre' }}
+            >
+              {part}
+            </span>
+          );
+        })}
+      </span>
+    );
+  }
+
+  // Non-Arabic: group characters by word to prevent mid-word line breaking
+  const words = text.split(/(\s+)/);
+  return (
+    <span className={className} aria-label={text}>
+      {words.map((word, wIdx) => {
+        if (!word) return null;
+        if (/^\s+$/.test(word)) {
+          return (
+            <span key={wIdx} style={{ display: 'inline-block', whiteSpace: 'pre' }}>
+              {word}
+            </span>
+          );
+        }
+        return (
+          <span key={wIdx} style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+            {word.split('').map((char, cIdx) => (
+              <span
+                key={cIdx}
+                data-char
+                aria-hidden="true"
+                style={{ display: 'inline-block', willChange: 'transform, opacity' }}
+              >
+                {char}
+              </span>
+            ))}
+          </span>
+        );
+      })}
+    </span>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   HOME CLIENT — 5-Act Cinematic Scroll Experience
+   ═══════════════════════════════════════════════════════════════════ */
+export default function HomeClient({
+  services = [],
+  clients = [],
+  dynamicContent = null,
+}: {
+  services?: ServiceData[];
+  clients?: ClientData[];
+  dynamicContent?: any;
+}) {
   const [isMobile, setIsMobile] = useState(false);
   const { t, locale } = useTranslation();
 
-  // Helper to safely get dynamic content or fallback to JSON translation
-  const getDc = (path: string, fallbackKey: string) => {
-    if (dynamicContent && dynamicContent.content && dynamicContent.content[locale]) {
+  /* ── Dynamic content helper ────────────────────────────────── */
+  const getDc = (path: string, fallbackKey: string): string => {
+    if (dynamicContent?.content?.[locale]) {
       const parts = path.split('.');
-      let val = dynamicContent.content[locale];
+      let val: any = dynamicContent.content[locale];
       for (const p of parts) {
         if (!val) break;
         val = val[p];
       }
-      if (val) return val;
+      if (val && typeof val === 'string') return val;
     }
     return t(fallbackKey);
   };
 
-  const getScene = (section: string, FallbackComponent: any) => {
-    if (dynamicContent && dynamicContent.scenes && dynamicContent.scenes[section]) {
-      const sceneName = dynamicContent.scenes[section];
-      if (sceneName && SceneMap[sceneName]) return SceneMap[sceneName];
-    }
-    return FallbackComponent;
+  /* ── Scene selector ─────────────────────────────────────────── */
+  const getScene = (section: string, Fallback: any) => {
+    const name = dynamicContent?.scenes?.[section];
+    if (name && SceneMap[name]) return SceneMap[name];
+    return Fallback;
   };
 
-  const HeroDynamicScene = getScene('hero', HeroScene);
-  const AboutDynamicScene = getScene('about', StatementScene);
-  const VisionDynamicScene = getScene('vision', BoxScene);
-  const MissionDynamicScene = getScene('mission', TorusKnotScene);
-  const GoalsDynamicScene = getScene('goals', TetrahedronScene);
+  /* ── Dynamic scene assignments ──────────────────────────────── */
+  const HeroDynamicScene       = getScene('hero', HeroScene);
   const PhilosophyDynamicScene = getScene('philosophy', StatementScene);
-  const ProcessDynamicScene = getScene('process', ProcessScene);
+  const ProcessDynamicScene    = getScene('process', ProcessScene);
+  const VisionDynamicScene     = getScene('vision', BoxScene);
+  const MissionDynamicScene    = getScene('mission', TorusKnotScene);
+  const GoalsDynamicScene      = getScene('goals', TetrahedronScene);
 
+  /* ── Mobile detection ────────────────────────────────────────── */
   useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check, { passive: true });
+    return () => window.removeEventListener('resize', check);
   }, []);
 
-  /* ── Animated mesh canvas (blue palette) ─────────── */
+  /* ── 3D card tilt (desktop only) ────────────────────────────── */
   useEffect(() => {
-    const canvas = meshRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    let raf = 0, t = 0;
-
-    const resize = () => {
-      canvas.width  = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    };
-    resize();
-    const ro = new ResizeObserver(resize);
-    ro.observe(canvas);
-
-    const isMobile = window.innerWidth < 768;
-    const orbCount = isMobile ? 8 : 18;
-
-    const ORBS = Array.from({ length: orbCount }, (_, i) => ({
-      x: Math.random(),
-      y: Math.random(),
-      r: (isMobile ? 30 : 40) + Math.random() * (isMobile ? 80 : 120),
-      vx: (Math.random() - 0.5) * 0.0003,
-      vy: (Math.random() - 0.5) * 0.0003,
-      hue: 200 + Math.random() * 40,
-    }));
-
-    const draw = () => {
-      t += 0.006;
-      const { width: w, height: h } = canvas;
-      ctx.clearRect(0, 0, w, h);
-
-      ORBS.forEach(o => {
-        o.x += o.vx; o.y += o.vy;
-        if (o.x < 0 || o.x > 1) o.vx *= -1;
-        if (o.y < 0 || o.y > 1) o.vy *= -1;
-        const x = o.x * w, y = o.y * h;
-        const g = ctx.createRadialGradient(x, y, 0, x, y, o.r);
-        g.addColorStop(0,   `hsla(${o.hue}, 80%, 60%, 0.18)`);
-        g.addColorStop(0.5, `hsla(${o.hue}, 70%, 45%, 0.08)`);
-        g.addColorStop(1,   `hsla(${o.hue}, 60%, 35%, 0)`);
-        ctx.beginPath();
-        ctx.arc(x, y, o.r, 0, Math.PI * 2);
-        ctx.fillStyle = g;
-        ctx.fill();
-      });
-
-      const STEP = 60;
-      for (let gx = 0; gx <= w + STEP; gx += STEP) {
-        for (let gy = 0; gy <= h + STEP; gy += STEP) {
-          const wave = Math.sin(t + gx * 0.018 + gy * 0.012) * 0.5 + 0.5;
-          ctx.beginPath();
-          ctx.arc(gx, gy, 1.2 + wave * 1.4, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(21, 101, 216, ${0.06 + wave * 0.14})`;
-          ctx.fill();
-        }
-      }
-      raf = requestAnimationFrame(draw);
-    };
-
-    let isVisible = true;
-    const observer = new IntersectionObserver((entries) => {
-      isVisible = entries[0].isIntersecting;
-    }, { threshold: 0 });
-    observer.observe(canvas);
-
-    const loop = () => {
-      if (isVisible) draw();
-      else raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
-
-    return () => { 
-      cancelAnimationFrame(raf); 
-      ro.disconnect(); 
-      observer.disconnect();
-    };
-  }, []);
-
-  /* ── 3D tilt effect for service cards ──────────── */
-  useEffect(() => {
+    if (isMobile) return;
     const cards = document.querySelectorAll<HTMLElement>('[data-tilt]');
-    const handlers: Array<{ el: HTMLElement; onMove: (e: MouseEvent) => void; onLeave: () => void }> = [];
+    const handlers: { el: HTMLElement; mv: (e: MouseEvent) => void; ml: () => void }[] = [];
 
     cards.forEach(card => {
-      const onMove = (e: MouseEvent) => {
+      const mv = (e: MouseEvent) => {
         const r = card.getBoundingClientRect();
-        const x = ((e.clientX - r.left) / r.width - 0.5) * 16;
-        const y = ((e.clientY - r.top) / r.height - 0.5) * -16;
-        card.style.transform = `perspective(800px) rotateX(${y}deg) rotateY(${x}deg) translateZ(8px)`;
+        const x = ((e.clientX - r.left) / r.width  - 0.5) * 14;
+        const y = ((e.clientY - r.top)  / r.height - 0.5) * -14;
+        card.style.transform = `perspective(900px) rotateX(${y}deg) rotateY(${x}deg) translateZ(10px)`;
       };
-      const onLeave = () => { card.style.transform = ''; };
-      card.addEventListener('mousemove', onMove);
-      card.addEventListener('mouseleave', onLeave);
-      handlers.push({ el: card, onMove, onLeave });
+      const ml = () => { card.style.transform = ''; };
+      card.addEventListener('mousemove', mv);
+      card.addEventListener('mouseleave', ml);
+      handlers.push({ el: card, mv, ml });
     });
 
     return () => handlers.forEach(h => {
-      h.el.removeEventListener('mousemove', h.onMove);
-      h.el.removeEventListener('mouseleave', h.onLeave);
+      h.el.removeEventListener('mousemove', h.mv);
+      h.el.removeEventListener('mouseleave', h.ml);
     });
-  }, []);
+  }, [isMobile]);
 
-  /* ── Intersection reveal ──────────────────────── */
-  useEffect(() => {
-    const els = document.querySelectorAll<HTMLElement>('[data-reveal]');
-    const io = new IntersectionObserver(
-      entries => entries.forEach(e => {
-        if (e.isIntersecting) (e.target as HTMLElement).dataset.visible = 'true';
-      }),
-      { threshold: 0.1 }
-    );
-    els.forEach(el => io.observe(el));
-    return () => io.disconnect();
-  }, []);
+  /* ── Stats from dynamic content ─────────────────────────────── */
+  const stats = [
+    {
+      value: dynamicContent?.stats?.projectsValue   || t('stats.projectsValue'),
+      label: t('stats.projectsLabel'),
+      note:  t('stats.projectsNote'),
+    },
+    {
+      value: dynamicContent?.stats?.clientsValue    || t('stats.clientsValue'),
+      label: t('stats.clientsLabel'),
+      note:  t('stats.clientsNote'),
+    },
+    {
+      value: dynamicContent?.stats?.disciplinesValue || t('stats.disciplinesValue'),
+      label: t('stats.disciplinesLabel'),
+      note:  t('stats.disciplinesNote'),
+    },
+    {
+      value: dynamicContent?.stats?.foundedValue    || t('stats.foundedValue'),
+      label: t('stats.foundedLabel'),
+      note:  t('stats.foundedNote'),
+    },
+  ];
 
   return (
-    <div className={s.page}>
+    <div className={s.page} id="main">
 
-      {/* ══ HERO ═══════════════════════════════════════════════════ */}
-      <section className={s.hero}>
-        {!isMobile && <HeroDynamicScene />}
-        <canvas ref={meshRef} className={s.heroMesh} aria-hidden />
-
-        <div className={s.heroContent} style={{ position: 'relative', zIndex: 1 }} data-reveal="true">
-          <div className={s.heroBadge} dangerouslySetInnerHTML={{ __html: getDc('hero.badge', 'hero.badge') }} />
-          <div className={s.heroTitle}>
-            <div className={s.heroLine1} dangerouslySetInnerHTML={{ __html: getDc('hero.titleLine1', 'hero.titleLine1') }} />
-            <div className={`${s.heroLine2} ${s.heroItalic}`} dangerouslySetInnerHTML={{ __html: getDc('hero.titleLine2', 'hero.titleLine2') }} />
-            <div className={s.heroLine3}>
-              <span dangerouslySetInnerHTML={{ __html: getDc('hero.titleLine3Prefix', 'hero.titleLine3Prefix') }} />
-              <span className={s.heroBlue} dangerouslySetInnerHTML={{ __html: getDc('hero.titleLine3Highlight', 'hero.titleLine3Highlight') }} />
-            </div>
+      {/* ═══════════════════════════════════════════════════════
+          ACT 1 — HOOK (100dvh)
+          "We Build Cinematic Digital Worlds."
+          Anti-center: 60/40 split — text left, 3D right
+          The poster test: freeze any frame, it's fine art.
+          ═══════════════════════════════════════════════════════ */}
+      <section className={s.hero} aria-label="Hero">
+        {/* WebGL 3D — right side, desktop only */}
+        {!isMobile && (
+          <div className={s.heroCanvas} aria-hidden="true">
+            <HeroDynamicScene />
           </div>
-          <div className={s.heroSub} dangerouslySetInnerHTML={{ __html: getDc('hero.sub', 'hero.sub') }} />
-          <div className={s.heroActions} data-reveal="true">
-            <Link href="/projects" className={s.btnBlue}>
-              {t('common.exploreOurWork')}
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
-                <path d="M3.5 9h11M10 4l5 5-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+        )}
+
+        {/* Electric arc atmospheric overlay */}
+        <div className={s.heroAtmosphere} aria-hidden="true">
+          <div className={s.heroGlow1} />
+          <div className={s.heroGlow2} />
+        </div>
+
+        {/* Vertical index label — editorial detail */}
+        <div className={s.sectionIndex} aria-hidden="true">
+          <span>01</span>
+          <div className={s.sectionIndexLine} />
+        </div>
+
+        {/* Content block — LEFT aligned, not centered (anti-center rule) */}
+        <div className={s.heroContent}>
+
+          {/* Badge */}
+          <div
+            className={s.heroBadge}
+            data-hero-badge
+            dangerouslySetInnerHTML={{
+              __html: getDc('hero.badge', 'hero.badge')
+            }}
+          />
+
+          {/* Kinetic title — character split for GSAP animation */}
+          <h1 className={s.heroTitle} aria-label={`${getDc('hero.titleLine1','hero.titleLine1')} ${getDc('hero.titleLine2','hero.titleLine2')} ${getDc('hero.titleLine3Prefix','hero.titleLine3Prefix')}${getDc('hero.titleLine3Highlight','hero.titleLine3Highlight')}`}>
+            <span className={s.heroLine1}>
+              <SplitChars
+                text={getDc('hero.titleLine1', 'hero.titleLine1')}
+              />
+            </span>
+            <span className={`${s.heroLine2} ${s.italic}`}>
+              <SplitChars
+                text={getDc('hero.titleLine2', 'hero.titleLine2')}
+              />
+            </span>
+            <span className={s.heroLine3}>
+              <SplitChars
+                text={getDc('hero.titleLine3Prefix', 'hero.titleLine3Prefix')}
+              />
+              <span className={s.heroAccent}>
+                <SplitChars
+                  text={getDc('hero.titleLine3Highlight', 'hero.titleLine3Highlight')}
+                />
+              </span>
+            </span>
+          </h1>
+
+          {/* Sub */}
+          <p
+            className={s.heroSub}
+            data-hero-sub
+            dangerouslySetInnerHTML={{ __html: getDc('hero.sub', 'hero.sub') }}
+          />
+
+          {/* CTAs */}
+          <div className={s.heroActions} data-hero-actions>
+            <Link href="/projects" className={`${s.btnPrimary} magnetic`}>
+              <span>{t('common.exploreOurWork')}</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.3"
+                      strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </Link>
-            <Link href="/contact" className={s.btnOutline}>{t('common.startAProject')}</Link>
+            <Link href="/contact" className={s.btnGhost}>
+              {t('common.startAProject')}
+            </Link>
           </div>
+        </div>
 
-          <div className={s.heroScroll} data-reveal="true" aria-hidden>
-            <div className={s.heroScrollTrack}><div className={s.heroScrollThumb}/></div>
-            <span>{t('hero.scroll')}</span>
+        {/* Scroll indicator — fades out on first scroll */}
+        <div className={s.scrollIndicator} data-scroll-indicator aria-hidden="true">
+          <div className={s.scrollLine}>
+            <div className={s.scrollThumb} />
           </div>
+          <span>{t('hero.scroll')}</span>
         </div>
       </section>
 
-      {/* ══ STATS BELT ══════════════════════════════════════════════ */}
-      <div className={s.statsBelt} data-stagger-container="true">
-        {[
-          { value: dynamicContent?.stats?.projectsValue || t('stats.projectsValue'), label: dynamicContent?.stats?.projectsLabel || t('common.projects'),     note: dynamicContent?.stats?.projectsNote || t('stats.projectsNote') },
-          { value: dynamicContent?.stats?.clientsValue || t('stats.clientsValue'),  label: dynamicContent?.stats?.clientsLabel || t('common.clients'),      note: dynamicContent?.stats?.clientsNote || t('stats.clientsNote') },
-          { value: dynamicContent?.stats?.disciplinesValue || '8',                      label: dynamicContent?.stats?.disciplinesLabel || t('common.disciplines'),  note: dynamicContent?.stats?.disciplinesNote || t('stats.disciplinesNote') },
-          { value: dynamicContent?.stats?.foundedValue || '2023',                   label: dynamicContent?.stats?.foundedLabel || t('common.founded'),      note: dynamicContent?.stats?.foundedNote || t('stats.foundedNote') },
-        ].map((st, i) => (
-          <div key={i} className={s.statCell} data-stagger-item="true" data-reveal style={{ transitionDelay: `${i * 0.06}s` }}>
-            <span className={s.statVal}>{st.value}</span>
-            <span className={s.statLbl}>{st.label}</span>
+      {/* ═══════════════════════════════════════════════════════
+          STATS BELT — Kinetic counter numbers
+          4 cells, animated on scroll entry
+          ═══════════════════════════════════════════════════════ */}
+      <div className={s.statsBelt} data-stagger-container aria-label="Studio statistics">
+        {stats.map((st, i) => (
+          <div
+            key={i}
+            className={s.statCell}
+            data-stagger-item
+            style={{ '--stagger-delay': `${i * 0.09}s` } as React.CSSProperties}
+          >
+            <span className={s.statVal} data-stat-val>{st.value}</span>
+            <span className={s.statLabel}>{st.label}</span>
             <span className={s.statNote}>{st.note}</span>
           </div>
         ))}
       </div>
 
-      {/* ══ MARQUEE ══════════════════════════════════════════════════ */}
-      <div className={s.marqueeWrap} aria-hidden>
-        <div className={s.marqueeTrack}>
-          {Array.from({ length: 10 }, (_, i) => (
+      {/* ═══════════════════════════════════════════════════════
+          MARQUEE — Infinite scroll identity strip
+          ═══════════════════════════════════════════════════════ */}
+      <div className={s.marqueeOuter} aria-hidden="true">
+        <div className={s.marqueeTrack} data-marquee-track>
+          {Array.from({ length: 8 }, (_, i) => (
             <span key={i} className={s.marqueeItem}>
-              PIXELECTRO <span className={s.marqueeDot}>●</span> CINEMA <span className={s.marqueeDot}>●</span> BRAND <span className={s.marqueeDot}>●</span> CODE <span className={s.marqueeDot}>●</span> 3D <span className={s.marqueeDot}>●</span>
+              {t('marquee.text')}
             </span>
           ))}
         </div>
       </div>
 
-      {/* ══ ABOUT / VISION / MISSION / GOALS ════════════════════════ */}
-      <section className={s.aboutSection} data-reveal style={{ paddingBottom: 0 }}>
-        <AboutDynamicScene />
-        <div style={{ padding: '7rem 6%', position: 'relative', zIndex: 2 }} data-reveal="true">
-          <div className={s.eyebrow} style={{ color: 'var(--blue-core)' }} dangerouslySetInnerHTML={{ __html: getDc('about.eyebrow', 'about.eyebrow') }} />
-          <div className={s.sectionTitle} style={{ color: 'var(--ink)', display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '2rem' }}>
-            <div dangerouslySetInnerHTML={{ __html: getDc('about.titleLine1', 'about.titleLine1') }} />
-            <div style={{ fontStyle: 'italic', fontWeight: 300, fontFamily: 'var(--font-cormorant)' }} dangerouslySetInnerHTML={{ __html: getDc('about.titleLine2', 'about.titleLine2') }} />
-          </div>
-          <div className={s.statementBody} style={{ color: 'var(--ink-dim)' }} dangerouslySetInnerHTML={{ __html: getDc('about.intro', 'about.intro') }} />
+      {/* ═══════════════════════════════════════════════════════
+          ACT 2 — ABOUT / WHO WE ARE (asymmetric 60/40)
+          Left: heavy text mass. Right: 3D atmospheric scene.
+          ═══════════════════════════════════════════════════════ */}
+      <section className={s.aboutSection} aria-label="About Pixelectro">
+        {/* Section index */}
+        <div className={s.sectionIndex} aria-hidden="true">
+          <span>02</span>
+          <div className={s.sectionIndexLine} />
         </div>
-      </section>
 
-      {/* Vision Section */}
-      <section data-reveal style={{ minHeight: 'auto', padding: '100px 0', position: 'relative', overflow: 'hidden' }}>
-        {/* Full-width absolute background scene */}
+        {/* 3D scene — full bleed background */}
         {!isMobile && (
-          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, opacity: 0.9 }}>
-            <VisionDynamicScene />
+          <div className={s.aboutScene} aria-hidden="true">
+            <StatementScene />
           </div>
         )}
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1200px', margin: '0 auto', padding: '0 2rem', textAlign: 'center' }}>
-          <div style={{ padding: '5rem 3rem', borderRadius: '2rem' }}>
-            <div style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 600, color: 'var(--ink)', marginBottom: '1.5rem', letterSpacing: '-0.02em' }} dangerouslySetInnerHTML={{ __html: getDc('vision.title', 'about.vision.title') }} />
-            <div style={{ fontSize: 'clamp(1.1rem, 2vw, 1.4rem)', color: 'var(--ink-dim)', lineHeight: 1.8, maxWidth: '900px', margin: '0 auto' }} dangerouslySetInnerHTML={{ __html: getDc('vision.desc', 'about.vision.desc') }} />
+
+        <div className={s.aboutContent}>
+          <div className={s.aboutLeft} data-reveal-left>
+            <p className={s.eyebrow}>
+              {getDc('about.eyebrow', 'about.eyebrow')}
+            </p>
+            <h2 className={s.sectionTitle}>
+              <span>{getDc('about.titleLine1', 'about.titleLine1')}</span>
+              <em className={s.titleItalic}>
+                {getDc('about.titleLine2', 'about.titleLine2')}
+              </em>
+            </h2>
+            <div
+              className={s.aboutBody}
+              dangerouslySetInnerHTML={{ __html: getDc('about.intro', 'about.intro') }}
+            />
+            <Link href="/contact" className={s.btnGhostAccent}>
+              {t('common.getInTouch')}
+            </Link>
+          </div>
+
+          {/* Right: vision + mission compact */}
+          <div className={s.aboutRight} data-reveal>
+            <div className={s.aboutCard} data-tilt>
+              <div className={s.aboutCardGlow} aria-hidden="true" />
+              <p className={s.aboutCardEyebrow}>
+                {getDc('vision.title', 'about.vision.title')}
+              </p>
+              <p className={s.aboutCardBody}
+                dangerouslySetInnerHTML={{
+                  __html: getDc('vision.desc', 'about.vision.desc')
+                }}
+              />
+            </div>
+            <div className={s.aboutCard} data-tilt>
+              <div className={s.aboutCardGlow} aria-hidden="true" />
+              <p className={s.aboutCardEyebrow}>
+                {getDc('mission.title', 'about.mission.title')}
+              </p>
+              <p className={s.aboutCardBody}
+                dangerouslySetInnerHTML={{
+                  __html: getDc('mission.desc', 'about.mission.desc')
+                }}
+              />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Mission Section */}
-      <section data-reveal style={{ minHeight: 'auto', padding: '100px 0', position: 'relative', overflow: 'hidden' }}>
-        {/* Full-width absolute background scene */}
-        {!isMobile && (
-          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, opacity: 0.9 }}>
-            <MissionDynamicScene />
-          </div>
-        )}
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1200px', margin: '0 auto', padding: '0 2rem', textAlign: 'center' }}>
-          <div style={{ padding: '5rem 3rem', borderRadius: '2rem' }}>
-            <div style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 600, color: 'var(--ink)', marginBottom: '1.5rem', letterSpacing: '-0.02em' }} dangerouslySetInnerHTML={{ __html: getDc('mission.title', 'about.mission.title') }} />
-            <div style={{ fontSize: 'clamp(1.1rem, 2vw, 1.4rem)', color: 'var(--ink-dim)', lineHeight: 1.8, maxWidth: '900px', margin: '0 auto' }} dangerouslySetInnerHTML={{ __html: getDc('mission.desc', 'about.mission.desc') }} />
-          </div>
+      {/* ═══════════════════════════════════════════════════════
+          DISCIPLINES — What Sets Us Apart (goals)
+          3 items — border-top dividers, no cards
+          ═══════════════════════════════════════════════════════ */}
+      <section className={s.disciplinesSection} aria-label="Our disciplines">
+        <div className={s.sectionIndex} aria-hidden="true">
+          <span>03</span>
+          <div className={s.sectionIndexLine} />
         </div>
-      </section>
 
-      {/* Goals Section Redesigned */}
-      <section className={s.aboutSection} data-reveal style={{ paddingTop: '40px' }}>
-        <GoalsDynamicScene />
-        <div className={s.aboutHead} data-reveal="true" style={{ marginBottom: '40px' }}>
-          <div className={s.sectionTitle} style={{ color: 'var(--ink)' }} dangerouslySetInnerHTML={{ __html: getDc('goals.title', 'about.goals.title') }} />
+        <div className={s.disciplinesHead} data-reveal>
+          <p className={s.eyebrow}>{getDc('goals.title', 'about.goals.title')}</p>
         </div>
-        <div className={s.aboutGrid} data-stagger-container="true">
+
+        <div className={s.disciplinesList} data-stagger-container>
           {[0, 1, 2].map((i) => {
-            const itemTitle = getDc(`goals.items.${i}.title`, `about.goals.items.${i}.title`);
-            const itemDesc = getDc(`goals.items.${i}.desc`, `about.goals.items.${i}.desc`);
-            if (!itemTitle || itemTitle === `about.goals.items.${i}.title`) return null;
+            const title = getDc(`goals.items.${i}.title`, `about.goals.items.${i}.title`);
+            const desc  = getDc(`goals.items.${i}.desc`,  `about.goals.items.${i}.desc`);
+            if (!title || title === `about.goals.items.${i}.title`) return null;
             return (
-              <div key={i} className={s.aboutCard} data-stagger-item="true" data-reveal style={{ transitionDelay: `${i * 0.1}s` }}>
-                <div className={s.aboutCardNum}>0{i + 1}</div>
-                <div className={s.aboutCardTitle} dangerouslySetInnerHTML={{ __html: itemTitle }} />
-                <div className={s.aboutCardDesc} dangerouslySetInnerHTML={{ __html: itemDesc }} />
+              <div
+                key={i}
+                className={s.disciplineItem}
+                data-stagger-item
+                style={{ '--stagger-delay': `${i * 0.12}s` } as React.CSSProperties}
+              >
+                <span className={s.disciplineNum}>0{i + 1}</span>
+                <div className={s.disciplineBody}>
+                  <h3
+                    className={s.disciplineTitle}
+                    dangerouslySetInnerHTML={{ __html: title }}
+                  />
+                  <p
+                    className={s.disciplineDesc}
+                    dangerouslySetInnerHTML={{ __html: desc }}
+                  />
+                </div>
               </div>
             );
           })}
         </div>
       </section>
 
-
-      {/* ══ SERVICES — ALTERNATING SECTIONS ════════════════════════ */}
-      <section className={s.services}>
-        <div className={s.servicesHead} data-reveal="true" style={{ marginBottom: 0 }}>
-          <p className={s.eyebrow}>{t('services.eyebrow', { count: services.length.toString().padStart(2, '0') })}</p>
+      {/* ═══════════════════════════════════════════════════════
+          SERVICES HEADER
+          ═══════════════════════════════════════════════════════ */}
+      <section className={s.servicesHead} aria-label="Our services">
+        <div className={s.sectionIndex} aria-hidden="true">
+          <span>04</span>
+          <div className={s.sectionIndexLine} />
+        </div>
+        <div className={s.servicesHeadContent} data-reveal>
+          <p className={s.eyebrow}>
+            {t('services.eyebrow', { count: services.length.toString().padStart(2, '0') })}
+          </p>
           <h2 className={s.sectionTitle}>
-            {t('services.titleLine1')}<br />
-            <em>{t('services.titleLine2')}</em>
+            <span>{t('services.titleLine1')}</span>
+            <em className={s.titleItalic}>{t('services.titleLine2')}</em>
           </h2>
         </div>
       </section>
 
-      {/* Alternating Service Sections */}
+      {/* ═══════════════════════════════════════════════════════
+          ACT 3 — SERVICES (alternating layout)
+          Each service: 60/40 split, alternating direction.
+          Images slide from off-screen. 3D on desktop.
+          ═══════════════════════════════════════════════════════ */}
       {services.map((svc, i) => {
-        const getLocField = (field: string) => {
-          if (locale === 'en') return (svc as any)[field];
-          const tr = svc.translations?.[locale];
-          return tr?.[field] || (svc as any)[field];
-        };
-        const title = getLocField('title');
-        const sub = getLocField('description') || getLocField('excerpt') || getLocField('sub');
-        const DynamicScene = svc.homeScene && SceneMap[svc.homeScene] ? SceneMap[svc.homeScene] : null;
-
         const isEven = i % 2 === 0;
 
-        return (
-          <section key={svc.n} className={s.serviceSection} data-reveal>
-            <div className={s.serviceSectionInner} style={{ flexDirection: isEven ? 'row' : 'row-reverse' }}>
-              <div className={s.serviceSectionText}>
-                <div className={s.serviceSectionEyebrow}>
-                  <span className={s.serviceSectionIcon}>{svc.icon}</span>
-                  <span className={s.serviceSectionNum}>{svc.n}</span>
-                </div>
-                <h3 className={s.serviceSectionTitle}>{title}</h3>
-                <div className={s.serviceSectionSub} dangerouslySetInnerHTML={{ __html: sub || '' }} />
-                <Link href={svc.href} className={s.serviceSectionLink}>
-                  {t('services.exploreService', { title: title || '' })}
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
-                    <path d="M4 10h12M12 5l5 5-5 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </Link>
-              </div>
+        const getLocField = (field: string) => {
+          if (locale !== 'en') {
+            const tr = svc.translations?.[locale];
+            if (tr?.[field]) return tr[field];
+          }
+          return (svc as any)[field];
+        };
 
-              {/* Right side for image/video and 3D scene */}
-              <div className={s.serviceSectionVisualEmpty}>
-                {svc.homeImage ? (
-                  <div className={s.serviceSectionImageWrap}>
-                    {svc.homeImage.match(/\.(mp4|webm|mov)$/i) ? (
-                      <video 
-                        src={svc.homeImage} 
-                        className={s.serviceSectionImage} 
-                        autoPlay 
-                        loop 
-                        muted 
-                        playsInline 
-                      />
-                    ) : (
-                      <img 
-                        src={svc.homeImage} 
-                        alt={title} 
-                        className={s.serviceSectionImage} 
-                        loading="lazy"
-                      />
-                    )}
-                    <div className={s.serviceSectionImageGlow} />
-                  </div>
-                ) : (
-                  !isMobile && DynamicScene && (
-                    <div className={s.serviceSectionDynamicScene}>
-                      <DynamicScene />
-                    </div>
-                  )
-                )}
+        const title = getLocField('title');
+        const sub   = getLocField('description') || getLocField('excerpt') || getLocField('sub');
+        const DynamicScene = svc.homeScene && SceneMap[svc.homeScene]
+          ? SceneMap[svc.homeScene]
+          : null;
+
+        return (
+          <section
+            key={svc.n}
+            className={`${s.serviceSection} ${isEven ? s.serviceSectionEven : s.serviceSectionOdd}`}
+            aria-label={title}
+          >
+            {/* Text block */}
+            <div
+              className={s.serviceText}
+              data-reveal-left={isEven ? true : undefined}
+              data-reveal-right={!isEven ? true : undefined}
+            >
+              <div className={s.serviceEyebrow}>
+                <span className={s.serviceIcon}>{svc.icon}</span>
+                <span className={s.serviceNum}>{svc.n}</span>
               </div>
+              <h3 className={s.serviceTitle}>{title}</h3>
+              <div
+                className={s.serviceSub}
+                dangerouslySetInnerHTML={{ __html: sub || '' }}
+              />
+              <Link href={svc.href} className={s.serviceLink}>
+                <span>{t('services.exploreService', { title: title || '' })}</span>
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
+                  <path d="M3.5 9h11M10 4l5 5-5 5" stroke="currentColor" strokeWidth="1.2"
+                        strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </Link>
+            </div>
+
+            {/* Visual block — image or 3D scene */}
+            <div className={s.serviceVisual} data-service-img>
+              {svc.homeImage ? (
+                <div className={s.serviceImgWrap}>
+                  {svc.homeImage.match(/\.(mp4|webm|mov)$/i) ? (
+                    <video
+                      src={svc.homeImage}
+                      className={s.serviceImg}
+                      autoPlay loop muted playsInline
+                    />
+                  ) : (
+                    <img
+                      src={svc.homeImage}
+                      alt={title}
+                      className={s.serviceImg}
+                      loading="lazy"
+                    />
+                  )}
+                  <div className={s.serviceImgOverlay} aria-hidden="true" />
+                </div>
+              ) : (
+                !isMobile && DynamicScene && (
+                  <div className={s.service3DWrap} aria-hidden="true">
+                    <DynamicScene />
+                  </div>
+                )
+              )}
             </div>
           </section>
         );
       })}
 
-      {/* ══ DARK NAVY STATEMENT ══════════════════════════════════════ */}
-      <section className={s.statement} data-reveal>
-        <PhilosophyDynamicScene />
-        <div className={s.statementOrbs} aria-hidden>
-          <div className={s.statOrb1} />
-          <div className={s.statOrb2} />
-        </div>
-        <div className={s.statementInner} data-reveal="true">
-          <div className={s.eyebrowLight} dangerouslySetInnerHTML={{ __html: getDc('philosophy.eyebrow', 'statement.eyebrow') }} />
-          <div className={s.statementQuote} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <div dangerouslySetInnerHTML={{ __html: getDc('philosophy.quoteLine1', 'statement.quoteLine1') }} />
-            <div style={{ fontStyle: 'italic', fontWeight: 300, fontFamily: 'var(--font-cormorant)' }} dangerouslySetInnerHTML={{ __html: getDc('philosophy.quoteLine2', 'statement.quoteLine2') }} />
+      {/* ═══════════════════════════════════════════════════════
+          ACT 4 — PHILOSOPHY STATEMENT (dark, full-bleed)
+          "We don't make content. We engineer perception."
+          ═══════════════════════════════════════════════════════ */}
+      <section className={s.statement} aria-label="Our philosophy">
+        {!isMobile && (
+          <div className={s.statementScene} aria-hidden="true">
+            <PhilosophyDynamicScene />
           </div>
-          <div className={s.statementBody} dangerouslySetInnerHTML={{ __html: getDc('philosophy.body', 'statement.body') }} />
-          <div>
-            <Link href="/contact" className={s.btnWhite} dangerouslySetInnerHTML={{ __html: getDc('philosophy.cta', 'statement.cta') || 'Start the Conversation' }} />
-          </div>
+        )}
+
+        {/* Atmospheric orbs */}
+        <div className={s.statementOrb1} aria-hidden="true" />
+        <div className={s.statementOrb2} aria-hidden="true" />
+
+        {/* Section index */}
+        <div className={`${s.sectionIndex} ${s.sectionIndexLight}`} aria-hidden="true">
+          <span>05</span>
+          <div className={s.sectionIndexLine} />
         </div>
 
-        {/* 3D floating card visual */}
-        <div className={s.statementVisual} aria-hidden>
-          <div className={s.floatCard} data-reveal="true" data-tilt>
-            <div className={s.floatCardInner}>
-              <div className={s.floatSphere} />
-              <p className={s.floatLabel}>{getDc('philosophy.floatLabel', 'statement.floatLabel') || 'PIXELECTRO STUDIO'}</p>
-              <p className={s.floatSub}>{getDc('philosophy.floatSub', 'statement.floatSub') || 'Global Creative Force'}</p>
+        <div className={s.statementInner}>
+          {/* Left: manifesto text */}
+          <div className={s.statementText} data-reveal-left>
+            <p className={s.eyebrowLight}>
+              {getDc('philosophy.eyebrow', 'statement.eyebrow')}
+            </p>
+            <blockquote className={s.statementQuote}>
+              <span className={s.quoteLine1}
+                dangerouslySetInnerHTML={{
+                  __html: getDc('philosophy.quoteLine1', 'statement.quoteLine1')
+                }}
+              />
+              <em className={s.quoteLine2}
+                dangerouslySetInnerHTML={{
+                  __html: getDc('philosophy.quoteLine2', 'statement.quoteLine2')
+                }}
+              />
+            </blockquote>
+            <p className={s.statementBody}
+              dangerouslySetInnerHTML={{
+                __html: getDc('philosophy.body', 'statement.body')
+              }}
+            />
+            <Link
+              href="/contact"
+              className={`${s.btnWhite} magnetic`}
+              dangerouslySetInnerHTML={{
+                __html: getDc('philosophy.cta', 'statement.cta') || 'Start the Conversation'
+              }}
+            />
+          </div>
+
+          {/* Right: floating studio card */}
+          <div className={s.statementCard} data-reveal data-tilt>
+            <div className={s.floatGlobe} aria-hidden="true" />
+            <div className={s.floatCardContent}>
+              <p className={s.floatLabel}>
+                {getDc('philosophy.floatLabel', 'statement.floatLabel')}
+              </p>
+              <p className={s.floatSub}>
+                {getDc('philosophy.floatSub', 'statement.floatSub')}
+              </p>
               <div className={s.floatStats}>
-                <div><span>{dynamicContent?.stats?.projectsValue || t('stats.projectsValue')}</span><small>{dynamicContent?.stats?.projectsLabel || t('stats.projectsLabel')}</small></div>
-                <div><span>{dynamicContent?.stats?.clientsValue || t('stats.clientsValue')}</span><small>{dynamicContent?.stats?.clientsLabel || t('stats.clientsLabel')}</small></div>
-                <div><span>{dynamicContent?.stats?.disciplinesValue || '5'}</span><small>{dynamicContent?.stats?.disciplinesLabel || t('common.countries')}</small></div>
+                <div className={s.floatStat}>
+                  <span>{dynamicContent?.stats?.projectsValue || t('stats.projectsValue')}</span>
+                  <small>{t('stats.projectsLabel')}</small>
+                </div>
+                <div className={s.floatStat}>
+                  <span>{dynamicContent?.stats?.clientsValue || t('stats.clientsValue')}</span>
+                  <small>{t('stats.clientsLabel')}</small>
+                </div>
+                <div className={s.floatStat}>
+                  <span>{dynamicContent?.stats?.disciplinesValue || t('stats.disciplinesValue')}</span>
+                  <small>{t('stats.disciplinesLabel')}</small>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ══ PROCESS ══════════════════════════════════════════════════ */}
-      <section className={s.process}>
-        <ProcessDynamicScene />
-        <div className={s.processHead} data-reveal="true">
-          <div className={s.eyebrow} dangerouslySetInnerHTML={{ __html: getDc('process.eyebrow', 'process.eyebrow') }} />
-          <div className={s.sectionTitle} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <div dangerouslySetInnerHTML={{ __html: getDc('process.titleLine1', 'process.titleLine1') }} />
-            <div style={{ fontStyle: 'italic', fontWeight: 300, fontFamily: 'var(--font-cormorant)' }} dangerouslySetInnerHTML={{ __html: getDc('process.titleLine2', 'process.titleLine2') }} />
+      {/* ═══════════════════════════════════════════════════════
+          PROCESS — How We Work
+          4 steps in a diagonal tension layout
+          ═══════════════════════════════════════════════════════ */}
+      <section className={s.process} aria-label="Our process">
+        {!isMobile && (
+          <div className={s.processScene} aria-hidden="true">
+            <ProcessDynamicScene />
           </div>
+        )}
+
+        <div className={s.sectionIndex} aria-hidden="true">
+          <span>06</span>
+          <div className={s.sectionIndexLine} />
         </div>
-        <div className={s.processSteps} data-stagger-container="true">
+
+        <div className={s.processHead} data-reveal>
+          <p className={s.eyebrow}>
+            {getDc('process.eyebrow', 'process.eyebrow')}
+          </p>
+          <h2 className={s.sectionTitle}>
+            <span>{getDc('process.titleLine1', 'process.titleLine1')}</span>
+            <em className={s.titleItalic}>
+              {getDc('process.titleLine2', 'process.titleLine2')}
+            </em>
+          </h2>
+        </div>
+
+        <div className={s.processSteps} data-stagger-container>
           {[0, 1, 2, 3].map((i) => {
-            const stepNum = getDc(`process.items.${i}.num`, `process.step${i+1}Num`);
-            const stepTitle = getDc(`process.items.${i}.title`, `process.step${i+1}Title`);
-            const stepBody = getDc(`process.items.${i}.body`, `process.step${i+1}Body`);
-            if (!stepTitle || stepTitle === `process.step${i+1}Title`) return null;
+            const num   = getDc(`process.items.${i}.num`,   `process.step${i+1}Num`);
+            const title = getDc(`process.items.${i}.title`, `process.step${i+1}Title`);
+            const body  = getDc(`process.items.${i}.body`,  `process.step${i+1}Body`);
+            if (!title || title === `process.step${i+1}Title`) return null;
             return (
-              <div key={i} className={s.processStep} data-stagger-item="true" data-reveal style={{ transitionDelay: `${i * 0.1}s` }}>
-                <div className={s.stepNum} dangerouslySetInnerHTML={{ __html: stepNum }} />
-                <div className={s.stepTitle} style={{ color: 'var(--ink)' }} dangerouslySetInnerHTML={{ __html: stepTitle }} />
-                <div className={s.stepBody} style={{ color: 'var(--ink-dim)' }} dangerouslySetInnerHTML={{ __html: stepBody }} />
+              <div
+                key={i}
+                className={s.processStep}
+                data-stagger-item
+                style={{ '--stagger-delay': `${i * 0.12}s` } as React.CSSProperties}
+              >
+                <div className={s.processStepNum}
+                  dangerouslySetInnerHTML={{ __html: num }}
+                />
+                <h3 className={s.processStepTitle}
+                  dangerouslySetInnerHTML={{ __html: title }}
+                />
+                <p className={s.processStepBody}
+                  dangerouslySetInnerHTML={{ __html: body }}
+                />
+                {/* Connector line between steps */}
+                {i < 3 && <div className={s.processConnector} aria-hidden="true" />}
               </div>
             );
           })}
         </div>
       </section>
 
-      {/* ══ PROMINENT CLIENTS ══════════════════════════════════════ */}
+      {/* ═══════════════════════════════════════════════════════
+          CLIENTS — Trusted By (only if data exists)
+          Minimal grid, filter to luminosity 0
+          ═══════════════════════════════════════════════════════ */}
       {clients.length > 0 && (
-        <section className={s.clientsSection} data-reveal>
+        <section className={s.clients} data-reveal aria-label="Our clients">
           <div className={s.clientsInner}>
-            <p className={s.eyebrow} style={{ color: 'var(--blue-core)' }}>{t('clients.eyebrow')}</p>
+            <p className={s.eyebrow}>{t('clients.eyebrow')}</p>
             <div className={s.clientsGrid}>
               {clients.map(c => (
                 c.link ? (
-                  <a key={c.id} href={c.link} target="_blank" rel="noopener noreferrer" className={s.clientItem}>
-                    {c.logoUrl && <img src={c.logoUrl} alt={c.name} className={s.clientLogo} />}
-                    {!c.logoUrl && <span className={s.clientName}>{c.name}</span>}
+                  <a
+                    key={c.id}
+                    href={c.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={s.clientItem}
+                    aria-label={c.name}
+                  >
+                    {c.logoUrl
+                      ? <img src={c.logoUrl} alt={c.name} className={s.clientLogo} loading="lazy" />
+                      : <span className={s.clientName}>{c.name}</span>
+                    }
                   </a>
                 ) : (
-                  <div key={c.id} className={s.clientItem}>
-                    {c.logoUrl && <img src={c.logoUrl} alt={c.name} className={s.clientLogo} />}
-                    {!c.logoUrl && <span className={s.clientName}>{c.name}</span>}
+                  <div key={c.id} className={s.clientItem} aria-label={c.name}>
+                    {c.logoUrl
+                      ? <img src={c.logoUrl} alt={c.name} className={s.clientLogo} loading="lazy" />
+                      : <span className={s.clientName}>{c.name}</span>
+                    }
                   </div>
                 )
               ))}
@@ -506,23 +727,35 @@ export default function HomeClient({ services = [], clients = [], dynamicContent
         </section>
       )}
 
-      {/* ══ CTA FULL ═════════════════════════════════════════════════ */}
-      <section className={s.ctaSection} data-reveal>
-        <div className={s.ctaOrbs} aria-hidden>
-          <div className={s.ctaOrb1} />
-          <div className={s.ctaOrb2} />
+      {/* ═══════════════════════════════════════════════════════
+          ACT 5 — CLOSE / CTA (100dvh — echo of Act 1)
+          The site breathing out. Accent shifts warmth.
+          ═══════════════════════════════════════════════════════ */}
+      <section className={s.cta} aria-label="Get in touch">
+        <div className={s.ctaOrb1} aria-hidden="true" />
+        <div className={s.ctaOrb2} aria-hidden="true" />
+
+        <div className={s.sectionIndex} aria-hidden="true">
+          <span>07</span>
+          <div className={s.sectionIndexLine} />
         </div>
-        <div className={s.ctaInner} data-reveal="true">
+
+        <div className={s.ctaInner} data-reveal>
           <p className={s.eyebrowLight}>{t('cta.eyebrow')}</p>
           <h2 className={s.ctaTitle}>
-            {t('cta.titleLine1')}<br />
-            <em>{t('cta.titleLine2')}</em>
+            <span>{t('cta.titleLine1')}</span>
+            <em className={s.ctaTitleItalic}>{t('cta.titleLine2')}</em>
           </h2>
           <div className={s.ctaActions}>
-            <Link href="/contact" className={s.btnWhite}>
+            <Link href="/contact" className={`${s.btnWhite} magnetic`}>
               {t('common.getInTouch')}
             </Link>
-            <a href="https://wa.me/201060107536" target="_blank" rel="noopener noreferrer" className={s.btnGhostLight}>
+            <a
+              href="https://wa.me/201060107536"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={s.btnGhostLight}
+            >
               {t('common.chatOnWhatsapp')}
             </a>
           </div>

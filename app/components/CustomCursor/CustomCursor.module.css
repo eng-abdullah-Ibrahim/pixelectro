@@ -1,32 +1,55 @@
+/* ─── Spring-Physics Custom Cursor ──────────────────────────── */
+
+/* Dot: instant, precise, always at mouse position */
 .dot {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 8px;
-  height: 8px;
+  top: 0; left: 0;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: hsl(210, 90%, 55%);
+  background: var(--accent);
   pointer-events: none;
-  z-index: 9999;
+  z-index: 10000;
+  mix-blend-mode: difference;
+  transition: opacity 0.2s var(--ease-precise);
   will-change: transform;
-  transition: opacity 0.15s ease;
-  box-shadow: 0 0 8px hsl(210, 90%, 55%);
 }
 
+/* Ring: spring-delayed, reveals state changes */
 .ring {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 36px;
-  height: 36px;
+  top: 0; left: 0;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  border: 1.5px solid hsl(210, 90%, 55%);
+  border: 1px solid oklch(0.80 0.20 210 / 0.55);
   pointer-events: none;
-  z-index: 9998;
-  will-change: transform;
-  transition:
-    border-color    0.2s ease,
-    background      0.2s ease,
-    box-shadow      0.2s ease;
-  backdrop-filter: blur(0px);
+  z-index: 9999;
+  transition: scale 0.5s var(--ease-spring),
+              border-color 0.3s ease;
+  will-change: transform, scale;
+}
+
+.ring:has(.label:not(:empty)) {
+  background: oklch(0.80 0.20 210 / 0.08);
+}
+
+/* Label inside ring (for "VIEW", "OPEN" states — future enhancement) */
+.label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+@media (pointer: coarse) {
+  .dot, .ring { display: none !important; }
 }

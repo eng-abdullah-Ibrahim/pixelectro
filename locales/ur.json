@@ -12,13 +12,22 @@
     "viewAll": "سب دیکھیں",
     "backToHome": "ہوم پر واپس جائیں",
     "loading": "لوڈ ہو رہا ہے...",
-    "error": "کچھ غلط ہو گیا"
+    "error": "کچھ غلط ہو گیا",
+    "selectLanguage": "Select Language",
+    "skipToContent": "Skip to content",
+    "noProjectsYet": "No projects have been added yet.",
+    "likeThisProject": "Like this project",
+    "alreadyLiked": "Already liked",
+    "totalViews": "Total views",
+    "shareThisProject": "Share this project",
+    "copied": "Copied!",
+    "messageSent": "Thank you! Your message has been sent successfully."
   },
   "hero": {
     "badge": "اسکندریہ · عالمی تخلیقی اسٹوڈیو · قائم شدہ 2023",
     "titleLine1": "ہم بناتے ہیں",
     "titleLine2": "سنیماٹک",
-    "titleLine3Prefix": "ڈیجیটাল ",
+    "titleLine3Prefix": "ڈیجیٹل ",
     "titleLine3Highlight": "دنیا۔",
     "sub": "ایک عالمی اشتہاری اور تخلیقی اسٹوڈیو جو ڈیزائن، ٹیکنالوجی، اور ثقافت کے سنگم پر کام کرتا ہے۔ ہم باصلاحیت برانڈز کے لیے ڈیجیٹل فلیگ شپس ڈیزائن کرتے ہیں۔",
     "scroll": "دریافت کرنے کے لیے اسکرول کریں"
@@ -197,5 +206,11 @@
     "ui-ux": "UI/UX ڈیزائن",
     "social-media": "سوشل میڈیا",
     "video-production": "ویڈیو پروڈکشن"
+  },
+  "brand": {
+    "forAdvertising": "FOR ADVERTISING",
+    "calibrating": "Calibrating the electric experience",
+    "location": "Alexandria, Egypt · Global Reach",
+    "builtWithLocation": "Alexandria, Egypt"
   }
 }

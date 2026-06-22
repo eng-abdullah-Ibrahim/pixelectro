@@ -83,12 +83,13 @@ export function TranslationProvider({
     document.documentElement.setAttribute('data-lang', code);
   }, []);
 
-  // On mount: sync with cookie if different from server-passed initialLocale
   useEffect(() => {
     const match = document.cookie.match(/(?:^|;\s*)NEXT_LOCALE=([^;]+)/);
     const cookieLang = match ? match[1] : null;
     if (cookieLang && cookieLang !== locale) {
       setLocale(cookieLang);
+    } else if (!cookieLang) {
+      document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=${60 * 60 * 24 * 365}`;
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

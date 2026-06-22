@@ -12,7 +12,16 @@
     "viewAll": "모두 보기",
     "backToHome": "홈으로 돌아가기",
     "loading": "로딩 중...",
-    "error": "문제가 발생했습니다"
+    "error": "문제가 발생했습니다",
+    "selectLanguage": "Select Language",
+    "skipToContent": "Skip to content",
+    "noProjectsYet": "No projects have been added yet.",
+    "likeThisProject": "Like this project",
+    "alreadyLiked": "Already liked",
+    "totalViews": "Total views",
+    "shareThisProject": "Share this project",
+    "copied": "Copied!",
+    "messageSent": "Thank you! Your message has been sent successfully."
   },
   "hero": {
     "badge": "알렉산드리아 · 글로벌 크리에이티브 스튜디오 · 2023년 설립",
@@ -197,5 +206,11 @@
     "ui-ux": "UI/UX 디자인",
     "social-media": "소셜 미디어",
     "video-production": "비디오 제작"
+  },
+  "brand": {
+    "forAdvertising": "FOR ADVERTISING",
+    "calibrating": "Calibrating the electric experience",
+    "location": "Alexandria, Egypt · Global Reach",
+    "builtWithLocation": "Alexandria, Egypt"
   }
 }

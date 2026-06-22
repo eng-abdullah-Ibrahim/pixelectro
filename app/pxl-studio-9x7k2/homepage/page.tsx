@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Sparkles, LayoutDashboard, FileText, Target, Flag, Zap, Box, Languages, Save, Loader2, Image as ImageIcon, Globe, RotateCcw, BarChart } from 'lucide-react';
+import { Sparkles, LayoutDashboard, FileText, Target, Flag, Zap, Box, Languages, Save, Loader2, Image as ImageIcon, Globe, RotateCcw, BarChart, Undo2, Redo2 } from 'lucide-react';
 import RichTextEditor from '../components/RichTextEditor';
+import { useUndoRedo } from '../../hooks/useUndoRedo';
 import enData from '../../../locales/en.json';
 
 const SCENES = [
@@ -69,6 +70,8 @@ export default function HomepageEditor() {
     }
   });
 
+  const { saveSnapshot, undo, redo, canUndo, canRedo, history, currentIndex } = useUndoRedo(data);
+
   const loadData = () => {
     setLoading(true);
     fetch('/api/admin/homepage')
@@ -85,6 +88,8 @@ export default function HomepageEditor() {
           };
           setData(loadedData);
           setInitialData(JSON.parse(JSON.stringify(loadedData)));
+          // Init snapshot with loaded data
+          saveSnapshot(loadedData);
         }
         setLoading(false);
       });
@@ -92,6 +97,43 @@ export default function HomepageEditor() {
 
   useEffect(() => {
     loadData();
+  }, []);
+
+  const saveToDatabase = async (payload: any, silent = false) => {
+    try {
+      const res = await fetch('/api/admin/homepage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        if (!silent) setInitialData(JSON.parse(JSON.stringify(payload)));
+        return true;
+      }
+    } catch (e) {}
+    return false;
+  };
+
+  // Listen to Global Undo/Redo events
+  useEffect(() => {
+    const handleUndo = async (e: any) => {
+      const stateToRestore = e.detail;
+      setData(stateToRestore);
+      await saveToDatabase(stateToRestore, true);
+      alert('Undo: Restored previous snapshot to database.');
+    };
+    const handleRedo = async (e: any) => {
+      const stateToRestore = e.detail;
+      setData(stateToRestore);
+      await saveToDatabase(stateToRestore, true);
+      alert('Redo: Restored next snapshot to database.');
+    };
+    window.addEventListener('global-undo', handleUndo);
+    window.addEventListener('global-redo', handleRedo);
+    return () => {
+      window.removeEventListener('global-undo', handleUndo);
+      window.removeEventListener('global-redo', handleRedo);
+    };
   }, []);
 
   const handleSave = async () => {
@@ -115,14 +157,10 @@ export default function HomepageEditor() {
       }
 
       // 2. Save everything to DB
-      const res = await fetch('/api/admin/homepage', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(finalData)
-      });
+      const success = await saveToDatabase(finalData);
       
-      if (res.ok) {
-        setInitialData(JSON.parse(JSON.stringify(finalData)));
+      if (success) {
+        saveSnapshot(finalData); // Take a snapshot POST-SAVE
         alert('Saved & Translated to 15 languages successfully! 🎉');
       } else {
         alert('Failed to save changes.');
@@ -131,6 +169,34 @@ export default function HomepageEditor() {
       alert('Error saving changes.');
     }
     setSaving(false);
+  };
+
+  const handleRestoreAll = () => {
+    if (confirm("Restore ALL fields to default English definitions? This will overwrite everything.")) {
+      const defaultState = {
+        ...data,
+        content: { en: defaultContentEn, ar: defaultContentEn }
+      };
+      setData(defaultState);
+    }
+  };
+
+  const getNestedValue = (obj: Record<string, unknown>, path: string[]): unknown => {
+    return path.reduce<unknown>((acc, key) => {
+      if (acc && typeof acc === 'object' && key in (acc as Record<string, unknown>)) {
+        return (acc as Record<string, unknown>)[key];
+      }
+      return undefined;
+    }, obj);
+  };
+
+  const handleRestoreField = (englishPath: string[]) => {
+    if (confirm("Restore this specific field to default?")) {
+      const defaultVal = getNestedValue({ content: { en: defaultContentEn } }, englishPath);
+      if (typeof defaultVal === 'string') {
+        updateField(englishPath, defaultVal);
+      }
+    }
   };
 
   const handleDiscard = () => {
@@ -198,7 +264,16 @@ export default function HomepageEditor() {
 
     return (
       <div className="group relative bg-white dark:bg-[#1A1F2E] border border-gray-200 dark:border-gray-800 rounded-2xl p-6 hover:border-blue-300 dark:hover:border-blue-700 transition-colors duration-200 shadow-sm">
-        <label className="block text-base font-bold text-gray-800 dark:text-gray-200 mb-4">{label}</label>
+        <div className="flex justify-between items-center mb-4">
+          <label className="block text-base font-bold text-gray-800 dark:text-gray-200">{label}</label>
+          <button 
+            onClick={() => handleRestoreField(englishPath)}
+            title="Restore field to default"
+            className="text-xs flex items-center gap-1 text-gray-400 hover:text-blue-500 transition-colors"
+          >
+            <RotateCcw className="w-3 h-3" /> Restore
+          </button>
+        </div>
         <div className="w-full bg-white dark:bg-[#0D1117] border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-inner min-h-[120px]">
            <RichTextEditor 
              content={value} 
@@ -223,24 +298,52 @@ export default function HomepageEditor() {
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Design your digital masterpiece with dynamic 3D scenes and AI.</p>
         </div>
         
-        <div className="flex items-center gap-4 w-full md:w-auto">
-          {/* Discard Button */}
+        <div className="flex flex-wrap items-center gap-6 w-full md:w-auto">
+          {/* Restore All Button */}
           <button
-            onClick={handleDiscard}
-            disabled={saving}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-lg font-bold bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-300 transition-colors shadow-sm disabled:opacity-50"
+            onClick={handleRestoreAll}
+            className="btnGhost"
+            style={{ borderRadius: '1rem', padding: '12px 24px', fontWeight: 'bold' }}
           >
-            <RotateCcw className="w-4 h-4" /> Unsave
+            Reset All
           </button>
 
-          {/* Save Button */}
+          {/* Undo Button */}
+          <button
+            onClick={() => {
+              undo();
+              window.dispatchEvent(new CustomEvent('global-undo'));
+            }}
+            disabled={!canUndo}
+            title="Undo (Ctrl+Z)"
+            className="btnGhost"
+            style={{ borderRadius: '1rem', padding: '12px 24px', fontWeight: 'bold' }}
+          >
+            Undo
+          </button>
+
+          {/* Redo Button */}
+          <button
+            onClick={() => {
+              redo();
+              window.dispatchEvent(new CustomEvent('global-redo'));
+            }}
+            disabled={!canRedo}
+            title="Redo (Ctrl+Y)"
+            className="btnGhost"
+            style={{ borderRadius: '1rem', padding: '12px 24px', fontWeight: 'bold' }}
+          >
+            Redo
+          </button>
+
+          {/* Clean Save Button */}
           <button
             onClick={handleSave}
             disabled={saving}
-            className="btnPrimary flex items-center gap-2 px-8 py-2.5"
+            className="btnPrimary"
+            style={{ borderRadius: '1rem', padding: '12px 32px', fontWeight: 'bold' }}
           >
-            {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-            {saving ? 'Saving & Translating...' : 'Save'}
+            {saving ? 'Saving...' : 'Save & Translate'}
           </button>
         </div>
       </div>
@@ -250,24 +353,21 @@ export default function HomepageEditor() {
         {/* ─── SIDEBAR NAVIGATION ─── */}
         <div className="w-full lg:w-72 flex-shrink-0 space-y-2 bg-white dark:bg-[#1A1F2E] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm h-fit sticky top-36">
           <h3 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-4 px-3">Sections</h3>
-          {TABS.map(tab => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-left text-[15px] font-bold transition-all shadow-sm ${
-                  isActive 
-                    ? 'bg-blue-600 text-white border-transparent transform scale-[1.02]' 
-                    : 'bg-gray-50 dark:bg-[#23293B] text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700'
-                }`}
-              >
-                <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-400 dark:text-gray-500'}`} />
-                {tab.label}
-              </button>
-            );
-          })}
+          <div className="space-y-4">
+            {TABS.map(tab => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={isActive ? 'btnPrimary' : 'btnGhost'}
+                  style={{ width: '100%', borderRadius: '1rem', padding: '14px 20px', fontWeight: 'bold', justifyContent: 'center' }}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* ─── EDITOR AREA ─── */}

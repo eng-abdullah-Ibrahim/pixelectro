@@ -12,7 +12,16 @@
     "viewAll": "Vedi tutti",
     "backToHome": "Torna alla Home",
     "loading": "Caricamento...",
-    "error": "Qualcosa è andato storto"
+    "error": "Qualcosa è andato storto",
+    "selectLanguage": "Select Language",
+    "skipToContent": "Skip to content",
+    "noProjectsYet": "No projects have been added yet.",
+    "likeThisProject": "Like this project",
+    "alreadyLiked": "Already liked",
+    "totalViews": "Total views",
+    "shareThisProject": "Share this project",
+    "copied": "Copied!",
+    "messageSent": "Thank you! Your message has been sent successfully."
   },
   "hero": {
     "badge": "Alessandria · Studio Creativo Globale · Est. 2023",
@@ -197,5 +206,11 @@
     "ui-ux": "Design UI/UX",
     "social-media": "Social Media",
     "video-production": "Produzione Video"
+  },
+  "brand": {
+    "forAdvertising": "FOR ADVERTISING",
+    "calibrating": "Calibrating the electric experience",
+    "location": "Alexandria, Egypt · Global Reach",
+    "builtWithLocation": "Alexandria, Egypt"
   }
 }

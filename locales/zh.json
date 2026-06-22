@@ -12,7 +12,16 @@
     "viewAll": "查看全部",
     "backToHome": "返回首页",
     "loading": "加载中...",
-    "error": "出了些问题"
+    "error": "出了些问题",
+    "selectLanguage": "选择语言",
+    "skipToContent": "跳转到内容",
+    "noProjectsYet": "暂无项目添加。",
+    "likeThisProject": "喜欢这个项目",
+    "alreadyLiked": "已点赞",
+    "totalViews": "总浏览量",
+    "shareThisProject": "分享这个项目",
+    "copied": "已复制！",
+    "messageSent": "谢谢！您的消息已成功发送。"
   },
   "hero": {
     "badge": "亚历山大港 · 全球创意工作室 · 成立于2023年",
@@ -197,5 +206,11 @@
     "ui-ux": "UI/UX 设计",
     "social-media": "社交媒体",
     "video-production": "视频制作"
+  },
+  "brand": {
+    "forAdvertising": "广告",
+    "calibrating": "校准电子体验",
+    "location": "埃及，亚历山大 · 全球业务",
+    "builtWithLocation": "埃及，亚历山大"
   }
 }

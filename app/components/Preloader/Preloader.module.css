@@ -1,74 +1,178 @@
-.preloader {
+/* ─── Cinematic Preloader ─────────────────────────────────────── */
+
+.wrap {
   position: fixed;
   inset: 0;
-  background: var(--bg);
-  z-index: 9999;
+  z-index: 10000;
+  overflow: hidden;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 3rem 5%;
+  align-items: center;
+  justify-content: center;
 }
 
-.gridOverlay {
+/* ── Split curtain panels (exit animation) ──────────────────── */
+.curtain {
   position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(21, 101, 216, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(21, 101, 216, 0.03) 1px, transparent 1px);
-  background-size: 80px 80px;
-  pointer-events: none;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  background: var(--lum-void);
+  will-change: transform;
+  z-index: 1;
 }
 
-.content {
+.curtainLeft  { left: 0; }
+.curtainRight { right: 0; }
+
+/* ── Inner content ─────────────────────────────────────────── */
+.inner {
   position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  gap: 2.5rem;
+  align-items: flex-start;
+  gap: var(--space-6);
+  padding: 0 var(--gutter);
+  width: 100%;
+  max-width: 900px;
 }
 
-.glitchText {
+/* ── Logo image — brand reveal anchor ───────────────────────── */
+.logoWrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.logoImg {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  object-fit: cover;
+  display: block;
+  box-shadow:
+    0 0 32px oklch(0.56 0.22 250 / 0.50),
+    0 4px 20px oklch(0.28 0.18 268 / 0.60);
+  animation: logoPulse 2s ease-in-out infinite;
+}
+
+@keyframes logoPulse {
+  0%, 100% { box-shadow: 0 0 32px oklch(0.56 0.22 250 / 0.50), 0 4px 20px oklch(0.28 0.18 268 / 0.60); }
+  50%       { box-shadow: 0 0 52px oklch(0.56 0.22 250 / 0.80), 0 6px 30px oklch(0.28 0.18 268 / 0.80); }
+}
+
+.logoLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.logoName {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink);
+  line-height: 1.1;
+}
+
+.logoSub {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(0.50rem, 1vw, 0.62rem);
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  line-height: 1;
+}
+
+/* ── Counter — the primary visual mass ──────────────────────── */
+.counter {
   font-family: var(--font-display);
+  font-size: clamp(5rem, 20vw, 16rem);
   font-weight: 300;
-  font-style: italic;
-  font-size: clamp(3rem, 7vw, 6rem);
-  letter-spacing: -0.02em;
-  background: linear-gradient(135deg, var(--blue-royal), var(--blue-core));
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  /* Split tone: cool shadows, warm highlights */
+  background: linear-gradient(
+    160deg,
+    var(--lum-cloud) 0%,
+    var(--ink) 40%,
+    var(--lum-mid) 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  will-change: opacity, transform;
+  margin-left: -0.04em; /* optical alignment */
 }
 
-.loadingBarContainer {
-  width: 280px;
-  height: 2px;
-  background: rgba(21, 101, 216, 0.1);
+/* ── Tagline ─────────────────────────────────────────────────── */
+.tagline {
+  font-family: var(--font-mono);
+  font-size: clamp(0.6rem, 1.2vw, 0.75rem);
+  color: var(--ink-faint);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  will-change: opacity, transform;
+}
+
+/* ── Progress bar ────────────────────────────────────────────── */
+.barTrack {
+  width: min(400px, 60vw);
+  height: 1px;
+  background: oklch(0.93 0.010 88 / 0.10);
   position: relative;
   overflow: hidden;
-  border-radius: 2px;
 }
 
-.loadingBar {
-  height: 100%;
-  background: var(--blue-core);
-  transition: width 0.08s linear;
+.bar {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--accent), oklch(0.68 0.22 250 / 0.5));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.1s linear;
+  will-change: transform;
+  box-shadow: 0 0 12px var(--accent-glow);
 }
 
-.percentage {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.2em;
-  color: var(--blue-royal);
-  font-weight: 600;
+/* ── Corner markers ──────────────────────────────────────────── */
+.corner {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  z-index: 3;
+  opacity: 0.3;
 }
 
-.statusText {
-  font-family: var(--font-mono);
-  font-size: 0.55rem;
-  color: var(--ink-faint);
-  text-transform: uppercase;
-  letter-spacing: 0.3em;
+.corner::before,
+.corner::after {
+  content: '';
+  position: absolute;
+  background: var(--accent);
+}
+
+.corner::before { width: 100%; height: 1px; top: 0; }
+.corner::after  { width: 1px; height: 100%; }
+
+.tl { top: var(--space-6); left: var(--space-6); }
+.tl::after  { left: 0; }
+
+.tr { top: var(--space-6); right: var(--space-6); }
+.tr::before { right: 0; left: auto; }
+.tr::after  { right: 0; left: auto; }
+
+.bl { bottom: var(--space-6); left: var(--space-6); }
+.bl::before { bottom: 0; top: auto; }
+.bl::after  { left: 0; bottom: 0; top: auto; }
+
+.br { bottom: var(--space-6); right: var(--space-6); }
+.br::before { bottom: 0; top: auto; right: 0; left: auto; }
+.br::after  { right: 0; left: auto; bottom: 0; top: auto; }
+
+@media (max-width: 640px) {
+  .counter { font-size: clamp(4rem, 22vw, 8rem); }
 }

@@ -12,7 +12,16 @@
     "viewAll": "Смотреть все",
     "backToHome": "На главную",
     "loading": "Загрузка...",
-    "error": "Что-то пошло не так"
+    "error": "Что-то пошло не так",
+    "selectLanguage": "Select Language",
+    "skipToContent": "Skip to content",
+    "noProjectsYet": "No projects have been added yet.",
+    "likeThisProject": "Like this project",
+    "alreadyLiked": "Already liked",
+    "totalViews": "Total views",
+    "shareThisProject": "Share this project",
+    "copied": "Copied!",
+    "messageSent": "Thank you! Your message has been sent successfully."
   },
   "hero": {
     "badge": "Александрия · Глобальная креативная студия · Осн. в 2023 г.",
@@ -197,5 +206,11 @@
     "ui-ux": "UI/UX дизайн",
     "social-media": "Социальные сети",
     "video-production": "Видеопроизводство"
+  },
+  "brand": {
+    "forAdvertising": "ДЛЯ РЕКЛАМЫ",
+    "calibrating": "Калибровка электрического опыта",
+    "location": "Александрия, Египет · Глобальный охват",
+    "builtWithLocation": "Александрия, Египет"
   }
 }

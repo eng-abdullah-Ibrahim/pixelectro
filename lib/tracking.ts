@@ -16,7 +16,11 @@ export function getVisitorId(): string {
   if (typeof window === 'undefined') return '';
   let vid = localStorage.getItem('pxl_vid');
   if (!vid) {
-    vid = crypto.randomUUID();
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      vid = crypto.randomUUID();
+    } else {
+      vid = 'v_' + Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
+    }
     localStorage.setItem('pxl_vid', vid);
   }
   return vid;

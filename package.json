@@ -3,10 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"next dev\" \"npm run sync:watch\"",
     "build": "npx prisma generate && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "sync:pull": "node scripts/sync-pull.js",
+    "sync:push": "tsx scripts/sync-push.ts",
+    "sync:full": "tsx scripts/sync-full.ts",
+    "sync:watch": "tsx scripts/sync-watch.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
@@ -21,6 +25,7 @@
     "@tiptap/react": "^2.10.3",
     "@tiptap/starter-kit": "^2.10.3",
     "@vercel/analytics": "^2.0.1",
+    "chokidar": "^5.0.0",
     "cloudinary": "^2.5.1",
     "cookies-next": "^4.3.0",
     "geist": "^1.7.1",
@@ -44,6 +49,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/three": "^0.184.1",
+    "concurrently": "^10.0.3",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "prisma": "^5.22.0",

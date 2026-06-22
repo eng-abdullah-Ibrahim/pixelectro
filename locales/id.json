@@ -12,7 +12,16 @@
     "viewAll": "Lihat Semua",
     "backToHome": "Kembali ke Beranda",
     "loading": "Memuat...",
-    "error": "Terjadi kesalahan"
+    "error": "Terjadi kesalahan",
+    "selectLanguage": "Select Language",
+    "skipToContent": "Skip to content",
+    "noProjectsYet": "No projects have been added yet.",
+    "likeThisProject": "Like this project",
+    "alreadyLiked": "Already liked",
+    "totalViews": "Total views",
+    "shareThisProject": "Share this project",
+    "copied": "Copied!",
+    "messageSent": "Thank you! Your message has been sent successfully."
   },
   "hero": {
     "badge": "Alexandria · Studio Kreatif Global · Est. 2023",
@@ -197,5 +206,11 @@
     "ui-ux": "Desain UI/UX",
     "social-media": "Media Sosial",
     "video-production": "Produksi Video"
+  },
+  "brand": {
+    "forAdvertising": "FOR ADVERTISING",
+    "calibrating": "Calibrating the electric experience",
+    "location": "Alexandria, Egypt · Global Reach",
+    "builtWithLocation": "Alexandria, Egypt"
   }
 }

@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
-import { Space_Grotesk, Cormorant_Garamond, JetBrains_Mono, Cairo } from 'next/font/google';
+import { Space_Grotesk, Cormorant_Garamond, JetBrains_Mono } from 'next/font/google';
+import localFont from 'next/font/local';
 import './globals.css';
 import ClientLayoutWrapper from './ClientLayoutWrapper';
 import prisma from '@/lib/prisma';
 import { Analytics } from '@vercel/analytics/react';
-import { cookies } from 'next/headers';
+import { getLanguage } from '@/lib/translationHelper';
 import { TranslationProvider } from './components/TranslationProvider';
 
 const spaceGrotesk = Space_Grotesk({
@@ -29,9 +30,19 @@ const jetbrains = JetBrains_Mono({
   display: 'swap',
 });
 
-const cairo = Cairo({
-  weight: ['300', '400', '500', '600', '700'],
-  subsets: ['arabic', 'latin'],
+const lyonArabic = localFont({
+  src: [
+    { path: './fonts/COMM - Lyon Arabic Display Light.otf', weight: '300', style: 'normal' },
+    { path: './fonts/COMM - Lyon Arabic Display Regular.otf', weight: '400', style: 'normal' },
+    { path: './fonts/COMM - Lyon Arabic Display Medium.otf', weight: '500', style: 'normal' },
+    { path: './fonts/COMM - Lyon Arabic Display Bold.otf', weight: '700', style: 'normal' },
+    { path: './fonts/COMM - Lyon Arabic Display Black.otf', weight: '900', style: 'normal' },
+    { path: './fonts/COMM - Lyon Arabic Slanted Display Light.otf', weight: '300', style: 'italic' },
+    { path: './fonts/COMM - Lyon Arabic Slanted Display Regular.otf', weight: '400', style: 'italic' },
+    { path: './fonts/COMM - Lyon Arabic Slanted Display Medium.otf', weight: '500', style: 'italic' },
+    { path: './fonts/COMM - Lyon Arabic Slanted Display Bold.otf', weight: '700', style: 'italic' },
+    { path: './fonts/COMM - Lyon Arabic Slanted Display Black.otf', weight: '900', style: 'italic' }
+  ],
   variable: '--font-arabic',
   display: 'swap',
 });
@@ -53,8 +64,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     where: { isActive: true },
     orderBy: { order: 'asc' } 
   });
-  const cookieStore = await cookies();
-  const locale = cookieStore.get('NEXT_LOCALE')?.value || 'en';
+  const locale = await getLanguage();
   const RTL = ['ar', 'ur', 'he', 'fa'];
   const dir = RTL.includes(locale) ? 'rtl' : 'ltr';
 
@@ -67,7 +77,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang={locale} dir={dir} data-lang={locale}>
-      <body className={`${spaceGrotesk.variable} ${cormorant.variable} ${jetbrains.variable} ${cairo.variable}`}>
+      <body className={`${spaceGrotesk.variable} ${cormorant.variable} ${jetbrains.variable} ${lyonArabic.variable}`}>
+        <div className="noise-overlay" aria-hidden="true" />
         <TranslationProvider initialLocale={locale}>
           <ClientLayoutWrapper links={links}>{children}</ClientLayoutWrapper>
         </TranslationProvider>
