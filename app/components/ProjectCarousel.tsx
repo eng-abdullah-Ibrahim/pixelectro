@@ -121,9 +121,12 @@ export default function ProjectCarousel({ media, title }: { media: MediaItem[], 
                 overflow: 'hidden',
                 transition: 'box-shadow 0.6s ease'
               }}>
-                {m.type === 'IMAGE' ? (
-                  <img src={m.url} alt={title} style={{ width: '100%', maxWidth: '70%', height: 'auto', maxHeight: '56vh', margin: '0 auto', objectFit: 'contain', pointerEvents: 'none', display: 'block' }} />
-                ) : (
+                {m.type === 'IMAGE' ? (() => {
+                  const optimizedUrl = m.url.includes('cloudinary.com/') && m.url.includes('/upload/') 
+                    ? m.url.replace('/upload/', '/upload/f_auto,q_auto,w_800/') 
+                    : m.url;
+                  return <img src={optimizedUrl} alt={title} loading={isActive || isNext || isPrev ? "eager" : "lazy"} style={{ width: '100%', maxWidth: '70%', height: 'auto', maxHeight: '56vh', margin: '0 auto', objectFit: 'contain', pointerEvents: 'none', display: 'block' }} />;
+                })() : (
                   <video src={m.url} style={{ width: '100%', maxWidth: '70%', height: 'auto', maxHeight: '56vh', margin: '0 auto', objectFit: 'contain', pointerEvents: 'none', display: 'block' }} muted loop playsInline autoPlay />
                 )}
               </div>

@@ -74,13 +74,16 @@ export default function Lightbox({ items, initialIndex, onClose }: { items: Medi
         maxWidth: '92vw', maxHeight: '88dvh',
         position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center',
       }} onClick={(e) => e.stopPropagation()}>
-        {currentMedia.type === 'IMAGE' ? (
-          <img src={currentMedia.url} alt="Enlarged" style={{
+        {currentMedia.type === 'IMAGE' ? (() => {
+          const optimizedUrl = currentMedia.url.includes('cloudinary.com/') && currentMedia.url.includes('/upload/') 
+            ? currentMedia.url.replace('/upload/', '/upload/f_auto,q_auto,w_1600/') 
+            : currentMedia.url;
+          return <img src={optimizedUrl} alt="Enlarged" style={{
             maxWidth: '100%', maxHeight: '88dvh',
             objectFit: 'contain', userSelect: 'none',
             borderRadius: 12,
-          }} />
-        ) : (
+          }} />;
+        })() : (
           <video src={currentMedia.url} controls controlsList="nodownload" autoPlay style={{
             maxWidth: '100%', maxHeight: '88dvh', outline: 'none', borderRadius: 12,
           }} />
