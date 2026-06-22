@@ -22,7 +22,7 @@ async function generateDescription(topic: string, type: 'page' | 'project') {
   try {
     const prompt = type === 'page' 
       ? `Write a professional, catchy English description (exactly 1 sentence) for a creative agency's service page titled "${topic}". Return only the description text.`
-      : `Write a captivating English description (maximum 10 words, just half a sentence) for a creative project titled "${topic}". Focus on the brand broadly. Return only the description text.`;
+      : `Write a captivating English description (exactly 1 continuous sentence, around 15-25 words) for a creative project titled "${topic}". Focus on the brand broadly. Return only the description text.`;
     
     const result = await model.generateContent(prompt);
     return result.response.text().trim();

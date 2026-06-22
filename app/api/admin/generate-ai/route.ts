@@ -77,12 +77,12 @@ export async function POST(req: Request) {
     let finalPrompt = "";
     
     if (projectId) {
-      finalPrompt = `You are an expert marketing copywriter for Pixelectro. Read the project name "${fetchTitle || 'Unknown Project'}", category "${fetchCategory || 'Creative Work'}". 
-Analyze the attached visual snapshots, which are just a few examples of the work. Write a highly engaging, ultra-short catchphrase (maximum 10 words, just half a sentence) about the brand in general.
+      finalPrompt = `You are an expert marketing copywriter for Pixelectro. Read the project name "${fetchTitle || 'Unknown Project'}". 
+Analyze the attached visual snapshots, which are examples of the work. Write a highly engaging, professional description of exactly 1 continuous sentence (around 15 to 25 words) about the brand in general.
 CRITICAL RULES:
 1. Output the description in ENGLISH ONLY.
-2. Must be under 10 words. Extremely concise.
-3. Talk about the brand broadly based on the aesthetic style, do NOT describe the specific contents or layout of the provided images.
+2. Must be exactly 1 continuous sentence. Not too short, not too long.
+3. Base your description heavily on the aesthetic style and vibe of the provided images, but talk about the brand broadly (do NOT describe the specific contents or layout of the images).
 4. DO NOT output any conversational text, introductions, or explanations.
 5. DO NOT use any markdown formatting, asterisks (*), backticks (\`), or bold text. Just plain text.`;
     } else if (serviceId) {
