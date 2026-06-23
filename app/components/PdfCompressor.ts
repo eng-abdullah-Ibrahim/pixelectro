@@ -30,11 +30,10 @@ export async function compressPdf(file: File, quality = 0.6, scale = 1.5): Promi
           canvas.width = viewport.width;
           
           // Render page to canvas
-          // @ts-ignore - TS types for pdfjs-dist mismatch with runtime
           await page.render({
             canvasContext: context,
             viewport: viewport
-          }).promise;
+          } as any).promise;
           
           // Convert canvas to JPEG data URL
           const imgData = canvas.toDataURL('image/jpeg', quality);
