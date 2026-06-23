@@ -62,9 +62,11 @@ export async function GET(request: Request) {
         },
       };
 
-      // For project-specific analytics, filter by targetId for interaction events
-      // but keep PAGE_VIEW and CATEGORY_VIEW global (or targetId = projectId for PROJECT_VIEW)
-      if (projectId) {
+      // For project or media-specific analytics, filter by targetId for interaction events
+      const mediaId = searchParams.get('mediaId');
+      if (mediaId) {
+        whereClause.targetId = mediaId;
+      } else if (projectId) {
         whereClause.targetId = projectId;
       }
 
@@ -81,6 +83,9 @@ export async function GET(request: Request) {
         EMAIL_CLICK: 0,
         PROJECT_LIKE: 0,
         PROJECT_SHARE: 0,
+        MEDIA_VIEW: 0,
+        MEDIA_LIKE: 0,
+        MEDIA_SHARE: 0,
       });
 
       type TotalsType = ReturnType<typeof emptyTotals>;

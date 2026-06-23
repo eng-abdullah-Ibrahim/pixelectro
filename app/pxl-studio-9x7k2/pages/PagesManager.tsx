@@ -54,6 +54,7 @@ export default function PagesManager({ initialPages }: { initialPages: ServicePa
       excerpt: fd.get("excerpt") as string,
       scene: fd.get("scene") as string,
       icon: fd.get("icon") as string,
+      contentType: fd.get("contentType") as string,
       homeImage: fd.get("homeImage") as string,
       homeScene: fd.get("homeScene") as string
     });
@@ -141,6 +142,13 @@ export default function PagesManager({ initialPages }: { initialPages: ServicePa
                   {AVAILABLE_SCENES.map(s => (
                     <option key={s} value={s}>{s.replace('Scene', '')}</option>
                   ))}
+                </select>
+              </div>
+              <div className="field">
+                <label className="label">Content Type *</label>
+                <select name="contentType" className="select" required defaultValue="MEDIA">
+                  <option value="MEDIA">🖼️ Images & Videos (Carousel)</option>
+                  <option value="PDF_BOOK">📚 PDF Book (3D Flipbook)</option>
                 </select>
               </div>
               <div className="field">

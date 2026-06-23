@@ -50,6 +50,27 @@ export async function deleteMediaItem(mediaId: string, projectId: string) {
   revalidatePath(`/`);
 }
 
+export async function updateMediaCover(mediaId: string, projectId: string, coverImageUrl: string) {
+  await prisma.projectMedia.update({
+    where: { id: mediaId },
+    data: { coverImage: coverImageUrl }
+  });
+  
+  revalidatePath(`/pxl-studio-9x7k2/projects/${projectId}/edit`);
+}
+
+export async function updateMediaStats(mediaId: string, projectId: string, stats: { fakeLikes: number, fakeViews: number, fakeShares: number }) {
+  await prisma.projectMedia.update({
+    where: { id: mediaId },
+    data: {
+      fakeLikes: stats.fakeLikes,
+      fakeViews: stats.fakeViews,
+      fakeShares: stats.fakeShares
+    }
+  });
+  revalidatePath(`/pxl-studio-9x7k2/projects/${projectId}/edit`);
+}
+
 export async function uploadNewMedia(projectId: string, formData: FormData) {
   const mediaFiles = formData.getAll("mediaFiles") as File[];
   const mediaItems: { url: string; type: string; projectId: string; order: number }[] = [];

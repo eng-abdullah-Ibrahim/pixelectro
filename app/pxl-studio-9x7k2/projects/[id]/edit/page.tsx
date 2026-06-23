@@ -10,12 +10,16 @@ export default async function EditProjectPage({ params }: { params: Promise<{ id
 
   const project = await prisma.project.findUnique({
     where: { id },
-    include: { media: { orderBy: { order: "asc" } } },
+    include: { 
+      media: { orderBy: { order: "asc" } },
+      category: { include: { servicePage: true } }
+    },
   });
 
   if (!project) return notFound();
 
   const categories = await prisma.category.findMany({ orderBy: { name: "asc" } });
+  const contentType = project.category.servicePage.contentType;
 
   return (
     <>
@@ -31,7 +35,7 @@ export default async function EditProjectPage({ params }: { params: Promise<{ id
 
       <div className="card">
         <div className="cardBody">
-          <MediaManager projectId={project.id} initialMedia={project.media} />
+          <MediaManager projectId={project.id} initialMedia={project.media} contentType={contentType} />
         </div>
       </div>
     </>

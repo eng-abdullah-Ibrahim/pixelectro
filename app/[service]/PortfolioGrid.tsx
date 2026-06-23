@@ -51,8 +51,9 @@ function getLocalized(obj: any, field: string, locale: string, fallback: string)
 
 import ProjectCard from '../components/ProjectCard';
 import ProjectViewerModal from '../components/ProjectViewerModal';
+import PdfProjectSlider from '../components/PdfProjectSlider';
 
-export default function PortfolioGrid({ title, description, categories, sceneIdentifier, serviceSlug, allTranslations }: { title: string, description: string | null, categories: Category[], sceneIdentifier: string, serviceSlug: string, allTranslations?: any }) {
+export default function PortfolioGrid({ title, description, categories, sceneIdentifier, serviceSlug, contentType, allTranslations }: { title: string, description: string | null, categories: Category[], sceneIdentifier: string, serviceSlug: string, contentType?: string, allTranslations?: any }) {
   const { locale, t } = useTranslation();
   const activeCategories = categories.filter(c => c.projects.length > 0);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -106,19 +107,33 @@ export default function PortfolioGrid({ title, description, categories, sceneIde
               return (
                 <div key={cat.id} className={styles.categoryBlock} style={{ marginBottom: '80px' }}>
                   <h2 className={styles.categoryTitle} style={{ marginBottom: '30px' }}>{catName}</h2>
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-                    gap: '24px'
-                  }}>
-                    {cat.projects.map(project => (
-                      <ProjectCard 
-                        key={project.id} 
-                        project={project} 
-                        onClick={() => setSelectedProject(project)} 
-                      />
-                    ))}
-                  </div>
+                  
+                  {contentType === 'PDF_BOOK' ? (
+                    <div>
+                      {cat.projects.map(project => (
+                        <PdfProjectSlider 
+                          key={project.id} 
+                          project={project} 
+                          serviceSlug={serviceSlug} 
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                      gap: '24px'
+                    }}>
+                      {cat.projects.map(project => (
+                        <ProjectCard 
+                          key={project.id} 
+                          project={project} 
+                          contentType={contentType}
+                          onClick={() => setSelectedProject(project)} 
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
               );
             })
@@ -134,6 +149,7 @@ export default function PortfolioGrid({ title, description, categories, sceneIde
         <ProjectViewerModal 
           project={selectedProject} 
           serviceSlug={serviceSlug} 
+          contentType={contentType}
           onClose={() => setSelectedProject(null)} 
         />
       )}

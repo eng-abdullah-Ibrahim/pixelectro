@@ -43,6 +43,7 @@ export default async function ServicePage({ params }: { params: Promise<{ servic
         allTranslations={(servicePage.translations as any) || {}}
         categories={categories as any}
         sceneIdentifier={servicePage.scene} 
+        contentType={servicePage.contentType}
         serviceSlug={serviceSlug}
       />
     </main>

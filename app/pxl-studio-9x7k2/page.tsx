@@ -10,9 +10,12 @@ export default async function AdminDashboard() {
       include: {
         category: {
           include: {
-            servicePage: true,
+      servicePage: true,
           },
         },
+        media: {
+          orderBy: { order: 'asc' }
+        }
       },
     }),
   ]);
@@ -33,6 +36,17 @@ export default async function AdminDashboard() {
         title: p.category.servicePage.title,
       },
     },
+    media: p.media.map(m => ({
+      id: m.id,
+      url: m.url,
+      type: m.type,
+      likesCount: m.likesCount,
+      fakeLikes: m.fakeLikes,
+      viewsCount: m.viewsCount,
+      fakeViews: m.fakeViews,
+      sharesCount: m.sharesCount,
+      fakeShares: m.fakeShares,
+    }))
   }));
 
   return (

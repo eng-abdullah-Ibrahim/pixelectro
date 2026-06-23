@@ -28,6 +28,7 @@ model ServicePage {
   homeScene        String?
   scene            String
   icon             String             @default("◈")
+  contentType      String             @default("MEDIA") // MEDIA or PDF_BOOK
   order            Int                @default(0)
   isActive         Boolean            @default(true)
   translations     Json?              @default("{}")
@@ -72,13 +73,20 @@ model Project {
 }
 
 model ProjectMedia {
-  id        String   @id @default(cuid())
-  url       String
-  type      String   // e.g. 'IMAGE' or 'VIDEO'
-  projectId String
-  order     Int      @default(0)
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  id          String   @id @default(cuid())
+  url         String
+  type        String   // e.g. 'IMAGE', 'VIDEO', 'PDF'
+  coverImage  String?  // Optional custom cover image for PDFs
+  projectId   String
+  order       Int      @default(0)
+  likesCount  Int      @default(0)
+  fakeLikes   Int      @default(0)
+  viewsCount  Int      @default(0)
+  fakeViews   Int      @default(0)
+  sharesCount Int      @default(0)
+  fakeShares  Int      @default(0)
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
 }
 
 model TestimonialMedia {

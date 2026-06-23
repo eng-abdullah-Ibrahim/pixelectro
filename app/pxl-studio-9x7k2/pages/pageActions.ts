@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { generateTranslations } from "../../../lib/translationEngine";
 
-export async function createPage(data: { title: string, description: string, excerpt: string, scene: string, icon: string, homeImage?: string, homeScene?: string }) {
+export async function createPage(data: { title: string, description: string, excerpt: string, scene: string, icon: string, contentType?: string, homeImage?: string, homeScene?: string }) {
   const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
   const count = await prisma.servicePage.count();
 
@@ -16,6 +16,7 @@ export async function createPage(data: { title: string, description: string, exc
       excerpt: data.excerpt,
       scene: data.scene,
       icon: data.icon,
+      contentType: data.contentType || "MEDIA",
       homeImage: data.homeImage,
       homeScene: data.homeScene,
       order: count,
@@ -49,6 +50,7 @@ export async function editPage(
     description: string, 
     scene: string, 
     icon: string,
+    contentType?: string,
     excerpt?: string,
     homeImage?: string,
     homeScene?: string
@@ -64,6 +66,7 @@ export async function editPage(
       description: data.description,
       scene: data.scene,
       icon: data.icon,
+      contentType: data.contentType || "MEDIA",
       excerpt: data.excerpt,
       homeImage: data.homeImage,
       homeScene: data.homeScene,

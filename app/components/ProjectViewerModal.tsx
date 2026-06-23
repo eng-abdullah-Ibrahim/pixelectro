@@ -29,17 +29,30 @@ type Project = {
   translations?: any;
 };
 
+import PdfFlipbookViewer from './PdfFlipbookViewer';
+
 export default function ProjectViewerModal({ 
   project, 
   serviceSlug, 
+  contentType,
+  initialBookIndex = 0,
   onClose 
 }: { 
   project: Project, 
   serviceSlug: string, 
+  contentType?: string,
+  initialBookIndex?: number,
   onClose: () => void 
 }) {
   const { locale } = useTranslation();
   const [mounted, setMounted] = useState(false);
+
+  // If this is a PDF Book, render the specialized full-screen Flipbook Viewer
+  if (contentType === "PDF_BOOK") {
+    // Only pass PDF media items
+    const pdfMedia = project.media.filter(m => m.type === 'PDF');
+    return <PdfFlipbookViewer media={pdfMedia} initialBookIndex={initialBookIndex} onClose={onClose} />;
+  }
 
   useEffect(() => {
     setMounted(true);
@@ -138,25 +151,37 @@ export default function ProjectViewerModal({
                 color: 'rgba(255,255,255,0.85)', 
                 fontSize: '1.1rem', 
                 lineHeight: 1.8,
-                textAlign: 'center'
+                textAlign: 'center',
+                maxWidth: '800px',
+                margin: '40px auto 0'
               }}
               dangerouslySetInnerHTML={{ __html: projDesc }} 
             />
           )}
+        </div>
+      </div>
 
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-            <ProjectStats 
-              projectId={project.id}
-              serviceSlug={serviceSlug}
-              initialLikes={project.likesCount ?? 0}
-              initialFakeLikes={project.fakeLikes ?? 0}
-              initialViews={project.viewsCount ?? 0}
-              initialFakeViews={project.fakeViews ?? 0}
-              initialShares={project.sharesCount ?? 0}
-              initialFakeShares={project.fakeShares ?? 0}
-            />
-          </div>
-          
+      {/* Stats Bar (Sticky Bottom) */}
+      <div style={{ 
+        padding: '24px 40px', 
+        borderTop: '1px solid rgba(255,255,255,0.05)', 
+        background: 'rgba(5,5,5,0.98)',
+        position: 'sticky',
+        bottom: 0,
+        zIndex: 100
+      }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', justifyContent: 'center' }}>
+          <ProjectStats 
+            projectId={project.id}
+            targetType="PROJECT"
+            serviceSlug={serviceSlug}
+            initialLikes={project.likesCount || 0}
+            initialFakeLikes={project.fakeLikes || 0}
+            initialViews={project.viewsCount || 0}
+            initialFakeViews={project.fakeViews || 0}
+            initialShares={project.sharesCount || 0}
+            initialFakeShares={project.fakeShares || 0}
+          />
         </div>
       </div>
     </div>

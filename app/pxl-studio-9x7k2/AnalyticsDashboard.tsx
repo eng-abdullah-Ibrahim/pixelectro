@@ -12,6 +12,9 @@ type MetricTotals = {
   EMAIL_CLICK: number;
   PROJECT_LIKE: number;
   PROJECT_SHARE: number;
+  MEDIA_VIEW: number;
+  MEDIA_LIKE: number;
+  MEDIA_SHARE: number;
 };
 
 type DataPoint = MetricTotals & {
@@ -49,16 +52,20 @@ type ProjectItem = {
   sharesCount: number;
   fakeShares: number;
   category: { name: string; servicePage: { title: string } };
+  media?: any[];
 };
 
 const METRICS_DEF: { id: keyof MetricTotals; title: string; icon: string }[] = [
   { id: "PAGE_VIEW", title: "Site Visits", icon: "👁" },
   { id: "PROJECT_VIEW", title: "Project Views", icon: "◈" },
+  { id: "MEDIA_VIEW", title: "PDF/Media Views", icon: "📄" },
   { id: "CATEGORY_VIEW", title: "Category Views", icon: "▤" },
   { id: "WHATSAPP_CLICK", title: "WhatsApp Clicks", icon: "💬" },
   { id: "EMAIL_CLICK", title: "Emails Sent", icon: "✉" },
   { id: "PROJECT_LIKE", title: "Real Likes", icon: "♥" },
+  { id: "MEDIA_LIKE", title: "PDF/Media Likes", icon: "👍" },
   { id: "PROJECT_SHARE", title: "Real Shares", icon: "🔗" },
+  { id: "MEDIA_SHARE", title: "PDF/Media Shares", icon: "🚀" },
 ];
 
 const COLOR_PALETTE = [
@@ -215,6 +222,7 @@ export default function AnalyticsDashboard({
   const [loading, setLoading] = useState<boolean>(false);
 
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [selectedMediaId, setSelectedMediaId] = useState<string | null>(null);
   const [projectAnalytics, setProjectAnalytics] = useState<PeriodData[]>([]);
   const [projectLoading, setProjectLoading] = useState<boolean>(false);
 
@@ -249,7 +257,10 @@ export default function AnalyticsDashboard({
     if (!selectedProjectId || projectPeriods.length === 0) return;
     setProjectLoading(true);
     try {
-      const url = `/api/admin/analytics?projectId=${selectedProjectId}&periods=${encodeURIComponent(JSON.stringify(projectPeriods))}`;
+      let url = `/api/admin/analytics?projectId=${selectedProjectId}&periods=${encodeURIComponent(JSON.stringify(projectPeriods))}`;
+      if (selectedMediaId) {
+        url += `&mediaId=${selectedMediaId}`;
+      }
       const res = await fetch(url);
       const data = await res.json();
       if (data.success) setProjectAnalytics(data.periodsData);
@@ -272,7 +283,7 @@ export default function AnalyticsDashboard({
       fetchProjectAnalytics();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedProjectId, projectPeriods]);
+  }, [selectedProjectId, projectPeriods, selectedMediaId]);
 
   const generateSeries = (data: PeriodData[], selectedMetrics: (keyof MetricTotals)[]): SeriesItem[] => {
     const series: SeriesItem[] = [];
@@ -490,30 +501,55 @@ export default function AnalyticsDashboard({
                   </tr>
                 </thead>
                 <tbody>
-                  {initialProjects.map(p => (
+                  {initialProjects.map(p => {
+                    const isPdf = p.media?.some((m: any) => m.url?.toLowerCase().endsWith('.pdf') || m.type === 'PDF');
+                    return (
                     <tr key={p.id}>
                       <td style={{ fontWeight: 600 }}>{p.title}</td>
                       <td><span className="badge badgeBlue">{p.category.name}</span></td>
                       <td style={{ color: "var(--adm-green)", fontWeight: 700 }}>
-                        <span title="Likes">♥ {p.likesCount}</span> &nbsp;
-                        <span title="Views">👁 {p.viewsCount}</span> &nbsp;
-                        <span title="Shares">🔗 {p.sharesCount}</span>
+                        {isPdf ? <span style={{ color: "var(--adm-muted)", fontSize: "0.8rem", fontWeight: "normal" }}>N/A (PDF Project)</span> : (
+                          <>
+                            <span title="Likes">♥ {p.likesCount}</span> &nbsp;
+                            <span title="Views">👁 {p.viewsCount}</span> &nbsp;
+                            <span title="Shares">🔗 {p.sharesCount}</span>
+                          </>
+                        )}
                       </td>
                       <td style={{ color: "var(--adm-muted)" }}>
-                        <span title="Fake Likes">+{p.fakeLikes}</span> &nbsp;
-                        <span title="Fake Views">+{p.fakeViews}</span> &nbsp;
-                        <span title="Fake Shares">+{p.fakeShares}</span>
+                        {isPdf ? <span style={{ fontSize: "0.8rem" }}>N/A</span> : (
+                          <>
+                            <span title="Fake Likes">+{p.fakeLikes}</span> &nbsp;
+                            <span title="Fake Views">+{p.fakeViews}</span> &nbsp;
+                            <span title="Fake Shares">+{p.fakeShares}</span>
+                          </>
+                        )}
                       </td>
                       <td style={{ color: "var(--adm-primary)", fontWeight: 700 }}>
-                        <span title="Total Likes">♥ {p.likesCount + p.fakeLikes}</span> &nbsp;
-                        <span title="Total Views">👁 {p.viewsCount + p.fakeViews}</span> &nbsp;
-                        <span title="Total Shares">🔗 {p.sharesCount + p.fakeShares}</span>
+                        {isPdf ? <span style={{ color: "var(--adm-muted)", fontSize: "0.8rem", fontWeight: "normal" }}>N/A</span> : (
+                          <>
+                            <span title="Total Likes">♥ {p.likesCount + p.fakeLikes}</span> &nbsp;
+                            <span title="Total Views">👁 {p.viewsCount + p.fakeViews}</span> &nbsp;
+                            <span title="Total Shares">🔗 {p.sharesCount + p.fakeShares}</span>
+                          </>
+                        )}
                       </td>
                       <td>
-                        <button onClick={() => setSelectedProjectId(p.id)} className="btnGhost" style={{ padding: "4px 10px", fontSize: "0.78rem" }}>📊 Detailed Stats</button>
+                        <button onClick={() => {
+                          setSelectedProjectId(p.id);
+                          if (isPdf) {
+                            const pdfMedia = p.media?.find((m: any) => m.url?.toLowerCase().endsWith('.pdf') || m.type === 'PDF') || p.media?.[0];
+                            if (pdfMedia) setSelectedMediaId(pdfMedia.id);
+                            setProjectActiveMetrics(["MEDIA_VIEW", "MEDIA_LIKE", "MEDIA_SHARE"]);
+                          } else {
+                            setSelectedMediaId(null);
+                            setProjectActiveMetrics(["PROJECT_VIEW", "PROJECT_LIKE", "PROJECT_SHARE"]);
+                          }
+                        }} className="btnGhost" style={{ padding: "4px 10px", fontSize: "0.78rem" }}>📊 Detailed Stats</button>
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -570,34 +606,101 @@ export default function AnalyticsDashboard({
         </>
       )}
 
-      {selectedProjectId && (
-        <div className={styles.modalOverlay} onClick={() => setSelectedProjectId(null)}>
-          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <div className={styles.modalTitle}>📈 Project Stats</div>
-              <button onClick={() => setSelectedProjectId(null)} className={styles.modalClose}>✕</button>
-            </div>
+      {selectedProjectId && (() => {
+        const proj = initialProjects.find(p => p.id === selectedProjectId);
+        if (!proj) return null;
 
-            <div className={styles.modalBody}>
-              <PeriodManager state={projectPeriods} setState={setProjectPeriods} />
+        const isPdf = proj.media?.some((m: any) => m.url?.toLowerCase().endsWith('.pdf') || m.type === 'PDF');
+        
+        let displayStats = { views: 0, likes: 0, shares: 0 };
+        if (selectedMediaId) {
+          const activeMedia = proj.media?.find((m: any) => m.id === selectedMediaId);
+          if (activeMedia) {
+            displayStats = {
+              views: activeMedia.viewsCount + activeMedia.fakeViews,
+              likes: activeMedia.likesCount + activeMedia.fakeLikes,
+              shares: activeMedia.sharesCount + activeMedia.fakeShares
+            };
+          }
+        } else {
+          displayStats = {
+            views: proj.viewsCount + proj.fakeViews,
+            likes: proj.likesCount + proj.fakeLikes,
+            shares: proj.sharesCount + proj.fakeShares
+          };
+        }
 
-              <div style={{ margin: "16px 0", display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                {METRICS_DEF.filter(m => m.id.startsWith("PROJECT_")).map(m => (
-                  <button
-                    key={m.id}
-                    onClick={() => {
-                      setProjectActiveMetrics(prev =>
-                        prev.includes(m.id)
-                          ? prev.length > 1 ? prev.filter(x => x !== m.id) : prev
-                          : [...prev, m.id]
-                      );
-                    }}
-                    className={`${styles.presetBtn} ${projectActiveMetrics.includes(m.id) ? styles.activePreset : ""}`}
-                  >
-                    {m.icon} {m.title}
-                  </button>
-                ))}
+        return (
+          <div className={styles.modalOverlay} onClick={() => { setSelectedProjectId(null); setSelectedMediaId(null); }}>
+            <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+              <div className={styles.modalHeader}>
+                <div className={styles.modalTitle}>📈 {proj.title} - Stats</div>
+                <button onClick={() => { setSelectedProjectId(null); setSelectedMediaId(null); }} className={styles.modalClose}>✕</button>
               </div>
+
+              <div className={styles.modalBody}>
+                {proj.media && proj.media.length > 0 && (
+                  <div style={{ marginBottom: "16px", display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "4px" }}>
+                    {!isPdf && (
+                      <button 
+                        className={`${styles.presetBtn} ${!selectedMediaId ? styles.activePreset : ""}`}
+                        onClick={() => {
+                          setSelectedMediaId(null);
+                          setProjectActiveMetrics(["PROJECT_VIEW", "PROJECT_LIKE", "PROJECT_SHARE"]);
+                        }}
+                      >
+                        Project Overview
+                      </button>
+                    )}
+                    {proj.media.map((m: any, i: number) => (
+                      <button 
+                        key={m.id}
+                        className={`${styles.presetBtn} ${selectedMediaId === m.id ? styles.activePreset : ""}`}
+                        onClick={() => {
+                          setSelectedMediaId(m.id);
+                          setProjectActiveMetrics(["MEDIA_VIEW", "MEDIA_LIKE", "MEDIA_SHARE"]);
+                        }}
+                      >
+                        Book {i + 1}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px', marginBottom: '16px' }}>
+                  <div style={{ background: 'var(--adm-bg)', padding: '12px', borderRadius: '8px', border: '1px solid var(--adm-border)' }}>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--adm-muted)' }}>👁 Total Views</div>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{displayStats.views}</div>
+                  </div>
+                  <div style={{ background: 'var(--adm-bg)', padding: '12px', borderRadius: '8px', border: '1px solid var(--adm-border)' }}>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--adm-muted)' }}>♥ Total Likes</div>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{displayStats.likes}</div>
+                  </div>
+                  <div style={{ background: 'var(--adm-bg)', padding: '12px', borderRadius: '8px', border: '1px solid var(--adm-border)' }}>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--adm-muted)' }}>🔗 Total Shares</div>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{displayStats.shares}</div>
+                  </div>
+                </div>
+
+                <PeriodManager state={projectPeriods} setState={setProjectPeriods} />
+
+                <div style={{ margin: "16px 0", display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                  {METRICS_DEF.filter(m => selectedMediaId ? m.id.startsWith("MEDIA_") : m.id.startsWith("PROJECT_")).map(m => (
+                    <button
+                      key={m.id}
+                      onClick={() => {
+                        setProjectActiveMetrics(prev =>
+                          prev.includes(m.id)
+                            ? prev.length > 1 ? prev.filter(x => x !== m.id) : prev
+                            : [...prev, m.id]
+                        );
+                      }}
+                      className={`${styles.presetBtn} ${projectActiveMetrics.includes(m.id) ? styles.activePreset : ""}`}
+                    >
+                      {m.icon} {m.title}
+                    </button>
+                  ))}
+                </div>
 
               {projectLoading ? (
                 <div style={{ height: "240px", display: "flex", alignItems: "center", justifyContent: "center" }}><span className="badge badgeBlue">Loading project stats...</span></div>
@@ -621,7 +724,8 @@ export default function AnalyticsDashboard({
             </div>
           </div>
         </div>
-      )}
+        );
+      })()}
     </div>
   );
 }

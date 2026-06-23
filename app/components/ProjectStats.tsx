@@ -6,8 +6,9 @@ import styles from "./ProjectStats.module.css";
 import { useTranslation } from "./TranslationProvider";
 
 interface ProjectStatsProps {
-  projectId: string;
-  serviceSlug: string; // e.g. "branding" — needed to build the share URL
+  projectId: string; // Used as target ID, can be project ID or media ID depending on targetType
+  targetType?: "PROJECT" | "MEDIA";
+  serviceSlug: string;
   initialLikes: number;
   initialFakeLikes: number;
   initialViews: number;
@@ -18,6 +19,7 @@ interface ProjectStatsProps {
 
 export default function ProjectStats({
   projectId,
+  targetType = "PROJECT",
   serviceSlug,
   initialLikes,
   initialFakeLikes,
@@ -34,63 +36,95 @@ export default function ProjectStats({
   const [likeAnimate, setLikeAnimate] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  const apiBasePath = targetType === "PROJECT" ? `/api/projects/${projectId}` : `/api/media/${projectId}`;
+  const lsLikeKey = targetType === "PROJECT" ? `pxl_like_${projectId}` : `pxl_media_like_${projectId}`;
+  const ssViewKey = targetType === "PROJECT" ? `pxl_viewed_${projectId}` : `pxl_media_viewed_${projectId}`;
+
   // Check localStorage on mount to restore liked state
   useEffect(() => {
-    if (localStorage.getItem(`pxl_like_${projectId}`)) {
+    if (localStorage.getItem(lsLikeKey)) {
       setLiked(true);
     }
-  }, [projectId]);
+  }, [projectId, lsLikeKey]);
 
   // Track a real view when this component mounts (deep-link or fresh load)
+  // Wait! The plan says we should remove the on-mount view tracking for Projects, because we'll trigger it explicitly on modal open!
+  // But wait, what if the user hits the direct URL to the project? We need the View to count.
+  // Actually, ProjectStats is ALWAYS rendered when the modal is open or when Flipbook is open.
+  // If it's rendered on the main page grid, it will count a view for every card if we don't remove this.
+  // BUT ProjectStats is NOT rendered on the grid, only inside ProjectViewerModal! So the on-mount logic is PERFECT because the modal only mounts on click!
   useEffect(() => {
     // Only count once per session — use sessionStorage as guard
-    const sessionKey = `pxl_viewed_${projectId}`;
-    if (sessionStorage.getItem(sessionKey)) return;
-    sessionStorage.setItem(sessionKey, "1");
+    if (sessionStorage.getItem(ssViewKey)) return;
+    sessionStorage.setItem(ssViewKey, "1");
 
-    fetch(`/api/projects/${projectId}/view`, { method: "POST" })
+    fetch(`${apiBasePath}/view`, { method: "POST" })
       .then((r) => r.json())
       .then((data) => {
         if (data.success) setViews(data.totalViews);
       })
       .catch(() => {});
-  }, [projectId]);
+  }, [apiBasePath, ssViewKey]);
 
   const handleLike = async () => {
     if (liked) return;
+    
+    // Optimistic UI update
     setLiked(true);
-    setLikes((v) => v + 1);
+    setLikes((prev) => prev + 1);
     setLikeAnimate(true);
-    localStorage.setItem(`pxl_like_${projectId}`, "1");
-    setTimeout(() => setLikeAnimate(false), 600);
+    setTimeout(() => setLikeAnimate(false), 1000); // Reset animation state
+    
+    localStorage.setItem(lsLikeKey, "1");
 
     try {
-      const res = await fetch(`/api/projects/${projectId}/like`, { method: "POST" });
+      const res = await fetch(`${apiBasePath}/like`, { method: "POST" });
       const data = await res.json();
-      if (data.success) setLikes(data.totalLikes);
-    } catch {}
+      if (data.success) {
+        setLikes(data.totalLikes);
+      }
+    } catch (err) {
+      console.error(err);
+      // Revert if failed
+      setLiked(false);
+      setLikes((prev) => prev - 1);
+      localStorage.removeItem(lsLikeKey);
+    }
   };
 
   const handleShare = async () => {
-    const shareUrl = `${window.location.origin}/${serviceSlug}#project-${projectId}`;
+    // Determine the deep-link URL. Depending on targetType, we might share a project or a direct link to the media (PDF)
+    // For now, if it's a PDF we just share the project link with a hash, or just the project link.
+    // The requirement says "شير لكل Pdf", let's append #pdf=mediaId or just share the project URL. 
+    // Actually, sharing the project URL is fine, maybe we add ?pdf=id if we want.
+    const urlToShare = targetType === "PROJECT" 
+      ? `${window.location.origin}/${serviceSlug}#project=${projectId}`
+      : `${window.location.origin}/${serviceSlug}#pdf=${projectId}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: t("common.exploreOurWork"),
+          url: urlToShare,
+        });
+      } catch (err) {
+        console.log("Share canceled or failed", err);
+      }
+    } else {
+      navigator.clipboard.writeText(urlToShare);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
 
     try {
-      if (navigator.share) {
-        await navigator.share({
-          title: document.title,
-          url: shareUrl,
-        });
-      } else {
-        await navigator.clipboard.writeText(shareUrl);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2500);
-      }
-
-      // Log the share event
-      const res = await fetch(`/api/projects/${projectId}/share`, { method: "POST" });
+      const res = await fetch(`${apiBasePath}/share`, { method: "POST" });
       const data = await res.json();
-      if (data.success) setShares(data.totalShares);
-    } catch {}
+      if (data.success) {
+        setShares(data.totalShares);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (

@@ -41,6 +41,7 @@ export default function EditPageForm({ page }: { page: any }) {
       await editPage(page.id, {
         title,
         icon: fd.get("icon") as string,
+        contentType: fd.get("contentType") as string,
         scene: fd.get("scene") as string,
         description,
         excerpt,
@@ -95,6 +96,13 @@ export default function EditPageForm({ page }: { page: any }) {
             {AVAILABLE_SCENES.map(s => (
               <option key={s} value={s}>{s.replace('Scene', '')}</option>
             ))}
+          </select>
+        </div>
+        <div className="field">
+          <label className="label">Content Type *</label>
+          <select name="contentType" className="select" required defaultValue={page.contentType || "MEDIA"}>
+            <option value="MEDIA">🖼️ Images & Videos (Carousel)</option>
+            <option value="PDF_BOOK">📚 PDF Book (3D Flipbook)</option>
           </select>
         </div>
         <div className="field formGridFull" style={{ gridColumn: '1 / -1' }}>

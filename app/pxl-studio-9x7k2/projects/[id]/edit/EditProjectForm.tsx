@@ -10,6 +10,7 @@ export default function EditProjectForm({ project, categories }: { project: any,
   const router = useRouter();
   const { addTask, updateTaskStatus } = useTasks();
   const [loading, setLoading] = useState(false);
+  const isPdf = project.media?.some((m: any) => m.url?.toLowerCase().endsWith('.pdf') || m.type === 'PDF');
 
   async function handleSubmit(formData: FormData) {
     setLoading(true);
@@ -70,20 +71,24 @@ export default function EditProjectForm({ project, categories }: { project: any,
               </select>
             </div>
 
-            <div className="field">
-              <label className="label">Mock Likes</label>
-              <input name="fakeLikes" type="number" min="0" defaultValue={project.fakeLikes || 0} className="input" required />
-            </div>
+            {!isPdf && (
+              <>
+                <div className="field">
+                  <label className="label">Mock Likes</label>
+                  <input name="fakeLikes" type="number" min="0" defaultValue={project.fakeLikes || 0} className="input" required />
+                </div>
 
-            <div className="field">
-              <label className="label">Mock Views</label>
-              <input name="fakeViews" type="number" min="0" defaultValue={project.fakeViews || 0} className="input" required />
-            </div>
+                <div className="field">
+                  <label className="label">Mock Views</label>
+                  <input name="fakeViews" type="number" min="0" defaultValue={project.fakeViews || 0} className="input" required />
+                </div>
 
-            <div className="field">
-              <label className="label">Mock Shares</label>
-              <input name="fakeShares" type="number" min="0" defaultValue={project.fakeShares || 0} className="input" required />
-            </div>
+                <div className="field">
+                  <label className="label">Mock Shares</label>
+                  <input name="fakeShares" type="number" min="0" defaultValue={project.fakeShares || 0} className="input" required />
+                </div>
+              </>
+            )}
           </div>
 
           <div className="formActions" style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>

@@ -21,7 +21,7 @@ type Project = {
   translations?: any;
 };
 
-export default function ProjectCard({ project, onClick }: { project: Project, onClick: () => void }) {
+export default function ProjectCard({ project, contentType, onClick }: { project: Project, contentType?: string, onClick: () => void }) {
   const { locale } = useTranslation();
 
   const title = (locale !== 'en' && project.translations?.[locale]?.title)
@@ -37,7 +37,12 @@ export default function ProjectCard({ project, onClick }: { project: Project, on
   
   let coverUrl = '';
   if (coverMedia) {
-    if (coverMedia.type === 'IMAGE') {
+    if (contentType === 'PDF_BOOK' || coverMedia.type === 'PDF') {
+      const urlWithoutHash = coverMedia.url.split('#')[0];
+      coverUrl = urlWithoutHash.includes('/upload/')
+        ? urlWithoutHash.replace('/upload/', '/upload/c_fill,w_600,h_800,f_jpg,pg_1/')
+        : urlWithoutHash;
+    } else if (coverMedia.type === 'IMAGE') {
       coverUrl = coverMedia.url.includes('cloudinary.com/') && coverMedia.url.includes('/upload/') 
         ? coverMedia.url.replace('/upload/', '/upload/c_fill,w_600,h_800,f_auto,q_auto/') 
         : coverMedia.url;
@@ -75,7 +80,7 @@ export default function ProjectCard({ project, onClick }: { project: Project, on
       }}
     >
       <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-        {coverMedia && coverMedia.type === 'IMAGE' ? (
+        {(coverMedia && coverMedia.type === 'IMAGE') || (coverMedia && coverMedia.type === 'PDF') || contentType === 'PDF_BOOK' ? (
           <img 
             src={coverUrl} 
             alt={title} 
@@ -111,9 +116,24 @@ export default function ProjectCard({ project, onClick }: { project: Project, on
           justifyContent: 'flex-end',
           pointerEvents: 'none'
         }}>
-          <h3 style={{ margin: '0 0 8px 0', fontSize: '1.25rem', color: '#fff', fontWeight: 600, letterSpacing: '-0.02em' }}>
-            {title}
-          </h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <h3 style={{ margin: '0', fontSize: '1.25rem', color: '#fff', fontWeight: 600, letterSpacing: '-0.02em' }}>
+              {title}
+            </h3>
+            
+            {/* Outside Stats */}
+            <div style={{ display: 'flex', gap: '12px', color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                <span>{(project.likesCount || 0) + (project.fakeLikes || 0)}</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span>{(project.viewsCount || 0) + (project.fakeViews || 0)}</span>
+              </div>
+            </div>
+          </div>
+
           {desc && (
             <p style={{ margin: 0, fontSize: '0.875rem', color: 'rgba(255,255,255,0.7)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
               {desc.replace(/(<([^>]+)>)/gi, "")}
