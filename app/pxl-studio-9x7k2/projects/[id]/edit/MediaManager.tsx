@@ -161,13 +161,22 @@ export default function MediaManager({ projectId, initialMedia }: { projectId: s
                   boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
                 }}
               >
-                {/* Order Badge */}
+                {/* Order/Cover Badge */}
                 <div style={{
-                  position: 'absolute', top: 8, left: 8, background: 'var(--blue-core)', color: 'white',
-                  width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '0.8rem', fontWeight: 'bold', zIndex: 10
+                  position: 'absolute', top: 8, left: 8, 
+                  background: index === 0 ? 'var(--blue-core)' : 'rgba(0,0,0,0.6)', 
+                  color: 'white',
+                  padding: index === 0 ? '4px 12px' : '0',
+                  width: index === 0 ? 'auto' : '24px', 
+                  height: '24px', 
+                  borderRadius: index === 0 ? '12px' : '50%', 
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '0.75rem', fontWeight: 'bold', zIndex: 10,
+                  backdropFilter: 'blur(4px)',
+                  border: index === 0 ? '1px solid rgba(255,255,255,0.2)' : 'none',
+                  boxShadow: index === 0 ? '0 2px 8px rgba(0,0,0,0.2)' : 'none'
                 }}>
-                  {index + 1}
+                  {index === 0 ? '🌟 Cover' : index + 1}
                 </div>
 
                 {m.type === 'IMAGE' ? (

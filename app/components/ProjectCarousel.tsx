@@ -9,7 +9,38 @@ type MediaItem = {
   type: string;
   projectId: string;
   createdAt: Date;
-  order?: number;
+};
+
+const ProgressiveCarouselImage = ({ url, alt, shouldLoadSrc }: { url: string, alt: string, shouldLoadSrc: boolean }) => {
+  const isCloudinary = url.includes('cloudinary.com/') && url.includes('/upload/');
+  
+  // Tiny placeholder (fast load)
+  const placeholderUrl = isCloudinary ? url.replace('/upload/', '/upload/f_auto,q_auto,w_100,e_blur:200/') : url;
+  
+  // High quality for carousel (600px is enough)
+  const hqUrl = isCloudinary ? url.replace('/upload/', '/upload/f_auto,q_auto,w_600/') : url;
+
+  const [loadedUrl, setLoadedUrl] = useState<string | null>(null);
+  const isLoaded = loadedUrl === hqUrl;
+
+  return (
+    <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+      {shouldLoadSrc && (
+        <>
+          <img src={placeholderUrl} alt={alt} style={{
+            maxWidth: '100%', maxHeight: '56vh', width: 'auto', height: 'auto', objectFit: 'contain', 
+            position: 'absolute', pointerEvents: 'none',
+            transition: 'opacity 0.6s ease', opacity: isLoaded ? 0 : 1
+          }} />
+          <img src={hqUrl} alt={alt} onLoad={() => setLoadedUrl(hqUrl)} loading="lazy" style={{
+            maxWidth: '100%', maxHeight: '56vh', width: 'auto', height: 'auto', objectFit: 'contain', 
+            position: 'relative', pointerEvents: 'none',
+            transition: 'opacity 0.6s ease', opacity: isLoaded ? 1 : 0, zIndex: 2
+          }} />
+        </>
+      )}
+    </div>
+  );
 };
 
 export default function ProjectCarousel({ media, title }: { media: MediaItem[], title: string }) {
@@ -115,6 +146,7 @@ export default function ProjectCarousel({ media, title }: { media: MediaItem[], 
           margin: '2rem 0',
           touchAction: 'pan-y',
           userSelect: 'none',
+          perspective: '1200px' // Add perspective for 3D effect
         }} 
         onClick={() => setLightboxOpen(true)}
         onTouchStart={handleTouchStart}
@@ -136,10 +168,16 @@ export default function ProjectCarousel({ media, title }: { media: MediaItem[], 
           const isNext = offset === 1;
           const isVisibleSlide = isActive || isPrev || isNext;
           
-          let transform = `translateX(${offset * 65}%) scale(${isActive ? 1 : 0.75})`;
-          let opacity = isActive ? 1 : (isVisibleSlide ? 0.4 : 0);
+          // 3D Coverflow Calculations - Cinematic & Glassy
+          let translateX = offset * 35; // Bring them much closer to the center
+          let translateZ = isActive ? 0 : Math.abs(offset) * -150; // Push back progressively
+          let rotateY = isActive ? 0 : (offset < 0 ? 40 : -40); // Sharper angle
+          let scale = isActive ? 1 : 0.85;
+          let opacity = isActive ? 1 : (isVisibleSlide ? 0.8 : 0);
           let zIndex = isActive ? 10 : (isVisibleSlide ? 5 : 1);
-          let filter = isActive ? 'blur(0px)' : (isVisibleSlide ? 'blur(6px)' : 'blur(12px)');
+          let filter = isActive ? 'blur(0px) brightness(1)' : (isVisibleSlide ? 'blur(2px) brightness(0.4)' : 'blur(12px)');
+          
+          const transform = `translateX(${translateX}%) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`;
           
           const shouldLoadSrc = loadedSlides[idx];
 
@@ -152,12 +190,13 @@ export default function ProjectCarousel({ media, title }: { media: MediaItem[], 
                 left: 0, 
                 width: '100%', 
                 height: '100%',
-                transition: 'all 0.6s cubic-bezier(0.25, 1, 0.5, 1)',
+                transition: 'all 0.7s cubic-bezier(0.25, 1, 0.5, 1)',
                 transform, opacity, zIndex, filter,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                pointerEvents: isActive ? 'auto' : 'none'
+                pointerEvents: isActive ? 'auto' : 'none',
+                transformStyle: 'preserve-3d'
               }}
             >
               <div style={{
@@ -165,23 +204,40 @@ export default function ProjectCarousel({ media, title }: { media: MediaItem[], 
                 height: '100%',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                position: 'relative'
               }}>
+                
+                {/* Ambient Glow behind active slide */}
+                {isActive && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '10%',
+                    left: '10%',
+                    width: '80%',
+                    height: '80%',
+                    background: 'rgba(255,255,255,0.05)',
+                    boxShadow: '0 0 100px 40px rgba(255,255,255,0.05)',
+                    borderRadius: '50%',
+                    filter: 'blur(40px)',
+                    zIndex: -1
+                  }} />
+                )}
+
                 <div style={{
                   maxWidth: '100%',
                   maxHeight: '100%',
-                  boxShadow: isActive ? '0 25px 50px rgba(0,0,0,0.25)' : 'none',
+                  boxShadow: isActive ? '0 30px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1)' : '0 10px 30px rgba(0,0,0,0.5)',
                   borderRadius: '16px',
                   overflow: 'hidden',
-                  transition: 'box-shadow 0.6s ease',
-                  display: 'flex'
+                  transition: 'box-shadow 0.7s ease',
+                  display: 'flex',
+                  background: 'rgba(20, 20, 20, 0.4)', // Glassy backdrop
+                  backdropFilter: 'blur(20px)'
                 }}>
-                {m.type === 'IMAGE' ? (() => {
-                  const optimizedUrl = m.url.includes('cloudinary.com/') && m.url.includes('/upload/') 
-                    ? m.url.replace('/upload/', '/upload/f_auto,q_auto,w_600/') 
-                    : m.url;
-                  return <img src={shouldLoadSrc ? optimizedUrl : undefined} alt={title} loading="lazy" style={{ maxWidth: '100%', maxHeight: '56vh', width: 'auto', height: 'auto', objectFit: 'contain', pointerEvents: 'none', display: 'block' }} />;
-                })() : (
+                {m.type === 'IMAGE' ? (
+                  <ProgressiveCarouselImage url={m.url} alt={title} shouldLoadSrc={shouldLoadSrc} />
+                ) : (
                   <video src={shouldLoadSrc ? m.url : undefined} style={{ maxWidth: '100%', maxHeight: '56vh', width: 'auto', height: 'auto', objectFit: 'contain', pointerEvents: 'none', display: 'block' }} muted loop playsInline autoPlay={isActive} />
                 )}
                 </div>

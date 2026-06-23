@@ -4,6 +4,30 @@ import { useEffect, useState } from "react";
 
 type MediaItem = { url: string; type: string; };
 
+const ImageWithPlaceholder = ({ url }: { url: string }) => {
+  const isCloudinary = url.includes('cloudinary.com/') && url.includes('/upload/');
+  // Use w_600 as the placeholder since it's already cached by the carousel!
+  const placeholderUrl = isCloudinary ? url.replace('/upload/', '/upload/f_auto,q_auto,w_600/') : url;
+  const hqUrl = isCloudinary ? url.replace('/upload/', '/upload/f_auto,q_auto,w_1600/') : url;
+
+  const [loadedUrl, setLoadedUrl] = useState<string | null>(null);
+  const isLoaded = loadedUrl === hqUrl;
+
+  return (
+    <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+      <img src={placeholderUrl} alt="Placeholder" style={{
+        maxWidth: '100%', maxHeight: '88dvh', objectFit: 'contain', borderRadius: 12, position: 'absolute',
+        filter: 'blur(10px)', transform: 'scale(1.02)', // slight blur to hide artifacts while hq loads
+        transition: 'opacity 0.5s ease', opacity: isLoaded ? 0 : 1, userSelect: 'none'
+      }} />
+      <img src={hqUrl} alt="Enlarged" onLoad={() => setLoadedUrl(hqUrl)} style={{
+        maxWidth: '100%', maxHeight: '88dvh', objectFit: 'contain', borderRadius: 12, position: 'relative',
+        transition: 'opacity 0.5s ease', opacity: isLoaded ? 1 : 0, zIndex: 2, userSelect: 'none'
+      }} />
+    </div>
+  );
+};
+
 export default function Lightbox({ items, initialIndex, onClose }: { items: MediaItem[], initialIndex: number, onClose: () => void }) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
@@ -71,19 +95,12 @@ export default function Lightbox({ items, initialIndex, onClose }: { items: Medi
 
       {/* Media */}
       <div style={{
-        maxWidth: '92vw', maxHeight: '88dvh',
+        maxWidth: '92vw', maxHeight: '88dvh', width: '100%', height: '100%',
         position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center',
       }} onClick={(e) => e.stopPropagation()}>
-        {currentMedia.type === 'IMAGE' ? (() => {
-          const optimizedUrl = currentMedia.url.includes('cloudinary.com/') && currentMedia.url.includes('/upload/') 
-            ? currentMedia.url.replace('/upload/', '/upload/f_auto,q_auto,w_1600/') 
-            : currentMedia.url;
-          return <img src={optimizedUrl} alt="Enlarged" style={{
-            maxWidth: '100%', maxHeight: '88dvh',
-            objectFit: 'contain', userSelect: 'none',
-            borderRadius: 12,
-          }} />;
-        })() : (
+        {currentMedia.type === 'IMAGE' ? (
+          <ImageWithPlaceholder url={currentMedia.url} />
+        ) : (
           <video src={currentMedia.url} controls controlsList="nodownload" autoPlay style={{
             maxWidth: '100%', maxHeight: '88dvh', outline: 'none', borderRadius: 12,
           }} />
