@@ -171,7 +171,7 @@ async function run() {
         });
 
         const crypto = require('crypto');
-        const localFileHashes = validFiles.map(f => crypto.createHash('md5').update(f.name).digest('hex'));
+        const localFileHashes = validFiles.map(f => crypto.createHash('md5').update(proj.name + '-' + f.name).digest('hex'));
 
         // Delete DB Media if file is removed locally
         for (const m of dbProj.media) {
@@ -186,7 +186,7 @@ async function run() {
         // Upload new media files
         for (const file of validFiles) {
           const ext = path.extname(file.name).toLowerCase();
-          const fileHash = crypto.createHash('md5').update(file.name).digest('hex');
+          const fileHash = crypto.createHash('md5').update(proj.name + '-' + file.name).digest('hex');
           const isUploaded = dbProj.media.some(m => m.url.includes(fileHash));
           
           if (!isUploaded) {

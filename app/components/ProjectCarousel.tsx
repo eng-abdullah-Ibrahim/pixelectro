@@ -103,13 +103,16 @@ export default function ProjectCarousel({ media, title }: { media: MediaItem[], 
         style={{ 
           position: 'relative', 
           width: '100%', 
+          height: '56vh',
+          minHeight: '400px',
           background: 'transparent', 
           cursor: 'zoom-in',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           overflow: 'hidden',
-          padding: '2rem 0',
+          padding: '0',
+          margin: '2rem 0',
           touchAction: 'pan-y',
           userSelect: 'none',
         }} 
@@ -144,11 +147,11 @@ export default function ProjectCarousel({ media, title }: { media: MediaItem[], 
             <div 
               key={m.id} 
               style={{
-                position: isActive ? 'relative' : 'absolute',
-                top: isActive ? 'auto' : 0, 
+                position: 'absolute',
+                top: 0, 
                 left: 0, 
                 width: '100%', 
-                height: isActive ? 'auto' : '100%',
+                height: '100%',
                 transition: 'all 0.6s cubic-bezier(0.25, 1, 0.5, 1)',
                 transform, opacity, zIndex, filter,
                 display: 'flex',
@@ -159,20 +162,29 @@ export default function ProjectCarousel({ media, title }: { media: MediaItem[], 
             >
               <div style={{
                 width: '70%',
-                height: 'auto',
-                boxShadow: isActive ? '0 25px 50px rgba(0,0,0,0.25)' : 'none',
-                borderRadius: '16px',
-                overflow: 'hidden',
-                transition: 'box-shadow 0.6s ease'
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}>
+                <div style={{
+                  maxWidth: '100%',
+                  maxHeight: '100%',
+                  boxShadow: isActive ? '0 25px 50px rgba(0,0,0,0.25)' : 'none',
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  transition: 'box-shadow 0.6s ease',
+                  display: 'flex'
+                }}>
                 {m.type === 'IMAGE' ? (() => {
                   const optimizedUrl = m.url.includes('cloudinary.com/') && m.url.includes('/upload/') 
                     ? m.url.replace('/upload/', '/upload/f_auto,q_auto,w_600/') 
                     : m.url;
-                  return <img src={shouldLoadSrc ? optimizedUrl : undefined} alt={title} loading="lazy" style={{ width: '100%', maxWidth: '70%', height: 'auto', maxHeight: '56vh', margin: '0 auto', objectFit: 'contain', pointerEvents: 'none', display: 'block' }} />;
+                  return <img src={shouldLoadSrc ? optimizedUrl : undefined} alt={title} loading="lazy" style={{ maxWidth: '100%', maxHeight: '56vh', width: 'auto', height: 'auto', objectFit: 'contain', pointerEvents: 'none', display: 'block' }} />;
                 })() : (
-                  <video src={shouldLoadSrc ? m.url : undefined} style={{ width: '100%', maxWidth: '70%', height: 'auto', maxHeight: '56vh', margin: '0 auto', objectFit: 'contain', pointerEvents: 'none', display: 'block' }} muted loop playsInline autoPlay={isActive} />
+                  <video src={shouldLoadSrc ? m.url : undefined} style={{ maxWidth: '100%', maxHeight: '56vh', width: 'auto', height: 'auto', objectFit: 'contain', pointerEvents: 'none', display: 'block' }} muted loop playsInline autoPlay={isActive} />
                 )}
+                </div>
               </div>
             </div>
           );
