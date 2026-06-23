@@ -9,6 +9,7 @@ type MediaItem = {
   type: string;
   projectId: string;
   createdAt: Date;
+  order?: number;
 };
 
 const ProgressiveCarouselImage = ({ url, alt, shouldLoadSrc }: { url: string, alt: string, shouldLoadSrc: boolean }) => {
