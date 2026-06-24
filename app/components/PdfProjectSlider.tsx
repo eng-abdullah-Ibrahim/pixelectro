@@ -19,6 +19,13 @@ type Project = {
   title: string;
   description: string | null;
   media: MediaItem[];
+  order: number;
+  likesCount?: number;
+  fakeLikes?: number;
+  viewsCount?: number;
+  fakeViews?: number;
+  sharesCount?: number;
+  fakeShares?: number;
   translations?: any;
 };
 
