@@ -11,6 +11,7 @@ type MediaItem = {
   projectId: string;
   createdAt: Date;
   order?: number;
+  coverImage?: string | null;
 };
 
 type Project = {
