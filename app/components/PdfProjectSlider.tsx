@@ -35,6 +35,14 @@ export default function PdfProjectSlider({ project, serviceSlug }: { project: Pr
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
   const [selectedBookIndex, setSelectedBookIndex] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const title = (locale !== 'en' && project.translations?.[locale]?.title)
     ? project.translations[locale].title
@@ -88,8 +96,8 @@ export default function PdfProjectSlider({ project, serviceSlug }: { project: Pr
 
       <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
         
-        {/* Left Arrow */}
-        {showLeftArrow && (
+        {/* Left Arrow (Hidden on mobile) */}
+        {!isMobile && showLeftArrow && (
           <button 
             onClick={() => slide('left')}
             style={{
@@ -123,8 +131,8 @@ export default function PdfProjectSlider({ project, serviceSlug }: { project: Pr
               key={media.id} 
               onClick={() => setSelectedBookIndex(index)}
               style={{
-                flex: '0 0 calc(25% - 15px)', // Max 4 items visible
-                minWidth: '220px',
+                flex: isMobile ? '0 0 calc(75% - 10px)' : '0 0 calc(25% - 15px)', // Larger cards on mobile
+                minWidth: isMobile ? '200px' : '220px',
                 aspectRatio: '4/5.5',
                 scrollSnapAlign: 'start',
                 cursor: 'pointer',
@@ -177,8 +185,8 @@ export default function PdfProjectSlider({ project, serviceSlug }: { project: Pr
           ))}
         </div>
 
-        {/* Right Arrow */}
-        {showRightArrow && pdfMedia.length > 4 && (
+        {/* Right Arrow (Hidden on mobile) */}
+        {!isMobile && showRightArrow && pdfMedia.length > 4 && (
           <button 
             onClick={() => slide('right')}
             style={{

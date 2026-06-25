@@ -63,11 +63,13 @@ function computeBookDims(pageAspect: number, isMobile: boolean) {
   const vh = window.innerHeight;
 
   // Book fills the FULL viewport — bars float on top of it
-  // We only subtract arrow width so arrows don't overlap book horizontally
-  const avW = Math.max(vw - ARROW_W * 2, 200);
+  // We only subtract arrow width on desktop. On mobile, we use 0 to maximize width.
+  const arrowPadding = isMobile ? 0 : ARROW_W * 2;
+  const avW = Math.max(vw - arrowPadding, 200);
   const avH = Math.max(vh, 200);
 
-  // A page is "landscape" only if clearly wider than tall (aspect > 1.3)
+  // Mobile is ALWAYS single page to be readable. 
+  // Desktop is single page only if clearly wider than tall (aspect > 1.3)
   const useSinglePage = isMobile || pageAspect > 1.3;
 
   let pageW: number, pageH: number;
@@ -232,9 +234,13 @@ export default function PdfFlipbookViewer({
         background: 'transparent',
         zIndex: 10,
       }}>
-        {/* Book tabs */}
+        {/* Book tabs - scrollable on mobile */}
         {media.length > 1 ? (
-          <div style={{ display: 'flex', gap: '4px' }}>
+          <div style={{ 
+            display: 'flex', gap: '4px', overflowX: 'auto', 
+            scrollbarWidth: 'none', msOverflowStyle: 'none', 
+            marginRight: '10px', paddingBottom: '2px'
+          }}>
             {media.map((m, idx) => (
               <button key={m.id}
                 onClick={() => setActiveBookIndex(idx)}
@@ -243,7 +249,8 @@ export default function PdfFlipbookViewer({
                   border: '1px solid rgba(255,255,255,0.15)',
                   backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
                   color: 'white', padding: '4px 14px', borderRadius: '20px',
-                  cursor: 'pointer', fontSize: '0.8rem', fontWeight: 'bold', transition: '0.2s'
+                  cursor: 'pointer', fontSize: '0.8rem', fontWeight: 'bold', transition: '0.2s',
+                  whiteSpace: 'nowrap', flexShrink: 0
                 }}
               >Book {idx + 1}</button>
             ))}
@@ -251,11 +258,13 @@ export default function PdfFlipbookViewer({
         ) : <div />}
 
         {/* Right controls */}
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexShrink: 0 }}>
           {rawNumPages > 0 && (
             <span style={{
-              color: 'rgba(255,255,255,0.5)', fontSize: '0.78rem', fontFamily: 'monospace',
-              background: 'rgba(255,255,255,0.08)', padding: '3px 12px', borderRadius: '20px'
+              color: 'rgba(255,255,255,0.7)', fontSize: '0.75rem', fontFamily: 'monospace',
+              background: 'rgba(0,0,0,0.55)', padding: '4px 10px', borderRadius: '20px',
+              border: '1px solid rgba(255,255,255,0.18)', backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)', whiteSpace: 'nowrap'
             }}>
               {currentPage + 1} / {rawNumPages}
             </span>
