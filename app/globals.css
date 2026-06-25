@@ -361,3 +361,8 @@ button, [role="button"] {
   padding-top: 1.08em;
   padding-bottom: 0.92em;
 }
+
+@keyframes skeleton-loading {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}

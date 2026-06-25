@@ -19,8 +19,9 @@ type MediaItem = {
 function getCloudinaryPageUrl(originalUrl: string, pageNumber: number, isMobile: boolean = false) {
   const urlWithoutHash = originalUrl.split('#')[0];
   if (!urlWithoutHash.includes('/upload/')) return urlWithoutHash;
-  const width = isMobile ? 'w_800' : 'w_1600';
-  return urlWithoutHash.replace('/upload/', `/upload/${width},q_auto,f_auto,fl_progressive,pg_${pageNumber}/`);
+  const width = isMobile ? 'w_600' : 'w_1600';
+  const quality = isMobile ? 'q_auto:eco' : 'q_auto';
+  return urlWithoutHash.replace('/upload/', `/upload/${width},${quality},f_auto,fl_progressive,pg_${pageNumber}/`);
 }
 
 function getPageCount(url: string) {
@@ -28,29 +29,35 @@ function getPageCount(url: string) {
   return match ? parseInt(match[1], 10) : 0;
 }
 
-// Stable forwardRef page — NO internal state (prevents setArea crash)
 const Page = React.forwardRef<HTMLDivElement, { src?: string; isFirstPage?: boolean }>(
   ({ src, isFirstPage }, ref) => (
     <div
       ref={ref}
       className="page"
       style={{ 
-        width: '100%', height: '100%', overflow: 'hidden', background: src ? '#fff' : 'transparent',
+        width: '100%', height: '100%', overflow: 'hidden', 
+        background: src ? '#f0f0f0' : 'transparent',
+        backgroundImage: src ? 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)' : 'none',
+        backgroundSize: '200% 100%',
+        animation: src ? 'skeleton-loading 1.5s infinite' : 'none',
         backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
         transform: 'translateZ(0)', WebkitTransform: 'translateZ(0)',
         willChange: 'transform'
       }}
     >
+      {/* We inject the keyframes style block directly here or in a global css, but it's simpler to do it inline or rely on background */}
       {src && (
         <img
           src={src}
           alt=""
           draggable={false}
-          loading={isFirstPage ? 'eager' : 'lazy'}
+          // Intentionally removed loading="lazy" to let browser fetch pages in background, 
+          // preventing the "blank page glitch" during fast 3D flip animations.
           style={{
             width: '100%', height: '100%', objectFit: 'contain',
             display: 'block', pointerEvents: 'none', userSelect: 'none',
-            backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden'
+            backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
+            position: 'relative', zIndex: 1, backgroundColor: '#fff' // Covers skeleton when loaded
           }}
         />
       )}
@@ -210,7 +217,8 @@ export default function PdfFlipbookViewer({
             usePortrait={useSinglePage}
             mobileScrollSupport={false}
             swipeDistance={isMobile ? 30 : 50}
-            maxShadowOpacity={0.3}
+            maxShadowOpacity={isMobile ? 0 : 0.3}
+            drawShadow={!isMobile}
             onFlip={(e: any) => { setCurrentPage(e.data); playFlipSound(); }}
             className="pdf-flipbook"
             style={{}}
