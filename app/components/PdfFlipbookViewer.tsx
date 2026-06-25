@@ -16,10 +16,11 @@ type MediaItem = {
   fakeShares?: number;
 };
 
-function getCloudinaryPageUrl(originalUrl: string, pageNumber: number) {
+function getCloudinaryPageUrl(originalUrl: string, pageNumber: number, isMobile: boolean = false) {
   const urlWithoutHash = originalUrl.split('#')[0];
   if (!urlWithoutHash.includes('/upload/')) return urlWithoutHash;
-  return urlWithoutHash.replace('/upload/', `/upload/w_1600,q_auto,f_auto,fl_progressive,pg_${pageNumber}/`);
+  const width = isMobile ? 'w_800' : 'w_1600';
+  return urlWithoutHash.replace('/upload/', `/upload/${width},q_auto,f_auto,fl_progressive,pg_${pageNumber}/`);
 }
 
 function getPageCount(url: string) {
@@ -28,21 +29,28 @@ function getPageCount(url: string) {
 }
 
 // Stable forwardRef page — NO internal state (prevents setArea crash)
-const Page = React.forwardRef<HTMLDivElement, { src?: string }>(
-  ({ src }, ref) => (
+const Page = React.forwardRef<HTMLDivElement, { src?: string; isFirstPage?: boolean }>(
+  ({ src, isFirstPage }, ref) => (
     <div
       ref={ref}
       className="page"
-      style={{ width: '100%', height: '100%', overflow: 'hidden', background: src ? '#fff' : 'transparent' }}
+      style={{ 
+        width: '100%', height: '100%', overflow: 'hidden', background: src ? '#fff' : 'transparent',
+        backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
+        transform: 'translateZ(0)', WebkitTransform: 'translateZ(0)',
+        willChange: 'transform'
+      }}
     >
       {src && (
         <img
           src={src}
           alt=""
           draggable={false}
+          loading={isFirstPage ? 'eager' : 'lazy'}
           style={{
             width: '100%', height: '100%', objectFit: 'contain',
             display: 'block', pointerEvents: 'none', userSelect: 'none',
+            backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden'
           }}
         />
       )}
@@ -108,7 +116,7 @@ export default function PdfFlipbookViewer({
   const [activeBookIndex, setActiveBookIndex] = useState(initialBookIndex);
   const [currentPage, setCurrentPage] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 768 : false);
   const [pageAspect, setPageAspect] = useState<number | null>(null);
   const [bookDims, setBookDims] = useState<{ pageW: number; pageH: number; useSinglePage: boolean } | null>(null);
 
@@ -118,7 +126,7 @@ export default function PdfFlipbookViewer({
 
   // Build page URL list — always pad to even count (required by react-pageflip showCover=false)
   const pageUrls: (string | null)[] = Array.from({ length: rawNumPages }, (_, i) =>
-    getCloudinaryPageUrl(activeMedia?.url ?? '', i + 1)
+    getCloudinaryPageUrl(activeMedia?.url ?? '', i + 1, isMobile)
   );
   if (pageUrls.length % 2 !== 0) pageUrls.push(null);
 
@@ -129,7 +137,7 @@ export default function PdfFlipbookViewer({
     setBookDims(null);
     setCurrentPage(0);
     const img = new Image();
-    img.src = getCloudinaryPageUrl(activeMedia.url, 1);
+    img.src = getCloudinaryPageUrl(activeMedia.url, 1, isMobile);
     img.onload = () => setPageAspect(img.naturalWidth / img.naturalHeight);
   }, [activeMedia]);
 
@@ -201,15 +209,14 @@ export default function PdfFlipbookViewer({
             showCover={false}
             usePortrait={useSinglePage}
             mobileScrollSupport={false}
-            drawShadow={true}
-            flippingTime={650}
+            swipeDistance={isMobile ? 30 : 50}
+            maxShadowOpacity={0.3}
             onFlip={(e: any) => { setCurrentPage(e.data); playFlipSound(); }}
             className="pdf-flipbook"
             style={{}}
           >
-            {pageUrls.map((src, i) => (
-              // @ts-ignore
-              <Page key={i} src={src ?? undefined} />
+            {pageUrls.map((url, i) => (
+              <Page key={`${activeBookIndex}-${i}`} src={url ?? undefined} isFirstPage={i === 0 || i === 1} />
             ))}
           </HTMLFlipBook>
         ) : (
