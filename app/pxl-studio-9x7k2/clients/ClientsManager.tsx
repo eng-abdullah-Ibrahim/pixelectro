@@ -1,7 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { createClient, deleteClient, updateClientsOrder, editClient } from "./clientActions";
-import { CldUploadWidget } from "next-cloudinary";
 import { UploadCloud, X, GripVertical, Pencil, Trash2 } from "lucide-react";
 
 type Client = {
@@ -15,12 +14,57 @@ type Client = {
 export default function ClientsManager({ initialClients }: { initialClients: Client[] }) {
   const [clients, setClients] = useState(initialClients);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
 
   // Form state
   const [form, setForm] = useState({ name: "", logoUrl: "", link: "" });
   const [editForm, setEditForm] = useState({ name: "", logoUrl: "", link: "" });
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const editFileInputRef = useRef<HTMLInputElement>(null);
+
+  async function uploadLogoToCloudinary(file: File): Promise<string | null> {
+    setIsUploading(true);
+    try {
+      const signRes = await fetch("/api/admin/cloudinary-sign?folder=pixelectro/clients");
+      if (!signRes.ok) throw new Error("Failed to get upload signature");
+      const { timestamp, signature, cloudName, apiKey } = await signRes.json();
+
+      const uploadData = new FormData();
+      uploadData.append("file", file);
+      uploadData.append("api_key", apiKey);
+      uploadData.append("timestamp", timestamp.toString());
+      uploadData.append("signature", signature);
+      uploadData.append("folder", "pixelectro/clients");
+
+      const uploadRes = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        { method: "POST", body: uploadData }
+      );
+      if (!uploadRes.ok) throw new Error("Upload failed");
+      const data = await uploadRes.json();
+      return data.secure_url;
+    } catch (err) {
+      alert("فشل رفع الصورة. يرجى المحاولة مرة أخرى.");
+      return null;
+    } finally {
+      setIsUploading(false);
+    }
+  }
+
+  async function handleLogoFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const url = await uploadLogoToCloudinary(e.target.files[0]);
+    if (url) setForm((f) => ({ ...f, logoUrl: url }));
+  }
+
+  async function handleEditLogoFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const url = await uploadLogoToCloudinary(e.target.files[0]);
+    if (url) setEditForm((f) => ({ ...f, logoUrl: url }));
+  }
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -97,30 +141,45 @@ export default function ClientsManager({ initialClients }: { initialClients: Cli
                 <label className="label">Logo *</label>
                 {form.logoUrl ? (
                   <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                    <img src={form.logoUrl} alt="logo" style={{ height: 60, objectFit: "contain", background: "#fff", padding: "6px", borderRadius: "8px" }} />
-                    <button type="button" className="btnDanger" style={{ padding: "6px 10px" }} onClick={() => setForm({ ...form, logoUrl: "" })}>
+                    <img
+                      src={form.logoUrl}
+                      alt="logo"
+                      style={{ height: 60, objectFit: "contain", background: "#fff", padding: "6px", borderRadius: "8px" }}
+                    />
+                    <button
+                      type="button"
+                      className="btnDanger"
+                      style={{ padding: "6px 10px" }}
+                      onClick={() => setForm({ ...form, logoUrl: "" })}
+                    >
                       <X size={14} /> Remove
                     </button>
                   </div>
                 ) : (
-                  <CldUploadWidget
-                    signatureEndpoint="/api/admin/cloudinary-sign"
-                    options={{ folder: "pixelectro/clients", maxFiles: 1 }}
-                    onSuccess={(result: any) => {
-                      if (result.info?.secure_url) setForm({ ...form, logoUrl: result.info.secure_url });
-                    }}
-                  >
-                    {({ open }) => (
-                      <button type="button" className="btnGhost" onClick={() => open()} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <UploadCloud size={16} /> Upload Logo
-                      </button>
-                    )}
-                  </CldUploadWidget>
+                  <>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={handleLogoFileChange}
+                    />
+                    <button
+                      type="button"
+                      className="btnGhost"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploading}
+                      style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                    >
+                      <UploadCloud size={16} />
+                      {isUploading ? "Uploading..." : "Upload Logo"}
+                    </button>
+                  </>
                 )}
               </div>
             </div>
             <div className="formActions">
-              <button type="submit" className="btnPrimary" disabled={isSubmitting || !form.logoUrl}>
+              <button type="submit" className="btnPrimary" disabled={isSubmitting || !form.logoUrl || isUploading}>
                 {isSubmitting ? "Adding..." : "+ Add Client"}
               </button>
             </div>
@@ -188,6 +247,30 @@ export default function ClientsManager({ initialClients }: { initialClients: Cli
                         placeholder="URL"
                         style={{ flex: "2 1 200px" }}
                       />
+                      {/* Edit logo */}
+                      {editForm.logoUrl && (
+                        <img
+                          src={editForm.logoUrl}
+                          alt="logo"
+                          style={{ height: 36, objectFit: "contain", background: "#fff", padding: "4px", borderRadius: "6px" }}
+                        />
+                      )}
+                      <input
+                        ref={editFileInputRef}
+                        type="file"
+                        accept="image/*"
+                        style={{ display: "none" }}
+                        onChange={handleEditLogoFileChange}
+                      />
+                      <button
+                        type="button"
+                        className="btnGhost"
+                        style={{ padding: "6px 10px" }}
+                        onClick={() => editFileInputRef.current?.click()}
+                        disabled={isUploading}
+                      >
+                        <UploadCloud size={14} /> {isUploading ? "..." : "Change Logo"}
+                      </button>
                       <button className="btnPrimary" style={{ padding: "6px 14px" }} onClick={() => handleEditSave(c.id)}>
                         Save
                       </button>
