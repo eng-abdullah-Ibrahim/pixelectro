@@ -495,8 +495,6 @@ export default function AnalyticsDashboard({
                     <th>Title</th>
                     <th>Category</th>
                     <th>Real Interactions</th>
-                    <th>Mock Interactions</th>
-                    <th>Public Total</th>
                     <th style={{ width: 140 }}>Analytics</th>
                   </tr>
                 </thead>
@@ -513,24 +511,6 @@ export default function AnalyticsDashboard({
                             <span title="Likes">♥ {p.likesCount}</span> &nbsp;
                             <span title="Views">👁 {p.viewsCount}</span> &nbsp;
                             <span title="Shares">🔗 {p.sharesCount}</span>
-                          </>
-                        )}
-                      </td>
-                      <td style={{ color: "var(--adm-muted)" }}>
-                        {isPdf ? <span style={{ fontSize: "0.8rem" }}>N/A</span> : (
-                          <>
-                            <span title="Fake Likes">+{p.fakeLikes}</span> &nbsp;
-                            <span title="Fake Views">+{p.fakeViews}</span> &nbsp;
-                            <span title="Fake Shares">+{p.fakeShares}</span>
-                          </>
-                        )}
-                      </td>
-                      <td style={{ color: "var(--adm-primary)", fontWeight: 700 }}>
-                        {isPdf ? <span style={{ color: "var(--adm-muted)", fontSize: "0.8rem", fontWeight: "normal" }}>N/A</span> : (
-                          <>
-                            <span title="Total Likes">♥ {p.likesCount + p.fakeLikes}</span> &nbsp;
-                            <span title="Total Views">👁 {p.viewsCount + p.fakeViews}</span> &nbsp;
-                            <span title="Total Shares">🔗 {p.sharesCount + p.fakeShares}</span>
                           </>
                         )}
                       </td>
@@ -617,16 +597,16 @@ export default function AnalyticsDashboard({
           const activeMedia = proj.media?.find((m: any) => m.id === selectedMediaId);
           if (activeMedia) {
             displayStats = {
-              views: activeMedia.viewsCount + activeMedia.fakeViews,
-              likes: activeMedia.likesCount + activeMedia.fakeLikes,
-              shares: activeMedia.sharesCount + activeMedia.fakeShares
+              views: activeMedia.viewsCount,
+              likes: activeMedia.likesCount,
+              shares: activeMedia.sharesCount
             };
           }
         } else {
           displayStats = {
-            views: proj.viewsCount + proj.fakeViews,
-            likes: proj.likesCount + proj.fakeLikes,
-            shares: proj.sharesCount + proj.fakeShares
+            views: proj.viewsCount,
+            likes: proj.likesCount,
+            shares: proj.sharesCount
           };
         }
 
@@ -639,19 +619,17 @@ export default function AnalyticsDashboard({
               </div>
 
               <div className={styles.modalBody}>
-                {proj.media && proj.media.length > 0 && (
+                {proj.media && proj.media.length > 0 && isPdf && (
                   <div style={{ marginBottom: "16px", display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "4px" }}>
-                    {!isPdf && (
-                      <button 
-                        className={`${styles.presetBtn} ${!selectedMediaId ? styles.activePreset : ""}`}
-                        onClick={() => {
-                          setSelectedMediaId(null);
-                          setProjectActiveMetrics(["PROJECT_VIEW", "PROJECT_LIKE", "PROJECT_SHARE"]);
-                        }}
-                      >
-                        Project Overview
-                      </button>
-                    )}
+                    <button 
+                      className={`${styles.presetBtn} ${!selectedMediaId ? styles.activePreset : ""}`}
+                      onClick={() => {
+                        setSelectedMediaId(null);
+                        setProjectActiveMetrics(["PROJECT_VIEW", "PROJECT_LIKE", "PROJECT_SHARE"]);
+                      }}
+                    >
+                      Project Overview
+                    </button>
                     {proj.media.map((m: any, i: number) => (
                       <button 
                         key={m.id}
