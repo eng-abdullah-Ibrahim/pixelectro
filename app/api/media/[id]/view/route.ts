@@ -37,7 +37,8 @@ export async function POST(
 
     return NextResponse.json({ 
       success: true, 
-      totalViews: updatedMedia.viewsCount + updatedMedia.fakeViews 
+      totalViews: updatedMedia.viewsCount,
+      viewsCount: updatedMedia.viewsCount,
     });
   } catch (error) {
     console.error('Error tracking media view:', error);

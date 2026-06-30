@@ -37,7 +37,8 @@ export async function POST(
 
     return NextResponse.json({ 
       success: true, 
-      totalLikes: updatedMedia.likesCount + updatedMedia.fakeLikes 
+      totalLikes: updatedMedia.likesCount,
+      likesCount: updatedMedia.likesCount,
     });
   } catch (error) {
     console.error('Error tracking media like:', error);

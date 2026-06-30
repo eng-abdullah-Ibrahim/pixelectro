@@ -44,7 +44,7 @@ export async function POST(
     return NextResponse.json({
       success: true,
       likesCount: updatedProject.likesCount,
-      totalLikes: updatedProject.likesCount + updatedProject.fakeLikes,
+      totalLikes: updatedProject.likesCount,
     });
   } catch (error: any) {
     console.error('Error liking project:', error);

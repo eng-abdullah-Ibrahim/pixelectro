@@ -37,7 +37,8 @@ export async function POST(
 
     return NextResponse.json({ 
       success: true, 
-      totalShares: updatedMedia.sharesCount + updatedMedia.fakeShares 
+      totalShares: updatedMedia.sharesCount,
+      sharesCount: updatedMedia.sharesCount,
     });
   } catch (error) {
     console.error('Error tracking media share:', error);

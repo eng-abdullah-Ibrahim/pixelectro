@@ -30,7 +30,7 @@ export async function POST(
     return NextResponse.json({
       success: true,
       sharesCount: updated.sharesCount,
-      totalShares: updated.sharesCount + updated.fakeShares,
+      totalShares: updated.sharesCount,
     });
   } catch (error: any) {
     console.error('Error tracking project share:', error);

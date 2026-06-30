@@ -30,9 +30,9 @@ export default function ProjectStats({
 }: ProjectStatsProps) {
   const { t } = useTranslation();
   const [liked, setLiked] = useState(false);
-  const [likes, setLikes] = useState(initialLikes + initialFakeLikes);
-  const [views, setViews] = useState(initialViews + initialFakeViews);
-  const [shares, setShares] = useState(initialShares + initialFakeShares);
+  const [likes, setLikes] = useState(initialLikes);
+  const [views, setViews] = useState(initialViews);
+  const [shares, setShares] = useState(initialShares);
   const [likeAnimate, setLikeAnimate] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -61,7 +61,7 @@ export default function ProjectStats({
     fetch(`${apiBasePath}/view`, { method: "POST" })
       .then((r) => r.json())
       .then((data) => {
-        if (data.success) setViews(data.totalViews);
+        if (data.success) setViews(data.viewsCount);
       })
       .catch(() => {});
   }, [apiBasePath, ssViewKey]);
@@ -81,7 +81,7 @@ export default function ProjectStats({
       const res = await fetch(`${apiBasePath}/like`, { method: "POST" });
       const data = await res.json();
       if (data.success) {
-        setLikes(data.totalLikes);
+        setLikes(data.likesCount);
       }
     } catch (err) {
       console.error(err);
@@ -120,7 +120,7 @@ export default function ProjectStats({
       const res = await fetch(`${apiBasePath}/share`, { method: "POST" });
       const data = await res.json();
       if (data.success) {
-        setShares(data.totalShares);
+        setShares(data.sharesCount);
       }
     } catch (err) {
       console.error(err);

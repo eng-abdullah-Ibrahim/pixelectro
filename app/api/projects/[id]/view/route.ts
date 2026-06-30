@@ -30,7 +30,7 @@ export async function POST(
     return NextResponse.json({
       success: true,
       viewsCount: updated.viewsCount,
-      totalViews: updated.viewsCount + updated.fakeViews,
+      totalViews: updated.viewsCount,
     });
   } catch (error: any) {
     console.error('Error tracking project view:', error);
