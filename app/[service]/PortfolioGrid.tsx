@@ -28,6 +28,7 @@ type Project = {
   fakeViews?: number;
   sharesCount?: number;
   fakeShares?: number;
+  coverImage?: string | null;
   translations?: any;
 };
 

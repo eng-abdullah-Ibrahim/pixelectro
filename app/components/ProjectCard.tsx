@@ -24,6 +24,7 @@ type Project = {
   fakeViews?: number;
   sharesCount?: number;
   fakeShares?: number;
+  coverImage?: string | null;
   translations?: any;
 };
 
@@ -41,8 +42,8 @@ export default function ProjectCard({ project, contentType, onClick }: { project
   const sortedMedia = [...project.media].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   const coverMedia = sortedMedia.length > 0 ? sortedMedia[0] : null;
   
-  let coverUrl = '';
-  if (coverMedia) {
+  let coverUrl = project.coverImage || '';
+  if (!coverUrl && coverMedia) {
     if (contentType === 'PDF_BOOK' || coverMedia.type === 'PDF') {
       const urlWithoutHash = coverMedia.url.split('#')[0];
       coverUrl = urlWithoutHash.includes('/upload/')
@@ -55,6 +56,8 @@ export default function ProjectCard({ project, contentType, onClick }: { project
     } else {
       coverUrl = coverMedia.url; // for video
     }
+  } else if (coverUrl && coverUrl.includes('cloudinary.com/') && coverUrl.includes('/upload/')) {
+    coverUrl = coverUrl.replace('/upload/', '/upload/c_fill,w_600,h_800,f_auto,q_auto/');
   }
 
   return (

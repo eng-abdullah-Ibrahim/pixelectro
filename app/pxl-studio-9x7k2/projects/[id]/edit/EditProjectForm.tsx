@@ -10,6 +10,7 @@ export default function EditProjectForm({ project, categories }: { project: any,
   const router = useRouter();
   const { addTask, updateTaskStatus } = useTasks();
   const [loading, setLoading] = useState(false);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
   const isPdf = project.media?.some((m: any) => m.url?.toLowerCase().endsWith('.pdf') || m.type === 'PDF');
 
   async function handleSubmit(formData: FormData) {
@@ -18,6 +19,26 @@ export default function EditProjectForm({ project, categories }: { project: any,
     const description = formData.get("description") as string;
 
     try {
+      if (coverFile) {
+        const signRes = await fetch('/api/admin/cloudinary-sign?folder=pixelectro/projects');
+        if (signRes.ok) {
+           const { timestamp, signature, cloudName, apiKey } = await signRes.json();
+           const uploadData = new FormData();
+           uploadData.append("file", coverFile);
+           uploadData.append("api_key", apiKey);
+           uploadData.append("timestamp", timestamp.toString());
+           uploadData.append("signature", signature);
+           uploadData.append("folder", "pixelectro/projects");
+           const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+             method: 'POST', body: uploadData
+           });
+           if (uploadRes.ok) {
+             const data = await uploadRes.json();
+             formData.append("coverImage", data.secure_url);
+           }
+        }
+      }
+
       // 1. Instant save
       await updateProjectBase(project.id, formData);
       
@@ -69,6 +90,24 @@ export default function EditProjectForm({ project, categories }: { project: any,
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </select>
+            </div>
+
+            <div className="field">
+              <label className="label">Cover Image (Optional)</label>
+              {project.coverImage && (
+                <div style={{ marginBottom: '10px' }}>
+                  <img src={project.coverImage} alt="Current Cover" style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '8px' }} />
+                  <div style={{ fontSize: '12px', color: '#888' }}>Current cover</div>
+                </div>
+              )}
+              <input type="file" accept="image/*" className="input" onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  setCoverFile(e.target.files[0]);
+                } else {
+                  setCoverFile(null);
+                }
+              }} />
+              <small style={{ color: '#888', marginTop: '4px', display: 'block' }}>Upload to replace the current cover. If not provided, the first media item will be used as cover.</small>
             </div>
 
             {!isPdf && (

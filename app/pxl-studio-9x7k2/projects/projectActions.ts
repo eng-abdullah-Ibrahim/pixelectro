@@ -33,6 +33,7 @@ export async function createDraftProjectBase(formData: FormData) {
   const fakeLikes   = parseInt(formData.get('fakeLikes') as string || "0", 10);
   const fakeViews   = parseInt(formData.get('fakeViews') as string || "0", 10);
   const fakeShares  = parseInt(formData.get('fakeShares') as string || "0", 10);
+  const coverImage  = formData.get('coverImage') as string | null;
   
   const count = await prisma.project.count({ where: { categoryId } });
 
@@ -41,6 +42,7 @@ export async function createDraftProjectBase(formData: FormData) {
       title, 
       description, 
       categoryId, 
+      coverImage,
       order: count, 
       fakeLikes, 
       fakeViews, 
@@ -60,10 +62,16 @@ export async function updateProjectBase(id: string, formData: FormData) {
   const fakeLikes = parseInt(formData.get("fakeLikes") as string || "0", 10);
   const fakeViews = parseInt(formData.get("fakeViews") as string || "0", 10);
   const fakeShares = parseInt(formData.get("fakeShares") as string || "0", 10);
+  const coverImage = formData.get("coverImage") as string | null;
   
+  const updateData: any = { title, description, categoryId, fakeLikes, fakeViews, fakeShares };
+  if (coverImage) {
+    updateData.coverImage = coverImage;
+  }
+
   await prisma.project.update({
     where: { id },
-    data: { title, description, categoryId, fakeLikes, fakeViews, fakeShares },
+    data: updateData,
   });
 
   return true;

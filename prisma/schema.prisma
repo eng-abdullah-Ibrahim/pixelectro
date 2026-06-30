@@ -66,6 +66,7 @@ model Project {
   category     Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   order        Int            @default(0)
   isActive     Boolean        @default(true)
+  coverImage   String?
   translations Json?          @default("{}")
   media        ProjectMedia[]
   createdAt    DateTime       @default(now())
